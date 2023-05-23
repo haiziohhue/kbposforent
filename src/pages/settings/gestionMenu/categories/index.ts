@@ -1,3 +1,3 @@
-import { ListCategories } from './ListCategories';
-import { EditCategory } from './EditCategory';
-import { CreateCategory } from './CreateCategory';
+export { ListCategories } from './list';
+export { EditCategory } from './edit';
+export { CreateCategory } from './create';

@@ -33,6 +33,45 @@ import {
   CategoryList,
   CategoryShow,
 } from './pages/categories';
+import {
+  MenuBook,
+  AccountBalanceWallet,
+  AccountBalance,
+  AddShoppingCart,
+  Settings,
+  TableRestaurant,
+  Fastfood,
+  RestaurantMenu,
+  Widgets,
+  Restaurant,
+  Category,
+} from '@mui/icons-material';
+import {
+  CreateMenu,
+  EditMenu,
+  ListMenus,
+} from './pages/settings/gestionMenu/menus';
+import {
+  CreateOrder,
+  EditOrder,
+  ListOrdes,
+  ShowOrder,
+} from './pages/commandes';
+import {
+  CreateCategory,
+  EditCategory,
+  ListCategories,
+} from './pages/settings/gestionMenu/categories';
+import {
+  CreateCaisse,
+  EditCaisse,
+  ListCaisses,
+} from './pages/settings/gestionMenu/caisses';
+import {
+  CreateTable,
+  EditTable,
+  ListTables,
+} from './pages/settings/gestionMenu/tables';
 
 function App() {
   return (
@@ -43,25 +82,39 @@ function App() {
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: 'auto' } }} />
           <RefineSnackbarProvider>
             <Refine
-              authProvider={authProvider}
+              // authProvider={authProvider}
               dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
               notificationProvider={notificationProvider}
               routerProvider={routerBindings}
               resources={[
                 {
-                  name: 'Caisse',
+                  name: 'menus',
                   list: '/blog-posts',
                   create: '/blog-posts/create',
                   edit: '/blog-posts/edit/:id',
                   show: '/blog-posts/show/:id',
                   meta: {
+                    label: 'Caisse',
                     canDelete: true,
+                    icon: <AccountBalance />,
+                  },
+                },
+                {
+                  name: 'commandes',
+                  list: '/commandes',
+                  create: '/commandes/create',
+                  edit: '/commandes/edit/:id',
+                  show: '/commandes/show/:id',
+                  meta: {
+                    canDelete: true,
+                    icon: <AddShoppingCart />,
                   },
                 },
                 {
                   name: 'settings',
                   meta: {
                     label: 'Paramètres',
+                    icon: <Settings />,
                   },
                 },
 
@@ -70,19 +123,54 @@ function App() {
                   meta: {
                     label: 'Gestion de Menu',
                     parent: 'settings',
+                    icon: <Fastfood />,
                   },
                 },
                 {
-                  name: 'menu',
-                  list: '/settings/gestionMenu/menu',
-                  create: '/settings/gestionMenu/menu/create',
-                  edit: '/settings/gestionMenu/menu/edit/:id',
-                  show: '/settings/gestionMenu/menu/show/:id',
+                  name: 'categories',
+                  list: '/settings/gestionMenu/categories',
+                  create: '/settings/gestionMenu/categories/create',
+                  edit: '/settings/gestionMenu/categories/edit/:id',
                   meta: {
                     canDelete: true,
                     parent: 'gestiondemenu',
+                    icon: <Category />,
                   },
                 },
+                {
+                  name: 'menus',
+                  list: 'settings/gestionMenu/menus',
+                  create: '/settings/gestionMenu/menus/create',
+                  edit: '/settings/gestionMenu/menus/edit/:id',
+                  meta: {
+                    canDelete: true,
+                    parent: 'gestiondemenu',
+                    icon: <MenuBook />,
+                  },
+                },
+                {
+                  name: 'tables',
+                  list: '/settings/gestionMenu/tables',
+                  create: '/settings/gestionMenu/tables/create',
+                  edit: '/settings/gestionMenu/tables/edit/:id',
+                  meta: {
+                    canDelete: true,
+                    parent: 'gestiondemenu',
+                    icon: <TableRestaurant />,
+                  },
+                },
+                {
+                  name: 'caisses',
+                  list: '/settings/gestionMenu/caisses',
+                  create: '/settings/gestionMenu/caisses/create',
+                  edit: '/settings/gestionMenu/caisses/edit/:id',
+                  meta: {
+                    canDelete: true,
+                    parent: 'gestiondemenu',
+                    icon: <AccountBalanceWallet />,
+                  },
+                },
+
                 // {
                 //   name: 'blog-posts',
                 //   list: '/blog-posts',
@@ -123,21 +211,44 @@ function App() {
                     index
                     element={<NavigateToResource resource="caisse" />}
                   />
-                  {/* Caisse */}
+                  {/* Menus */}
                   <Route path="/blog-posts">
                     <Route index element={<BlogPostList />} />
                     <Route path="create" element={<BlogPostCreate />} />
                     <Route path="edit/:id" element={<BlogPostEdit />} />
                     <Route path="show/:id" element={<BlogPostShow />} />
                   </Route>
+                  {/* Orders */}
+                  <Route path="/commandes">
+                    <Route index element={<ListOrdes />} />
+                    <Route path="create" element={<CreateOrder />} />
+                    <Route path="edit/:id" element={<EditOrder />} />
+                    <Route path="show/:id" element={<ShowOrder />} />
+                  </Route>
                   {/* Settings */}
                   <Route path="/settings">
-                    <Route index element={<CategoryList />} />
+                    {/* <Route index element={<CategoryList />} /> */}
                     <Route path="/settings/gestionMenu">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
+                      <Route path="/settings/gestionMenu/menus">
+                        <Route index element={<ListMenus />} />
+                        <Route path="create" element={<CreateMenu />} />
+                        <Route path="edit/:id" element={<EditMenu />} />
+                      </Route>
+                      <Route path="/settings/gestionMenu/categories">
+                        <Route index element={<ListCategories />} />
+                        <Route path="create" element={<CreateCategory />} />
+                        <Route path="edit/:id" element={<EditCategory />} />
+                      </Route>
+                      <Route path="/settings/gestionMenu/caisses">
+                        <Route index element={<ListCaisses />} />
+                        <Route path="create" element={<CreateCaisse />} />
+                        <Route path="edit/:id" element={<EditCaisse />} />
+                      </Route>
+                      <Route path="/settings/gestionMenu/tables">
+                        <Route index element={<ListTables />} />
+                        <Route path="create" element={<CreateTable />} />
+                        <Route path="edit/:id" element={<EditTable />} />
+                      </Route>
                     </Route>
                   </Route>
                   {/* <Route path="/categories">
