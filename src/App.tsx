@@ -236,7 +236,7 @@ function App() {
                       </Route>
                       <Route path="/settings/gestionMenu/categories">
                         <Route index element={<ListCategories />} />
-                        <Route path="create" element={<CreateCategory />} />
+                        {/* <Route path="create" element={<CreateCategory />} /> */}
                         <Route path="edit/:id" element={<EditCategory />} />
                       </Route>
                       <Route path="/settings/gestionMenu/caisses">

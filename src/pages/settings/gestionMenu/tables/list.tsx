@@ -21,9 +21,10 @@ import {
 import {
   AddCircleOutline,
   Edit,
+  Delete,
   RemoveCircleOutline,
 } from '@mui/icons-material';
-import { EditButton, List, SaveButton } from '@refinedev/mui';
+import { EditButton, List, SaveButton, DeleteButton } from '@refinedev/mui';
 
 export const ListTables: React.FC<IResourceComponentsProps> = () => {
   const {
@@ -82,16 +83,25 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
                   >
                     Edit
                   </EditButton>
-                  <div>Cancel</div>
+                  {/* <div>Cancel</div> */}
                 </>
               ) : (
-                <IconButton
-                  onClick={() => {
-                    setId(getValue() as string);
-                  }}
-                >
-                  <Edit fontSize="small" />
-                </IconButton>
+                <>
+                  <IconButton
+                    onClick={() => {
+                      setId(getValue() as string);
+                    }}
+                  >
+                    <Edit fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => {
+                      setId(getValue() as string);
+                    }}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </>
               )}
             </Stack>
           );
@@ -176,7 +186,8 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
           }}
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
-          <Button onClick={() => setId(undefined)}>Annuler</Button>
+          <Button onClick={() => setId(undefined)}>X</Button>
+          {/* <Button onClick={() => setId(undefined)}>Annuler</Button> */}
         </TableCell>
       </TableRow>
     );

@@ -1,4 +1,8 @@
-import { HttpError, IResourceComponentsProps } from '@refinedev/core';
+import {
+  HttpError,
+  IResourceComponentsProps,
+  useDelete,
+} from '@refinedev/core';
 import React, { useCallback } from 'react';
 import { ICategory } from '../../../../interfaces';
 import { useForm, useModalForm } from '@refinedev/react-hook-form';
@@ -20,12 +24,15 @@ import {
 } from '@mui/material';
 import {
   AddCircleOutline,
+  Delete,
   Edit,
   RemoveCircleOutline,
 } from '@mui/icons-material';
-import { EditButton, List, SaveButton } from '@refinedev/mui';
+import { CreateButton, EditButton, List, SaveButton } from '@refinedev/mui';
+import { CreateCategory } from './create';
 
 export const ListCategories: React.FC<IResourceComponentsProps> = () => {
+  const { mutate: mutateDelete } = useDelete();
   const {
     refineCore: { onFinish, id, setId },
     register,
@@ -36,7 +43,13 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
       action: 'edit',
     },
   });
-
+  // Modal
+  const createModalFormProps = useModalForm<ICategory, HttpError, ICategory>({
+    refineCoreProps: { action: 'create' },
+  });
+  const {
+    modal: { show: showCreateModal },
+  } = createModalFormProps;
   const columns = React.useMemo<ColumnDef<ICategory>[]>(
     () => [
       {
@@ -70,7 +83,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
         id: 'actions',
         header: 'Actions',
         accessorKey: 'id',
-        cell: function render({ getValue }) {
+        cell: function render({ row, getValue }) {
           return (
             <Stack direction="row">
               {id ? (
@@ -82,16 +95,31 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                   >
                     Edit
                   </EditButton>
-                  <div>Cancel</div>
                 </>
               ) : (
-                <IconButton
-                  onClick={() => {
-                    setId(getValue() as string);
-                  }}
-                >
-                  <Edit fontSize="small" />
-                </IconButton>
+                <>
+                  <IconButton
+                    onClick={() => {
+                      setId(getValue() as string);
+                      console.log(setId(getValue() as string));
+                    }}
+                  >
+                    <Edit fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => {
+                      mutateDelete({
+                        resource: 'categories',
+                        id: row.original.id,
+                        mutationMode: 'undoable',
+                        undoableTimeout: 10000,
+                      });
+                      console.log(id);
+                    }}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </>
               )}
             </Stack>
           );
@@ -155,10 +183,20 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
               size="small"
               defaultValue={nom}
               {...register('nom', {
-                // required: t('errors.required.field', {
-                //   field: 'Title',
-                // }),
+                required: 'This field is required',
               })}
+              InputProps={{
+                inputProps: {
+                  style: { textTransform: 'capitalize' },
+                  maxLength: 50,
+                  onChange: (event) => {
+                    const target = event.target as HTMLInputElement;
+                    target.value =
+                      target.value.charAt(0).toUpperCase() +
+                      target.value.slice(1);
+                  },
+                },
+              }}
             />
           </Stack>
         </TableCell>
@@ -185,45 +223,50 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
   // Create Modal
 
   return (
-    <List>
-      <form onSubmit={handleSubmit(onFinish)}>
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              {getHeaderGroups().map((headerGroup) => (
-                <TableRow key={`header-group-${headerGroup.id}`}>
-                  {headerGroup.headers.map((header) => (
-                    <TableCell key={`header-group-cell-${header.id}`}>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+    <>
+      <List
+        createButtonProps={{
+          onClick: () => showCreateModal(),
+        }}
+      >
+        <form onSubmit={handleSubmit(onFinish)}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                {getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={`header-group-${headerGroup.id}`}>
+                    {headerGroup.headers.map((header) => (
+                      <TableCell key={`header-group-cell-${header.id}`}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHead>
+              <TableBody>
+                {getRowModel().rows.map((row) => {
+                  return (
+                    <React.Fragment key={row.id}>
+                      {id === (row.original as ICategory).id ? (
+                        renderEditRow(row)
+                      ) : (
+                        <TableRow>
+                          {row.getAllCells().map((cell) => {
+                            return (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
                       )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHead>
-            <TableBody>
-              {getRowModel().rows.map((row) => {
-                return (
-                  <React.Fragment key={row.id}>
-                    {id === (row.original as ICategory).id ? (
-                      renderEditRow(row)
-                    ) : (
-                      <TableRow>
-                        {row.getAllCells().map((cell) => {
-                          return (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    )}
-                    {/* {row.getIsExpanded() ? (
+                      {/* {row.getIsExpanded() ? (
                       <TableRow>
                         <TableCell colSpan={row.getVisibleCells().length}>
                           {renderRowSubComponent({
@@ -232,35 +275,39 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                         </TableCell>
                       </TableRow>
                     ) : null} */}
-                  </React.Fragment>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          component="div"
-          rowsPerPageOptions={[
-            5,
-            10,
-            25,
-            {
-              label: 'All',
-              value: tableQueryResult.data?.total ?? 100,
-            },
-          ]}
-          showFirstButton
-          showLastButton
-          count={pageCount || 0}
-          rowsPerPage={pagination?.pageSize || 10}
-          page={pagination?.pageIndex || 0}
-          onPageChange={(_, newPage: number) => setPageIndex(newPage)}
-          onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setPageSize(parseInt(event.target.value, 10));
-            setPageIndex(0);
-          }}
-        />
-      </form>
-    </List>
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[
+              5,
+              10,
+              25,
+              {
+                label: 'All',
+                value: tableQueryResult.data?.total ?? 100,
+              },
+            ]}
+            showFirstButton
+            showLastButton
+            count={pageCount || 0}
+            rowsPerPage={pagination?.pageSize || 10}
+            page={pagination?.pageIndex || 0}
+            onPageChange={(_, newPage: number) => setPageIndex(newPage)}
+            onRowsPerPageChange={(
+              event: React.ChangeEvent<HTMLInputElement>
+            ) => {
+              setPageSize(parseInt(event.target.value, 10));
+              setPageIndex(0);
+            }}
+          />
+        </form>
+      </List>
+      <CreateCategory {...createModalFormProps} />
+    </>
   );
 };

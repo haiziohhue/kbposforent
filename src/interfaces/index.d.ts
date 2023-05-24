@@ -5,11 +5,12 @@ export interface ICategory {
 
 export interface IMenu {
   id: number;
-  titre: string;
+  titre?: string;
   isActive?: boolean;
   description?: string;
-  image: IFile[];
-  createdAt: string;
+  image: null | { url: string };
+  createdAt?: string;
   prix: number;
-  categorie: ICategory;
+  categorie?: ICategory;
+  stock?: number;
 }
