@@ -69,7 +69,7 @@ export const CreateMenu: React.FC<
     //     withCredentials: true,
     //   }
     // );
-    const res = await axios.post(`${API_URL}/upload`, formData, {
+    const res = await axios.post(`${API_URL}/api/upload`, formData, {
       // headers: {
       //   Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
       // },
@@ -150,7 +150,7 @@ export const CreateMenu: React.FC<
                         md: 180,
                       },
                     }}
-                    src={imageURL}
+                    src={imageInput && imageInput.url}
                     alt="Menu Image"
                   />
                 </label>

@@ -3,6 +3,7 @@ import {
   IResourceComponentsProps,
   useApiUrl,
   useTable,
+  getDefaultFilter,
 } from '@refinedev/core';
 import React from 'react';
 import { IMenu } from '../../../../interfaces';
@@ -20,6 +21,7 @@ import { Search } from '@mui/icons-material';
 import { MenuItem } from './item';
 import { useModalForm } from '@refinedev/react-hook-form';
 import { CreateMenu } from './create';
+import { CategoryFilter } from './CategoryFilter';
 
 export const ListMenus: React.FC<IResourceComponentsProps> = () => {
   // const {
@@ -109,11 +111,11 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
                   inputProps={{
                     'aria-label': 'product search',
                   }}
-                  // value={getDefaultFilter('name', filters, 'contains')}
+                  value={getDefaultFilter('titre', filters, 'contains')}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setFilters([
                       {
-                        field: 'name',
+                        field: 'titre',
                         operator: 'contains',
                         value:
                           e.target.value !== '' ? e.target.value : undefined,
@@ -185,15 +187,12 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
               },
             }}
           >
-            {/* <Stack padding="8px">
-                        <Typography variant="subtitle1">
-                            {t("stores.tagFilterDescription")}
-                        </Typography>
-                        <CategoryFilter
-                            setFilters={setFilters}
-                            filters={filters}
-                        />
-                    </Stack> */}
+            <Stack padding="8px">
+              <Typography variant="subtitle1">
+                {/* {t('stores.tagFilterDescription')} */}
+              </Typography>
+              <CategoryFilter setFilters={setFilters} filters={filters} />
+            </Stack>
           </Grid>
         </Grid>
       </Paper>
