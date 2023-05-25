@@ -1,0 +1,1 @@
+export { MenusList } from './list';

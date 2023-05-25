@@ -72,6 +72,7 @@ import {
   EditTable,
   ListTables,
 } from './pages/settings/gestionMenu/tables';
+import { MenusList } from './pages/menus';
 
 function App() {
   return (
@@ -89,7 +90,7 @@ function App() {
               resources={[
                 {
                   name: 'menus',
-                  list: '/blog-posts',
+                  list: '/menus',
                   create: '/blog-posts/create',
                   edit: '/blog-posts/edit/:id',
                   show: '/blog-posts/show/:id',
@@ -212,8 +213,8 @@ function App() {
                     element={<NavigateToResource resource="caisse" />}
                   />
                   {/* Menus */}
-                  <Route path="/blog-posts">
-                    <Route index element={<BlogPostList />} />
+                  <Route path="/menus">
+                    <Route index element={<MenusList />} />
                     <Route path="create" element={<BlogPostCreate />} />
                     <Route path="edit/:id" element={<BlogPostEdit />} />
                     <Route path="show/:id" element={<BlogPostShow />} />

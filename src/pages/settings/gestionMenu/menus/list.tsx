@@ -24,31 +24,6 @@ import { CreateMenu } from './create';
 import { CategoryFilter } from './CategoryFilter';
 
 export const ListMenus: React.FC<IResourceComponentsProps> = () => {
-  // const {
-  //   options: {
-  //     state: { pagination },
-  //     pageCount,
-  //   },
-
-  //   setPageSize,
-  //   refineCore: { tableQueryResult },
-  // } = useTable<ICategory>({
-  //   // columns,
-  //   // initialState: {
-  //   //   sorting: [{ id: 'title', desc: false }],
-  //   // },
-  // });
-  const { dataGridProps } = useDataGrid<IMenu>({
-    // initialPageSize: 10,
-    // permanentFilter: [
-    //   {
-    //     field: 'category.id',
-    //     operator: 'eq',
-    //     value: record.id,
-    //   },
-    // ],
-    syncWithLocation: false,
-  });
   const apiUrl = useApiUrl();
   console.log(apiUrl);
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
@@ -133,7 +108,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
               </Paper>
               <CreateButton
                 onClick={() => showCreateModal()}
-                variant="outlined"
+                variant="contained"
                 sx={{ marginBottom: '5px' }}
               >
                 Ajouter Menu
@@ -189,7 +164,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
           >
             <Stack padding="8px">
               <Typography variant="subtitle1">
-                {/* {t('stores.tagFilterDescription')} */}
+                Utilisez des tags pour filtrer votre recherche
               </Typography>
               <CategoryFilter setFilters={setFilters} filters={filters} />
             </Stack>
