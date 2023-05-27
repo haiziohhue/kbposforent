@@ -39,7 +39,17 @@ export interface IOrder {
   type: 'emporté' | 'sur place';
   table: ITable;
   //   caisse: ICaisse;
-  caisse: number;
+  etat: 'validé' | 'en cours' | 'annulé';
+  caisse: ICaisse;
   menus: IMenu[];
   total: number;
+  createdAt: string;
+}
+
+export interface IOrderFilterVariables {
+  q?: string;
+  table?: string;
+  caisse?: string;
+  user?: string;
+  etat?: string[];
 }
