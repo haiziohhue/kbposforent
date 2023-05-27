@@ -1,54 +1,31 @@
 import {
-  HttpError,
   IResourceComponentsProps,
-  useApiUrl,
   useTable,
   getDefaultFilter,
-  useList,
 } from '@refinedev/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { CreateButton, useAutocomplete, useDataGrid } from '@refinedev/mui';
 import {
-  Autocomplete,
-  Button,
-  FormControl,
-  FormHelperText,
-  FormLabel,
   Grid,
   IconButton,
   InputBase,
-  List,
-  ListItemButton,
-  ListItemText,
   Pagination,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
 import { CategoryFilter } from '../settings/gestionMenu/menus/CategoryFilter';
-import { CaisseFilter } from '../../components/menu/CaisseFilter';
-import { ICaisse, IMenu, IOrder, ITable } from '../../interfaces';
+
+import { ICartMenu, IMenu } from '../../interfaces';
 import { MenuCard } from './card';
-import { useForm } from '@refinedev/react-hook-form';
-import { Controller } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
+import { CreateOrder } from '../commandes';
 
 export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
-  const {
-    refineCore: { onFinish, formLoading },
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors },
-  } = useForm<IOrder, HttpError, IOrder>();
-  const apiUrl = useApiUrl();
-  console.log(apiUrl);
+  const [cartItems, setCartItems] = useState<ICartMenu[]>([]);
+
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
     useTable<IMenu>({
       resource: `menus`,
@@ -59,25 +36,16 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const menus: IMenu[] = tableQueryResult.data?.data || [];
   console.log(menus);
 
-  const { autocompleteProps } = useAutocomplete<ITable>({
-    resource: 'tables',
-  });
-
-  //
-
-  const { data: caisses, isLoading } = useList<ICaisse>({
-    resource: 'caisses',
-  });
-  const [selctedCaisse, setSelectedCaisse] = useState<number>(1);
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    caisseId: number
-  ) => {
-    setSelectedCaisse(caisseId);
+  const addToCart = (menu: IMenu) => {
+    const newItem: ICartMenu = {
+      id: menu.id,
+      menus: menu,
+      quantity: 1,
+    };
+    setCartItems((prevCartItems) => [...prevCartItems, newItem]);
   };
-  useEffect(() => {
-    setValue('caisse', selctedCaisse);
-  }, [selctedCaisse, setValue]);
+
+  console.log(cartItems);
   return (
     <>
       <Grid container columns={16} spacing={2}>
@@ -142,7 +110,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                 menus.map((menu: IMenu) => (
                   <Grid
                     item
-                    xs={12}
+                    xs={6}
                     md={6}
                     lg={4}
                     xl={3}
@@ -153,6 +121,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                       menu={menu}
                       selectedCards={selctedMenu}
                       onCardSelect={setSelectedMenu}
+                      onAddToCart={() => addToCart(menu)}
                     />
                   </Grid>
                 ))
@@ -190,140 +159,15 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
             },
           }}
         >
-          <Paper
+          {/* <Paper
             sx={{
               paddingX: { xs: 3, md: 2 },
               paddingY: { xs: 2, md: 3 },
               my: 0.5,
             }}
-          >
-            <Stack padding="8px">
-              {/* <CaisseFilter /> */}
-              <form onSubmit={handleSubmit(onFinish)}>
-                <Stack gap="10px" marginTop="10px">
-                  {/* Caisse */}
-                  <Stack>
-                    <List
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      {caisses?.data.map((caisse: ICaisse) => (
-                        <Button
-                          key={caisse.id}
-                          onClick={(
-                            event: React.MouseEvent<
-                              HTMLButtonElement,
-                              MouseEvent
-                            >
-                          ) => handleListItemClick(event, caisse?.id)}
-                          variant={
-                            selctedCaisse === caisse.id
-                              ? 'contained'
-                              : 'outlined'
-                          }
-                          sx={{
-                            borderRadius: '30px',
-                          }}
-                          disabled={isLoading}
-                        >
-                          <ListItemText primary={caisse.nom} />
-                          <input
-                            type="hidden"
-                            {...register('caisse')}
-                            value={caisse?.id}
-                          />
-                        </Button>
-                      ))}
-                    </List>
-                  </Stack>
-                  {/* Table */}
-                  <FormControl>
-                    <Controller
-                      control={control}
-                      name="table"
-                      rules={{
-                        required: 'This field is required',
-                      }}
-                      render={({ field }) => (
-                        <Autocomplete
-                          disablePortal
-                          {...autocompleteProps}
-                          {...field}
-                          onChange={(_, value) => {
-                            field.onChange(value?.id);
-                          }}
-                          getOptionLabel={(item) => {
-                            return item.nom ? item.nom : '';
-                          }}
-                          isOptionEqualToValue={(option, value) =>
-                            value === undefined ||
-                            option?.id?.toString() ===
-                              (value?.id ?? value)?.toString()
-                          }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Table"
-                              variant="outlined"
-                              error={!!errors.table?.message}
-                              required
-                            />
-                          )}
-                        />
-                      )}
-                    />
-                    {errors.table && (
-                      <FormHelperText error>
-                        {errors.table.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                  {/* Type */}
-                  <FormControl fullWidth>
-                    <Controller
-                      control={control}
-                      name="type"
-                      rules={{
-                        required: 'This field is required',
-                      }}
-                      // defaultValue={'sur place'}
-                      render={({ field }) => (
-                        <Autocomplete
-                          size="medium"
-                          {...field}
-                          onChange={(_, value) => {
-                            field.onChange(value);
-                          }}
-                          options={['Sur Place', 'Emporté']}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              variant="outlined"
-                              label="Type"
-                              error={!!errors.type}
-                              required
-                            />
-                          )}
-                        />
-                      )}
-                    />
-                    {errors.type && (
-                      <FormHelperText error>
-                        {errors.type.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                </Stack>
-                <button type="submit">Submit</button>
-              </form>
-            </Stack>
-          </Paper>
+          > */}
+          <CreateOrder />
+          {/* </Paper> */}
         </Grid>
       </Grid>
     </>

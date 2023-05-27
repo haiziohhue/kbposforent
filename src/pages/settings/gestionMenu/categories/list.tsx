@@ -214,7 +214,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
           }}
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
-          <Button onClick={() => setId(undefined)}>Annuler</Button>
+          <Button onClick={() => setId(undefined)}>X</Button>
         </TableCell>
       </TableRow>
     );

@@ -1,6 +1,10 @@
-import { HttpError, IResourceComponentsProps } from '@refinedev/core';
+import {
+  HttpError,
+  IResourceComponentsProps,
+  useDelete,
+} from '@refinedev/core';
 import React, { useCallback } from 'react';
-import { ICategory } from '../../../../interfaces';
+import { ITable } from '../../../../interfaces';
 import { useForm, useModalForm } from '@refinedev/react-hook-form';
 import { ColumnDef, flexRender, Row } from '@tanstack/react-table';
 import { useTable } from '@refinedev/react-table';
@@ -20,25 +24,33 @@ import {
 } from '@mui/material';
 import {
   AddCircleOutline,
-  Edit,
   Delete,
+  Edit,
   RemoveCircleOutline,
 } from '@mui/icons-material';
-import { EditButton, List, SaveButton, DeleteButton } from '@refinedev/mui';
+import { CreateButton, EditButton, List, SaveButton } from '@refinedev/mui';
+import { CreateTable } from './create';
 
 export const ListTables: React.FC<IResourceComponentsProps> = () => {
+  const { mutate: mutateDelete } = useDelete();
   const {
     refineCore: { onFinish, id, setId },
     register,
     handleSubmit,
-  } = useForm<ICategory>({
+  } = useForm<ITable>({
     refineCoreProps: {
       redirect: false,
       action: 'edit',
     },
   });
-
-  const columns = React.useMemo<ColumnDef<ICategory>[]>(
+  // Modal
+  const createModalFormProps = useModalForm<ITable, HttpError, ITable>({
+    refineCoreProps: { action: 'create' },
+  });
+  const {
+    modal: { show: showCreateModal },
+  } = createModalFormProps;
+  const columns = React.useMemo<ColumnDef<ITable>[]>(
     () => [
       {
         id: 'nom',
@@ -47,31 +59,17 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row" alignItems="center" spacing={3}>
-              <IconButton onClick={() => row.toggleExpanded()}>
-                {row.getIsExpanded() ? (
-                  <RemoveCircleOutline fontSize="small" />
-                ) : (
-                  <AddCircleOutline fontSize="small" />
-                )}
-              </IconButton>
               <Typography>{getValue() as string}</Typography>
             </Stack>
           );
         },
       },
-      // {
-      //   id: 'isActive',
-      //   header: t('categories.fields.isActive'),
-      //   accessorKey: 'isActive',
-      //   cell: function render({ getValue }) {
-      //     return <BooleanField value={getValue()} />;
-      //   },
-      // },
+
       {
         id: 'actions',
         header: 'Actions',
         accessorKey: 'id',
-        cell: function render({ getValue }) {
+        cell: function render({ row, getValue }) {
           return (
             <Stack direction="row">
               {id ? (
@@ -83,20 +81,26 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
                   >
                     Edit
                   </EditButton>
-                  {/* <div>Cancel</div> */}
                 </>
               ) : (
                 <>
                   <IconButton
                     onClick={() => {
                       setId(getValue() as string);
+                      console.log(setId(getValue() as string));
                     }}
                   >
                     <Edit fontSize="small" />
                   </IconButton>
                   <IconButton
                     onClick={() => {
-                      setId(getValue() as string);
+                      mutateDelete({
+                        resource: 'tables',
+                        id: row.original.id,
+                        mutationMode: 'undoable',
+                        undoableTimeout: 10000,
+                      });
+                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />
@@ -120,8 +124,10 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
     getRowModel,
     setPageIndex,
     setPageSize,
-    refineCore: { tableQueryResult },
-  } = useTable<ICategory>({
+    refineCore: {
+      tableQueryResult: { data: tableData },
+    },
+  } = useTable<ITable>({
     columns,
     // initialState: {
     //   sorting: [{ id: 'title', desc: false }],
@@ -130,11 +136,9 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
   const handleEditButtonClick = (editId: string) => {
     setId(editId);
   };
-  const tables = tableQueryResult?.data;
-  console.log(tables);
 
   // Edit Functionality
-  const renderEditRow = useCallback((row: Row<ICategory>) => {
+  const renderEditRow = useCallback((row: Row<ITable>) => {
     const { id, nom } = row.original;
 
     return (
@@ -150,14 +154,6 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
             alignContent="center"
             alignItems="center"
           >
-            <IconButton onClick={() => row.toggleExpanded()}>
-              {row.getIsExpanded() ? (
-                <RemoveCircleOutline fontSize="small" />
-              ) : (
-                <AddCircleOutline fontSize="small" />
-              )}
-            </IconButton>
-
             <TextField
               fullWidth
               id="title"
@@ -165,10 +161,20 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
               size="small"
               defaultValue={nom}
               {...register('nom', {
-                // required: t('errors.required.field', {
-                //   field: 'Title',
-                // }),
+                required: 'This field is required',
               })}
+              InputProps={{
+                inputProps: {
+                  style: { textTransform: 'capitalize' },
+                  maxLength: 50,
+                  onChange: (event) => {
+                    const target = event.target as HTMLInputElement;
+                    target.value =
+                      target.value.charAt(0).toUpperCase() +
+                      target.value.slice(1);
+                  },
+                },
+              }}
             />
           </Stack>
         </TableCell>
@@ -187,7 +193,6 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
           <Button onClick={() => setId(undefined)}>X</Button>
-          {/* <Button onClick={() => setId(undefined)}>Annuler</Button> */}
         </TableCell>
       </TableRow>
     );
@@ -196,82 +201,82 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
   // Create Modal
 
   return (
-    <List>
-      <form onSubmit={handleSubmit(onFinish)}>
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              {getHeaderGroups().map((headerGroup) => (
-                <TableRow key={`header-group-${headerGroup.id}`}>
-                  {headerGroup.headers.map((header) => (
-                    <TableCell key={`header-group-cell-${header.id}`}>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHead>
-            <TableBody>
-              {getRowModel().rows.map((row) => {
-                return (
-                  <React.Fragment key={row.id}>
-                    {id === (row.original as ICategory).id ? (
-                      renderEditRow(row)
-                    ) : (
-                      <TableRow>
-                        {row.getAllCells().map((cell) => {
-                          return (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    )}
-                    {/* {row.getIsExpanded() ? (
-                      <TableRow>
-                        <TableCell colSpan={row.getVisibleCells().length}>
-                          {renderRowSubComponent({
-                            row,
+    <>
+      <List
+        createButtonProps={{
+          onClick: () => showCreateModal(),
+        }}
+      >
+        <form onSubmit={handleSubmit(onFinish)}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                {getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={`header-group-${headerGroup.id}`}>
+                    {headerGroup.headers.map((header) => (
+                      <TableCell key={`header-group-cell-${header.id}`}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHead>
+              <TableBody>
+                {getRowModel().rows.map((row) => {
+                  return (
+                    <React.Fragment key={row.id}>
+                      {id === (row.original as ITable).id ? (
+                        renderEditRow(row)
+                      ) : (
+                        <TableRow>
+                          {row.getAllCells().map((cell) => {
+                            return (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
                           })}
-                        </TableCell>
-                      </TableRow>
-                    ) : null} */}
-                  </React.Fragment>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          component="div"
-          rowsPerPageOptions={[
-            5,
-            10,
-            25,
-            {
-              label: 'All',
-              value: tableQueryResult.data?.total ?? 100,
-            },
-          ]}
-          showFirstButton
-          showLastButton
-          count={pageCount || 0}
-          rowsPerPage={pagination?.pageSize || 10}
-          page={pagination?.pageIndex || 0}
-          onPageChange={(_, newPage: number) => setPageIndex(newPage)}
-          onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setPageSize(parseInt(event.target.value, 10));
-            setPageIndex(0);
-          }}
-        />
-      </form>
-    </List>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[
+              5,
+              10,
+              25,
+              {
+                label: 'All',
+                value: tableData?.total ?? 100,
+              },
+            ]}
+            showFirstButton
+            showLastButton
+            count={pageCount || 0}
+            rowsPerPage={pagination?.pageSize || 10}
+            page={pagination?.pageIndex || 0}
+            onPageChange={(_, newPage: number) => setPageIndex(newPage)}
+            onRowsPerPageChange={(
+              event: React.ChangeEvent<HTMLInputElement>
+            ) => {
+              setPageSize(parseInt(event.target.value, 10));
+              setPageIndex(0);
+            }}
+          />
+        </form>
+      </List>
+      <CreateTable {...createModalFormProps} />
+    </>
   );
 };

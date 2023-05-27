@@ -6,13 +6,21 @@ export interface ICategory {
 export interface IMenu {
   id: number;
   titre?: string;
-  active?: 'enable' | 'disable';
+  isActive?: boolean;
+  // active?: 'enable' | 'disable';
   description?: string;
   image: null | { url: string };
   createdAt?: string;
   prix: number;
   categorie?: ICategory;
   stock?: number;
+}
+
+export interface ICartMenu {
+  id: number;
+  menus: IMenu;
+  quantity: number;
+  total?: number;
 }
 
 export interface ICaisse {

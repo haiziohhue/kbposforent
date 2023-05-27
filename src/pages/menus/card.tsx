@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { BaseKey } from '@refinedev/core';
 import {
@@ -17,30 +17,24 @@ import {
 } from '@mui/material';
 import { Edit, MoreVert } from '@mui/icons-material';
 import { API_URL } from '../../constants';
-import { IMenu } from '../../interfaces';
+import { ICartMenu, IMenu } from '../../interfaces';
+import { CartContext } from '../../contexts/cart/CartProvider';
 
 type MenuCard = {
   menu: IMenu;
   selectedCards: IMenu[];
   onCardSelect: (selectedCards: IMenu[]) => void;
+  onAddToCart: (menu: IMenu) => void;
 };
 export const MenuCard: React.FC<MenuCard> = ({
   menu,
   selectedCards,
   onCardSelect,
+  onAddToCart,
 }) => {
   const { titre, image, prix } = menu;
-  const [quantity, setQuantity] = useState(0);
+  const { dispatch } = useContext(CartContext);
 
-  const handleIncrement = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const handleDecrement = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-    }
-  };
   const handleCardClick = () => {
     if (isSelected) {
       // Remove the card from selectedCards
@@ -57,6 +51,20 @@ export const MenuCard: React.FC<MenuCard> = ({
   const isSelected = selectedCards.some(
     (selectedMenu) => selectedMenu.id === menu.id
   );
+  // const handleAddToCart = () => {
+  //   onAddToCart(menu);
+  // };
+  const handleAddToCart = () => {
+    const newItem: ICartMenu = {
+      id: menu.id,
+      // name: menu.titre || '',
+      // price: menu.prix,
+      menus: menu,
+      quantity: 1,
+    };
+    dispatch({ type: 'ADD_ITEM', payload: newItem });
+    console.log(newItem);
+  };
   console.log(selectedCards);
   return (
     <Card
@@ -64,7 +72,7 @@ export const MenuCard: React.FC<MenuCard> = ({
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        height: '100%',
+        height: '300px',
         backgroundColor: isSelected ? '#ffebee' : 'white',
       }}
       onClick={handleCardClick}
@@ -125,25 +133,26 @@ export const MenuCard: React.FC<MenuCard> = ({
           >{`${prix} DA`}</Typography>
         </Tooltip>
       </CardContent>
-      <CardActions>
-        {(isSelected || quantity > 1) && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Button variant="outlined" onClick={handleDecrement}>
-              -
+      <CardActions
+        sx={{
+          display: 'flex',
+          paddingX: '36px',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {isSelected && (
+            <Button variant="contained" onClick={handleAddToCart}>
+              Add to Cart
             </Button>
-            <Typography>{quantity}</Typography>
-            <Button variant="outlined" onClick={handleIncrement}>
-              +
-            </Button>
-          </Box>
-        )}
+          )}
+        </Box>
       </CardActions>
     </Card>
   );

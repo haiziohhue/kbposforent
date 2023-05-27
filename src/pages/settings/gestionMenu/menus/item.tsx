@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IMenu } from '../../../../interfaces';
-import { BaseKey } from '@refinedev/core';
+import { BaseKey, useDelete } from '@refinedev/core';
 import {
   Box,
   Button,
@@ -14,7 +14,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Edit, MoreVert } from '@mui/icons-material';
+import { Delete, Edit, MoreVert } from '@mui/icons-material';
 import { API_URL } from '../../../../constants';
 type MenuItem = {
   //   updateStock?: (changedValue: number, clickedProduct: IMenu) => void;
@@ -22,6 +22,7 @@ type MenuItem = {
   show: (id: BaseKey) => void;
 };
 export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
+  const { mutate: mutateDelete } = useDelete();
   const { id, titre, description, image, prix } = menu;
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -75,9 +76,28 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
                 startIcon={<Edit />}
                 sx={{
                   padding: '5px 10px',
+                  color: '#4caf50',
                 }}
               >
                 Modifier menu
+              </Button>
+              <Button
+                onClick={() => {
+                  mutateDelete({
+                    resource: 'menus',
+                    id: id,
+                    mutationMode: 'undoable',
+                    undoableTimeout: 10000,
+                  });
+                  console.log(id);
+                }}
+                size="small"
+                startIcon={<Delete />}
+                sx={{
+                  padding: '5px 10px',
+                }}
+              >
+                Supprimer menu
               </Button>
             </Popover>
           </Box>
@@ -93,8 +113,8 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
         <CardMedia
           component="img"
           sx={{
-            width: { xs: 60, sm: 84, lg: 108, xl: 144 },
-            height: { xs: 60, sm: 84, lg: 108, xl: 144 },
+            width: { xs: 60, sm: 84, lg: 124, xl: 144 },
+            height: { xs: 60, sm: 84, lg: 124, xl: 144 },
             borderRadius: '50%',
           }}
           alt={titre}
@@ -142,14 +162,7 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
             {description}
           </Typography>
         </Tooltip>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            color: '#999999',
-            my: 1,
-          }}
-        >{`#${id}`}</Typography>
+
         <Tooltip title={`${prix} DA`} placement="top">
           <Typography
             sx={{

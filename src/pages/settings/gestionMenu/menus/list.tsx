@@ -22,6 +22,7 @@ import { MenuItem } from './item';
 import { useModalForm } from '@refinedev/react-hook-form';
 import { CreateMenu } from './create';
 import { CategoryFilter } from './CategoryFilter';
+import { EditMenu } from './edit';
 
 export const ListMenus: React.FC<IResourceComponentsProps> = () => {
   const apiUrl = useApiUrl();
@@ -52,7 +53,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <CreateMenu {...createDrawerFormProps} />
-      {/* <EditProduct {...editDrawerFormProps} /> */}
+      <EditMenu {...editDrawerFormProps} />
       <Paper
         sx={{
           paddingX: { xs: 3, md: 2 },
