@@ -34,6 +34,8 @@ import {
   Widgets,
   Restaurant,
   Category,
+  Payments,
+  People,
 } from '@mui/icons-material';
 import {
   CreateMenu,
@@ -53,6 +55,8 @@ import {
 import { EditCaisse, ListCaisses } from './pages/settings/gestionMenu/caisses';
 import { EditTable, ListTables } from './pages/settings/gestionMenu/tables';
 import { MenusList } from './pages/menus';
+import { ListTresor } from './pages/tresoriers';
+import { ListUsers } from './pages/settings/user';
 
 function App() {
   return (
@@ -91,6 +95,19 @@ function App() {
                     icon: <AddShoppingCart />,
                   },
                 },
+                {
+                  name: 'tresoriers',
+                  list: '/tresoriers',
+                  create: '',
+                  edit: '',
+                  show: '',
+                  meta: {
+                    label: 'Trésorerie',
+                    canDelete: true,
+                    icon: <Payments />,
+                  },
+                },
+
                 {
                   name: 'settings',
                   meta: {
@@ -151,6 +168,17 @@ function App() {
                     icon: <AccountBalanceWallet />,
                   },
                 },
+                {
+                  name: 'users',
+                  list: '/settings/users',
+                  create: '/settings/users/create',
+                  edit: '/settings/users/edit/:id',
+                  meta: {
+                    canDelete: true,
+                    parent: 'settings',
+                    icon: <People />,
+                  },
+                },
               ]}
               options={{
                 syncWithLocation: true,
@@ -185,6 +213,13 @@ function App() {
                     <Route path="edit/:id" element={<EditOrder />} />
                     <Route path="show/:id" element={<ShowOrder />} />
                   </Route>
+                  {/* Tresories */}
+                  <Route path="/tresoriers">
+                    <Route index element={<ListTresor />} />
+                    {/* <Route path="create" element={<CreateOrder />} />
+                    <Route path="edit/:id" element={<EditOrder />} />
+                    <Route path="show/:id" element={<ShowOrder />} /> */}
+                  </Route>
                   {/* Settings */}
                   <Route path="/settings">
                     {/* <Route index element={<CategoryList />} /> */}
@@ -207,6 +242,10 @@ function App() {
                         <Route index element={<ListTables />} />
                         <Route path="edit/:id" element={<EditTable />} />
                       </Route>
+                    </Route>
+                    <Route path="/settings/users">
+                      <Route index element={<ListUsers />} />
+                      {/* <Route path="edit/:id" element={<EditTable />} /> */}
                     </Route>
                   </Route>
                   {/* <Route path="/categories">

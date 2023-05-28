@@ -10,10 +10,12 @@ import {
   CardHeader,
   CardMedia,
   Divider,
+  IconButton,
   Stack,
   Typography,
 } from '@mui/material';
 import { API_URL } from '../../constants';
+import { Add, CloseOutlined, Remove } from '@mui/icons-material';
 
 export const Cart: React.FC = () => {
   const { cartState, dispatch } = useContext(CartContext);
@@ -47,7 +49,11 @@ export const Cart: React.FC = () => {
     return total;
   };
   return (
-    <Stack>
+    <Stack
+      sx={{
+        width: '100%',
+      }}
+    >
       {cartItems.length === 0 ? (
         <p>Your cart is empty.</p> // empty shopping cart svg
       ) : (
@@ -58,54 +64,81 @@ export const Cart: React.FC = () => {
                 key={item.id}
                 sx={{
                   display: 'flex',
-                  flexDirection: 'row',
+                  flexDirection: 'column',
                   position: 'relative',
                   height: '100%',
                   width: '100%',
+                  padding: 1,
                 }}
               >
-                <CardHeader sx={{ padding: 0, mt: 2 }} />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CardMedia
-                    component="img"
+                <CardHeader
+                  sx={{ padding: 0, mt: 2 }}
+                  avatar={
+                    <IconButton
+                      onClick={() => handleRemoveItem(item.id)}
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        mb: '5px',
+                      }}
+                    >
+                      <CloseOutlined />
+                    </IconButton>
+                  }
+                />
+                <Stack direction="row">
+                  <Box
                     sx={{
-                      width: { xs: 60, sm: 84, lg: 108, xl: 144 },
-                      height: { xs: 60, sm: 84, lg: 108, xl: 144 },
-                      borderRadius: '50%',
-                    }}
-                    alt={item.menus.titre}
-                    //   image={image?.url}
-                    image={`${API_URL}${item.menus.image?.url}`}
-                  />
-                </Box>
-                <CardContent
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1,
-                    flex: 1,
-                  }}
-                >
-                  <Divider />
-
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: '18px',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
                     }}
                   >
-                    {item.menus.titre}
-                  </Typography>
-
-                  {/* <Typography
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        width: { xs: 60, sm: 84, lg: 108, xl: 144 },
+                        height: { xs: 60, sm: 84, lg: 108, xl: 144 },
+                        borderRadius: '50%',
+                      }}
+                      alt={item.menus.titre}
+                      //   image={image?.url}
+                      image={`${API_URL}${item.menus.image?.url}`}
+                    />
+                  </Box>
+                  <Box>
+                    <CardContent
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1,
+                        flex: 1,
+                        padding: 1,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: 800,
+                          fontSize: '18px',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {item.menus.titre}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: '18px',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {item?.quantity}x {calculateSubtotal(item)}
+                      </Typography>
+                      {/* <Typography
                       sx={{
                         fontWeight: 500,
                         fontSize: '24px',
@@ -115,77 +148,58 @@ export const Cart: React.FC = () => {
                         display: '-webkit-box',
                       }}
                     >{`${prix} DA`}</Typography> */}
-                </CardContent>
-                <CardActions
-                  sx={{
-                    display: 'flex',
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <Button
-                      onClick={() =>
-                        handleQuantityChange(item.id, item.quantity + 1)
-                      }
+                    </CardContent>
+                    <CardActions
+                      sx={{
+                        display: 'flex',
+                      }}
                     >
-                      +
-                    </Button>
-                    {item.quantity > 1 && (
-                      <Button
-                        onClick={() =>
-                          handleQuantityChange(
-                            item.id,
-                            item.quantity === 1 ? 1 : item.quantity - 1
-                          )
-                        }
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
                       >
-                        -
-                      </Button>
-                    )}
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() =>
+                            handleQuantityChange(item.id, item.quantity + 1)
+                          }
+                        >
+                          <Add />
+                        </Button>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: '18px',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {item?.quantity}
+                        </Typography>
+                        {item.quantity > 1 && (
+                          <Button
+                            variant="contained"
+                            onClick={() =>
+                              handleQuantityChange(
+                                item.id,
+                                item.quantity === 1 ? 1 : item.quantity - 1
+                              )
+                            }
+                          >
+                            <Remove />
+                          </Button>
+                        )}
+                      </Box>
+                    </CardActions>
                   </Box>
-                </CardActions>
+                </Stack>
               </Card>
-              <li key={item.id}>
-                <span>{item.menus.titre}</span>
-                <span>Quantity: {item.quantity}</span>
-                <span>Subtotal: {calculateSubtotal(item)}</span>
-                <button onClick={() => handleRemoveItem(item.id)}>
-                  Remove
-                </button>
-                {/* <input
-                  type="number"
-                  min={0}
-                  value={item.quantity}
-                  onChange={(e) =>
-                    handleQuantityChange(item.id, Number(e.target.value))
-                  }
-                /> */}
-                <button
-                  onClick={() =>
-                    handleQuantityChange(item.id, item.quantity + 1)
-                  }
-                >
-                  +
-                </button>
-                {item.quantity > 1 && (
-                  <button
-                    onClick={() =>
-                      handleQuantityChange(
-                        item.id,
-                        item.quantity === 1 ? 1 : item.quantity - 1
-                      )
-                    }
-                  >
-                    -
-                  </button>
-                )}
-              </li>
             </>
           ))}
 

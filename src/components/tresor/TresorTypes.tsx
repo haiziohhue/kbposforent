@@ -1,22 +1,19 @@
 import Chip from '@mui/material/Chip';
 import type { ChipProps } from '@mui/material/Chip';
 
-type OrderStatusProps = {
-  status?: 'Validé' | 'En cours' | 'Annulé';
+type OrderTypesProps = {
+  status?: 'vente' | 'Dépense';
 };
 
-export const OrderStatus: React.FC<OrderStatusProps> = ({ status }) => {
+export const TresorTypes: React.FC<OrderTypesProps> = ({ status }) => {
   let color: ChipProps['color'];
 
   switch (status) {
-    case 'En cours':
+    case 'vente':
       color = 'warning';
       break;
-    case 'Validé':
+    case 'Dépense':
       color = 'success';
-      break;
-    case 'Annulé':
-      color = 'primary';
       break;
   }
 

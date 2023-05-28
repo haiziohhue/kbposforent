@@ -287,16 +287,16 @@ export const CreateMenu: React.FC<
                   </FormLabel>
                   <Controller
                     control={control}
-                    {...register('isActive')}
+                    {...register('active')}
                     // defaultValue={true}
                     render={({ field }) => (
                       <RadioGroup
-                        id="isActive"
+                        id="active"
                         {...field}
                         onChange={(event) => {
                           const value = event.target.value === 'true';
 
-                          setValue('isActive', value, {
+                          setValue('active', value, {
                             shouldValidate: true,
                           });
 
@@ -317,9 +317,9 @@ export const CreateMenu: React.FC<
                       </RadioGroup>
                     )}
                   />
-                  {errors.isActive && (
+                  {errors.active && (
                     <FormHelperText error>
-                      {errors.isActive.message}
+                      {errors.active.message}
                     </FormHelperText>
                   )}
                 </FormControl>

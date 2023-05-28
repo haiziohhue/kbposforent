@@ -35,23 +35,29 @@ import { useForm } from '@refinedev/react-hook-form';
 import { Controller } from 'react-hook-form';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { IOrder, IOrderFilterVariables } from '../../interfaces';
+import {
+  IOrder,
+  IOrderFilterVariables,
+  ITresor,
+  ITresorFilterVariables,
+} from '../../interfaces';
 import { OrderStatus } from '../../components/order/OrderStatus';
 import { OrderTypes } from '../../components/order/OrderTypes';
+import { TresorTypes } from '../../components/tresor/TresorTypes';
 
-export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
+export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
 
   const { dataGridProps, search, filters, sorter } = useDataGrid<
-    IOrder,
+    ITresor,
     HttpError,
-    IOrderFilterVariables
+    ITresorFilterVariables
   >({
     initialPageSize: 10,
     meta: { populate: '*' },
     onSearch: (params) => {
       const filters: CrudFilters = [];
-      const { q, table, caisse, user, etat } = params;
+      const { q, type, user } = params;
 
       filters.push({
         field: 'q',
@@ -62,12 +68,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       filters.push({
         field: 'table.id',
         operator: 'eq',
-        value: (table ?? [].length) > 0 ? table : undefined,
-      });
-      filters.push({
-        field: 'caisse.id',
-        operator: 'eq',
-        value: (caisse ?? [].length) > 0 ? caisse : undefined,
+        value: (type ?? [].length) > 0 ? type : undefined,
       });
 
       filters.push({
@@ -76,48 +77,41 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         value: user,
       });
 
-      filters.push({
-        field: 'etat',
-        operator: 'in',
-        value: (etat ?? []).length > 0 ? etat : undefined,
-      });
-
       return filters;
     },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<IOrder>>(
+  const columns = React.useMemo<GridColumns<ITresor>>(
     () => [
       {
-        field: 'code',
-        headerName: 'Commande',
+        field: 'id',
+        headerName: 'N° Operation',
         headerAlign: 'center',
         align: 'center',
         flex: 1,
         minWidth: 100,
       },
-      {
-        field: 'etat',
-        headerName: 'Etat',
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: function render({ row }) {
-          return <OrderStatus status={row.etat} />;
-        },
-        flex: 1,
-        minWidth: 100,
-      },
+
       {
         field: 'type',
         headerName: 'Type',
         headerAlign: 'center',
         align: 'center',
         renderCell: function render({ row }) {
-          return <OrderTypes status={row.type} />;
+          return <TresorTypes status={row?.type} />;
         },
         flex: 1,
         minWidth: 100,
       },
+      {
+        field: 'titre',
+        headerName: 'Titre',
+        headerAlign: 'center',
+        align: 'center',
+        flex: 1,
+        minWidth: 100,
+      },
+
       {
         field: 'total',
         headerName: 'Total',
@@ -130,7 +124,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 currency: 'USD',
                 style: 'currency',
               }}
-              value={row.total}
+              value={row.montant}
               sx={{ fontSize: '14px' }}
             />
           );
@@ -138,22 +132,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
       },
-      {
-        field: 'table',
-        headerName: 'Table',
-        valueGetter: ({ row }) => row?.table?.nom,
-        flex: 1,
-        minWidth: 150,
-        sortable: false,
-      },
-      {
-        field: 'caisse',
-        headerName: 'Caisse',
-        valueGetter: ({ row }) => row?.caisse?.nom,
-        flex: 1,
-        minWidth: 150,
-        sortable: false,
-      },
+
       {
         field: 'user',
         headerName: 'User',
@@ -194,7 +173,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       // },
       {
         field: 'createdAt',
-        headerName: 'Date-Creation',
+        headerName: 'Date',
         flex: 1,
         minWidth: 170,
         renderCell: function render({ row }) {
@@ -456,11 +435,13 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
               // ),
             }
           }
-          createButtonProps={{
-            sx: {
-              display: 'none',
-            },
-          }}
+          createButtonProps={
+            {
+              // sx: {
+              //   display: 'none',
+              // },
+            }
+          }
         >
           <DataGrid
             {...dataGridProps}
