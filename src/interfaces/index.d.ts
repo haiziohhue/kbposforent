@@ -35,7 +35,7 @@ export interface ITable {
 
 export interface IOrder {
   id: number;
-  code?: number;
+  code?: string;
   type?: 'Emporté' | 'Sur place';
   table?: ITable;
   //   caisse: ICaisse;
@@ -64,8 +64,23 @@ export interface ITresor {
   paiment: 'Chèque' | 'Espèce';
   categorie_depense: ICatDepense;
   createdAt?: string;
-  // user
-  // beneficier
+  user?: IUser;
+  beneficier?: IUser;
+}
+
+export interface IUser {
+  id: number;
+  nom?: string;
+  prenom?: string;
+  phone?: string;
+  photo?: null | { url: string };
+  email?: string;
+  password?: string;
+  username?: string;
+  date_naissance?: Date;
+  address?: string;
+  caisse?: ICaisse;
+  role: IRole;
 }
 export interface ITresorFilterVariables {
   q?: string;
@@ -75,4 +90,18 @@ export interface ITresorFilterVariables {
 export interface ICatDepense {
   id: number;
   nom: string;
+}
+
+export interface IRole {
+  id: number;
+  name?: string;
+  type?: string;
+}
+export interface LoginFormTypes {
+  email?: string;
+  username?: string;
+  password?: string;
+  remember?: boolean;
+  providerName?: string;
+  redirectPath?: string;
 }

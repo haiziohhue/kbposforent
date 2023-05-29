@@ -1,4 +1,4 @@
-import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
+import { DarkModeOutlined, LightModeOutlined } from '@mui/icons-material';
 import {
   AppBar,
   Avatar,
@@ -6,17 +6,19 @@ import {
   Stack,
   Toolbar,
   Typography,
-} from "@mui/material";
-import { useGetIdentity } from "@refinedev/core";
-import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from "@refinedev/mui";
-import React, { useContext } from "react";
-import { ColorModeContext } from "../../contexts/color-mode";
+} from '@mui/material';
+import { useGetIdentity } from '@refinedev/core';
+import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from '@refinedev/mui';
+import React, { useContext } from 'react';
+import { ColorModeContext } from '../../contexts/color-mode';
+import { IUser } from '../../interfaces';
+import { API_URL } from '../../constants';
 
-type IUser = {
-  id: number;
-  name: string;
-  avatar: string;
-};
+// type IUser = {
+//   id: number;
+//   name: string;
+//   avatar: string;
+// };
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   sticky = true,
@@ -24,9 +26,10 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { mode, setMode } = useContext(ColorModeContext);
 
   const { data: user } = useGetIdentity<IUser>();
+  console.log(user);
 
   return (
-    <AppBar position={sticky ? "sticky" : "relative"}>
+    <AppBar position={sticky ? 'sticky' : 'relative'}>
       <Toolbar>
         <Stack
           direction="row"
@@ -47,30 +50,33 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                 setMode();
               }}
             >
-              {mode === "dark" ? <LightModeOutlined /> : <DarkModeOutlined />}
+              {mode === 'dark' ? <LightModeOutlined /> : <DarkModeOutlined />}
             </IconButton>
 
-            {(user?.avatar || user?.name) && (
+            {(user?.photo || user?.username) && (
               <Stack
                 direction="row"
                 gap="16px"
                 alignItems="center"
                 justifyContent="center"
               >
-                {user?.name && (
+                {user?.username && (
                   <Typography
                     sx={{
                       display: {
-                        xs: "none",
-                        sm: "inline-block",
+                        xs: 'none',
+                        sm: 'inline-block',
                       },
                     }}
                     variant="subtitle2"
                   >
-                    {user?.name}
+                    {user?.username}
                   </Typography>
                 )}
-                <Avatar src={user?.avatar} alt={user?.name} />
+                <Avatar
+                  src={`${API_URL}${user?.photo?.url}`}
+                  alt={user?.username}
+                />
               </Stack>
             )}
           </Stack>

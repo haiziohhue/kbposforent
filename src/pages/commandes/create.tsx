@@ -23,12 +23,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ICaisse, ICartMenu, IOrder, ITable } from '../../interfaces';
 import { useForm } from '@refinedev/react-hook-form';
 import { Controller } from 'react-hook-form';
-import { Cart } from './cart';
+import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../contexts/cart/CartProvider';
 import { Add, CloseOutlined, Remove } from '@mui/icons-material';
 import { API_URL } from '../../constants';
+import axios from 'axios';
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
+  const navigate = useNavigate();
   const {
     refineCore: { onFinish, formLoading },
     saveButtonProps,
@@ -36,6 +38,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<IOrder, HttpError, IOrder>();
 
@@ -58,6 +61,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   };
   useEffect(() => {
     setValue('caisse', selctedCaisse);
+    setValue('etat', 'En cours');
   }, [selctedCaisse, setValue]);
 
   // Cart
@@ -93,12 +97,29 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   };
   //
 
+  // const onFinishHandler = async (data: IOrder) => {
+  //   await onFinish({
+  //     ...data,
+  //     menus: cartItems.map((item) => item.menus.id),
+  //     total: calculateTotal(),
+  //   });
+  // };
   const onFinishHandler = async (data: IOrder) => {
-    await onFinish({
+    const payload = {
       ...data,
       menus: cartItems.map((item) => item.menus.id),
       total: calculateTotal(),
-    });
+    };
+
+    try {
+      const response = await axios.post(`${API_URL}/api/commandes`, {
+        data: payload,
+      });
+      console.log('Request succeeded:', response.data);
+      navigate(`${API_URL}/api/commandes`);
+    } catch (error) {
+      console.error('Request failed:', error);
+    }
   };
   return (
     <Create
@@ -152,46 +173,6 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                 ))}
               </List>
             </Stack>
-            {/* Table */}
-            <FormControl>
-              <Controller
-                control={control}
-                name="table"
-                rules={{
-                  required: 'This field is required',
-                }}
-                render={({ field }) => (
-                  <Autocomplete
-                    disablePortal
-                    {...autocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value?.id);
-                    }}
-                    getOptionLabel={(item) => {
-                      return item.nom ? item.nom : '';
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Table"
-                        variant="outlined"
-                        error={!!errors.table?.message}
-                        required
-                      />
-                    )}
-                  />
-                )}
-              />
-              {errors.table && (
-                <FormHelperText error>{errors.table.message}</FormHelperText>
-              )}
-            </FormControl>
             {/* Type */}
             <FormControl fullWidth>
               <Controller
@@ -208,7 +189,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                     onChange={(_, value) => {
                       field.onChange(value);
                     }}
-                    options={['Sur Place', 'Emporté']}
+                    options={['Sur place', 'Emporté']}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -225,6 +206,48 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                 <FormHelperText error>{errors.type.message}</FormHelperText>
               )}
             </FormControl>
+            {/* Table */}
+            {watch('type') === 'Sur place' && (
+              <FormControl>
+                <Controller
+                  control={control}
+                  name="table"
+                  rules={{
+                    required: 'This field is required',
+                  }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      disablePortal
+                      {...autocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value?.id);
+                      }}
+                      getOptionLabel={(item) => {
+                        return item.nom ? item.nom : '';
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Table"
+                          variant="outlined"
+                          error={!!errors.table?.message}
+                          required
+                        />
+                      )}
+                    />
+                  )}
+                />
+                {errors.table && (
+                  <FormHelperText error>{errors.table.message}</FormHelperText>
+                )}
+              </FormControl>
+            )}
           </Stack>
           <Divider />
           {/* Cart */}

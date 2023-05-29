@@ -36,19 +36,17 @@ import { Controller } from 'react-hook-form';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import {
-  IOrder,
   IOrderFilterVariables,
   ITresor,
   ITresorFilterVariables,
 } from '../../interfaces';
-import { OrderStatus } from '../../components/order/OrderStatus';
-import { OrderTypes } from '../../components/order/OrderTypes';
+
 import { TresorTypes } from '../../components/tresor/TresorTypes';
 
 export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
 
-  const { dataGridProps, search, filters, sorter } = useDataGrid<
+  const { dataGridProps, search, filters } = useDataGrid<
     ITresor,
     HttpError,
     ITresorFilterVariables
@@ -141,36 +139,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         minWidth: 150,
         sortable: false,
       },
-      // {
-      //   field: 'products',
-      //   headerName: t('orders.fields.products'),
-      //   headerAlign: 'center',
-      //   align: 'center',
-      //   sortable: false,
-      //   renderCell: function render({ row }) {
-      //     // return (
-      //     //   <CustomTooltip
-      //     //     arrow
-      //     //     placement="top"
-      //     //     title={
-      //     //       <Stack sx={{ padding: '2px' }}>
-      //     //         {row.products.map((product) => (
-      //     //           <li key={product.id}>{product.name}</li>
-      //     //         ))}
-      //     //       </Stack>
-      //     //     }
-      //     //   >
-      //     //     <Typography sx={{ fontSize: '14px' }}>
-      //     //       {t('orders.fields.itemsAmount', {
-      //     //         amount: row.products.length,
-      //     //       })}
-      //     //     </Typography>
-      //     //   </CustomTooltip>
-      //     // );
-      //   },
-      //   flex: 1,
-      //   minWidth: 100,
-      // },
+
       {
         field: 'createdAt',
         headerName: 'Date',
@@ -202,7 +171,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
             showInMenu
             onClick={() => {
               mutate({
-                resource: 'commandes',
+                resource: 'tresoriers',
                 id,
                 values: {
                   status: {
@@ -449,7 +418,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
             filterModel={undefined}
             autoHeight
             onRowClick={({ id }) => {
-              show('commandes', id);
+              show('tresoriers', id);
             }}
             rowsPerPageOptions={[10, 20, 50, 100]}
             sx={{

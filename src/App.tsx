@@ -2,7 +2,6 @@ import { Authenticated, Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 
 import {
-  AuthPage,
   ErrorComponent,
   notificationProvider,
   RefineSnackbarProvider,
@@ -56,7 +55,8 @@ import { EditCaisse, ListCaisses } from './pages/settings/gestionMenu/caisses';
 import { EditTable, ListTables } from './pages/settings/gestionMenu/tables';
 import { MenusList } from './pages/menus';
 import { ListTresor } from './pages/tresoriers';
-import { ListUsers } from './pages/settings/user';
+import { CreateUser, ListUsers } from './pages/settings/user';
+import { AuthPage } from './pages/auth/AuthPage';
 
 function App() {
   return (
@@ -67,7 +67,7 @@ function App() {
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: 'auto' } }} />
           <RefineSnackbarProvider>
             <Refine
-              // authProvider={authProvider}
+              authProvider={authProvider}
               dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
               notificationProvider={notificationProvider}
               routerProvider={routerBindings}
@@ -202,9 +202,9 @@ function App() {
                   {/* Menus */}
                   <Route path="/menus">
                     <Route index element={<MenusList />} />
-                    {/* <Route path="create" element={<BlogPostCreate />} />
-                    <Route path="edit/:id" element={<BlogPostEdit />} />
-                    <Route path="show/:id" element={<BlogPostShow />} /> */}
+                    <Route path="create" element={<CreateOrder />} />
+                    {/* <Route path="edit/:id" element={<BlogPostEdit />} />
+                    <Route path="show/:id" element={<BlogPostShow />} />  */}
                   </Route>
                   {/* Orders */}
                   <Route path="/commandes">
@@ -245,6 +245,7 @@ function App() {
                     </Route>
                     <Route path="/settings/users">
                       <Route index element={<ListUsers />} />
+                      <Route path="create" element={<CreateUser />} />
                       {/* <Route path="edit/:id" element={<EditTable />} /> */}
                     </Route>
                   </Route>
@@ -270,8 +271,8 @@ function App() {
                         type="login"
                         formProps={{
                           defaultValues: {
-                            email: 'demo@refine.dev',
-                            password: 'demodemo',
+                            // email: 'demo@refine.dev',
+                            // password: 'demodemo',
                           },
                         }}
                       />
