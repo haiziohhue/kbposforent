@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { LoginPageProps, useActiveAuthProvider } from '@refinedev/core';
-import { useForm } from '@refinedev/react-hook-form';
-import { FormProvider } from 'react-hook-form';
+import * as React from "react";
+import { LoginPageProps, useActiveAuthProvider } from "@refinedev/core";
+import { useForm } from "@refinedev/react-hook-form";
+import { FormProvider } from "react-hook-form";
 import {
   Button,
   BoxProps,
@@ -16,7 +16,12 @@ import {
   Typography,
   Divider,
   Link as MuiLink,
-} from '@mui/material';
+  FormControl,
+  FormLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import {
   BaseRecord,
   HttpError,
@@ -25,14 +30,16 @@ import {
   useRouterContext,
   useRouterType,
   useLink,
-} from '@refinedev/core';
-import { layoutStyles, titleStyles } from './styles';
+} from "@refinedev/core";
+import { layoutStyles, titleStyles } from "./styles";
 
-import { FormPropsType } from './AuthPage';
+import { FormPropsType } from "./AuthPage";
 
-import { Stack } from '@mui/system';
-import { ThemedTitle } from '@refinedev/mui';
-import { LoginFormTypes } from '../../interfaces';
+import { Stack } from "@mui/system";
+import { ThemedTitle } from "@refinedev/mui";
+import { LoginFormTypes } from "../../interfaces";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 type LoginProps = LoginPageProps<BoxProps, CardContentProps, FormPropsType>;
 
@@ -70,23 +77,26 @@ export const LoginPage: React.FC<LoginProps> = ({
   const Link = useLink();
   const { Link: LegacyLink } = useRouterContext();
 
-  const ActiveLink = routerType === 'legacy' ? LegacyLink : Link;
-
+  const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
+  //
+  const [showPassword, setshowPassword] = useState<boolean>(false);
+  const handleClickShowPassword = () => setshowPassword((show) => !show);
+  //
   const PageTitle =
     title === false ? null : (
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '32px',
-          fontSize: '20px',
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "32px",
+          fontSize: "20px",
         }}
       >
         {title ?? (
           <ThemedTitle
             collapsed={false}
             wrapperStyles={{
-              gap: '8px',
+              gap: "8px",
             }}
           />
         )}
@@ -105,9 +115,9 @@ export const LoginPage: React.FC<LoginProps> = ({
                   variant="outlined"
                   fullWidth
                   sx={{
-                    color: 'primary.light',
-                    borderColor: 'primary.light',
-                    textTransform: 'none',
+                    color: "primary.light",
+                    borderColor: "primary.light",
+                    textTransform: "none",
                   }}
                   onClick={() => login({ providerName: provider.name })}
                   startIcon={provider.icon}
@@ -119,11 +129,11 @@ export const LoginPage: React.FC<LoginProps> = ({
           </Stack>
           <Divider
             sx={{
-              fontSize: '12px',
-              marginY: '16px',
+              fontSize: "12px",
+              marginY: "16px",
             }}
           >
-            {translate('pages.login.divider', 'or')}
+            {translate("pages.login.divider", "or")}
           </Divider>
         </>
       );
@@ -133,7 +143,7 @@ export const LoginPage: React.FC<LoginProps> = ({
 
   const Content = (
     <Card {...(contentProps ?? {})}>
-      <CardContent sx={{ p: '32px', '&:last-child': { pb: '32px' } }}>
+      <CardContent sx={{ p: "32px", "&:last-child": { pb: "32px" } }}>
         <Typography
           component="h1"
           variant="h5"
@@ -142,7 +152,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           color="primary"
           fontWeight={700}
         >
-          {translate('pages.login.title', 'Sign in to your account')}
+          {translate("pages.login.title", "Sign in to your account")}
         </Typography>
         <Box
           component="form"
@@ -156,13 +166,13 @@ export const LoginPage: React.FC<LoginProps> = ({
         >
           {renderProviders()}
           <TextField
-            {...register('username', {
+            {...register("username", {
               required: true,
             })}
             id="username"
             margin="normal"
             fullWidth
-            label={translate('pages.login.fields.username', 'Userame')}
+            label={translate("pages.login.fields.username", "Userame")}
             error={!!errors.username}
             name="username"
             type="username"
@@ -172,14 +182,14 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
           />
           <TextField
-            {...register('password', {
+            {...register("password", {
               required: true,
             })}
             id="password"
             margin="normal"
             fullWidth
             name="password"
-            label={translate('pages.login.fields.password', 'Password')}
+            label={translate("pages.login.fields.password", "Password")}
             helperText={errors?.password?.message}
             error={!!errors.password}
             type="password"
@@ -189,22 +199,49 @@ export const LoginPage: React.FC<LoginProps> = ({
               mb: 0,
             }}
           />
-
+          {/* Password */}
+          <FormControl variant="outlined" fullWidth>
+            <OutlinedInput
+             id="password"
+              type={showPassword ? "text" : "password"}
+              {...register("password", {
+                required: true,
+              })}
+            
+              error={!!errors.password?.message}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    color="primary"
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              sx={{ backgroundColor: "white" }}
+             
+              fullWidth
+              name="password"
+            />
+          </FormControl>
           <Box
             component="div"
             sx={{
-              mt: '24px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              mt: "24px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             {rememberMe ?? (
               <FormControlLabel
                 sx={{
                   span: {
-                    fontSize: '14px',
-                    color: 'text.secondary',
+                    fontSize: "14px",
+                    color: "text.secondary",
                   },
                 }}
                 color="secondary"
@@ -212,12 +249,12 @@ export const LoginPage: React.FC<LoginProps> = ({
                   <Checkbox
                     size="small"
                     id="remember"
-                    {...register('remember')}
+                    {...register("remember")}
                   />
                 }
                 label={translate(
-                  'pages.login.buttons.rememberMe',
-                  'Remember me'
+                  "pages.login.buttons.rememberMe",
+                  "Remember me"
                 )}
               />
             )}
@@ -231,8 +268,8 @@ export const LoginPage: React.FC<LoginProps> = ({
                 to="/forgot-password"
               >
                 {translate(
-                  'pages.login.buttons.forgotPassword',
-                  'Forgot password?'
+                  "pages.login.buttons.forgotPassword",
+                  "Forgot password?"
                 )}
               </MuiLink>
             )}
@@ -242,9 +279,9 @@ export const LoginPage: React.FC<LoginProps> = ({
             fullWidth
             variant="contained"
             disabled={isLoading}
-            sx={{ mt: '24px' }}
+            sx={{ mt: "24px" }}
           >
-            {translate('pages.login.signin', 'Sign in')}
+            {translate("pages.login.signin", "Sign in")}
           </Button>
           {/* {registerLink ?? (
             <Box
@@ -292,18 +329,18 @@ export const LoginPage: React.FC<LoginProps> = ({
           component="main"
           maxWidth="xs"
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            height: '100vh',
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            height: "100vh",
           }}
         >
           <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
             {renderContent ? (

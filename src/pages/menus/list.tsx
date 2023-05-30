@@ -34,7 +34,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     });
 
   const menus: IMenu[] = tableQueryResult.data?.data || [];
-  console.log(menus);
+ 
 
   const addToCart = (menu: IMenu) => {
     const newItem: ICartMenu = {
@@ -45,7 +45,8 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     setCartItems((prevCartItems) => [...prevCartItems, newItem]);
   };
 
-  console.log(cartItems);
+
+
   return (
     <>
       <Grid container columns={16} spacing={2}>
@@ -106,8 +107,9 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               <CategoryFilter setFilters={setFilters} filters={filters} />
             </Stack>
             <Grid container>
-              {menus.length > 0 ? (
-                menus.map((menu: IMenu) => (
+              {menus.length > 0  ? (
+                menus.filter((menu: IMenu) => menu.active === true)
+                .map((menu: IMenu) => (
                   <Grid
                     item
                     xs={6}

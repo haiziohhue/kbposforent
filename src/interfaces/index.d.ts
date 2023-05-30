@@ -36,10 +36,10 @@ export interface ITable {
 export interface IOrder {
   id: number;
   code?: string;
-  type?: 'Emporté' | 'Sur place';
+  type?: "Emporté" | "Sur place";
   table?: ITable;
   //   caisse: ICaisse;
-  etat?: 'Validé' | 'En cours' | 'Annulé';
+  etat?: "Validé" | "En cours" | "Annulé";
   caisse?: ICaisse;
   menus?: number[];
   // menus?: IMenu[];
@@ -57,11 +57,11 @@ export interface IOrderFilterVariables {
 
 export interface ITresor {
   id: number;
-  type: 'vente' | 'Dépense';
+  type: "vente" | "Dépense";
   titre: string;
   date: string;
   montant: number;
-  paiment: 'Chèque' | 'Espèce';
+  paiment: "Chèque" | "Espèce";
   categorie_depense: ICatDepense;
   createdAt?: string;
   user?: IUser;
@@ -78,9 +78,10 @@ export interface IUser {
   password?: string;
   username?: string;
   date_naissance?: Date;
-  address?: string;
+  adresse?: string;
   caisse?: ICaisse;
-  role: IRole;
+  role: { name: string; value: number };
+  //  role: IRole;
 }
 export interface ITresorFilterVariables {
   q?: string;
@@ -94,8 +95,8 @@ export interface ICatDepense {
 
 export interface IRole {
   id: number;
-  name?: string;
-  type?: string;
+  name: string;
+  type: string;
 }
 export interface LoginFormTypes {
   email?: string;

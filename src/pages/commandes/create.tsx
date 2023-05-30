@@ -17,10 +17,10 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { HttpError, IResourceComponentsProps, useList } from '@refinedev/core';
+import { HttpError, IResourceComponentsProps, useGetIdentity, useList } from '@refinedev/core';
 import { Create, useAutocomplete } from '@refinedev/mui';
 import React, { useContext, useEffect, useState } from 'react';
-import { ICaisse, ICartMenu, IOrder, ITable } from '../../interfaces';
+import { ICaisse, ICartMenu, IOrder, ITable, IUser } from '../../interfaces';
 import { useForm } from '@refinedev/react-hook-form';
 import { Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +30,8 @@ import { API_URL } from '../../constants';
 import axios from 'axios';
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
+  const { data: user } = useGetIdentity<IUser>();
+  console.log(user);
   const navigate = useNavigate();
   const {
     refineCore: { onFinish, formLoading },
@@ -52,7 +54,10 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const { data: caisses, isLoading } = useList<ICaisse>({
     resource: 'caisses',
   });
-  const [selctedCaisse, setSelectedCaisse] = useState<number>(1); // to change the default value based on the user
+  console.log("caisse",caisses)
+  const caisseId = user?.caisse?.id ?? 0;
+  console.log(caisseId)
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>();// to change the default value based on the user
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     caisseId: number
@@ -60,9 +65,9 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     setSelectedCaisse(caisseId);
   };
   useEffect(() => {
-    setValue('caisse', selctedCaisse);
+    setValue('caisse', selectedCaisse);
     setValue('etat', 'En cours');
-  }, [selctedCaisse, setValue]);
+  }, [selectedCaisse, setValue]);
 
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
@@ -116,7 +121,8 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
         data: payload,
       });
       console.log('Request succeeded:', response.data);
-      navigate(`${API_URL}/api/commandes`);
+      handleClearCart();
+      navigate(`/commandes`);
     } catch (error) {
       console.error('Request failed:', error);
     }
@@ -156,17 +162,19 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                       event: React.MouseEvent<HTMLButtonElement, MouseEvent>
                     ) => handleListItemClick(event, caisse?.id)}
                     variant={
-                      selctedCaisse === caisse.id ? 'contained' : 'outlined'
+                      selectedCaisse === caisse?.id ? 'contained' : 'outlined'
                     }
                     sx={{
                       borderRadius: '30px',
                     }}
                     disabled={isLoading}
+                    defaultValue={caisseId}
                   >
                     <ListItemText primary={caisse.nom} />
                     <input
                       type="hidden"
                       {...register('caisse')}
+                   
                       value={caisse?.id}
                     />
                   </Button>

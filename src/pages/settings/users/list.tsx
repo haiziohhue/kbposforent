@@ -9,6 +9,7 @@ import {
   useUpdate,
   useExport,
   getDefaultFilter,
+  useDelete,
 } from '@refinedev/core';
 import {
   useDataGrid,
@@ -40,10 +41,12 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { IUser } from '../../../interfaces';
 import { API_URL } from '../../../constants';
 import { Avatar } from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
 
 export const ListUsers: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
-
+  const { edit } = useNavigation();
+  const { mutate: mutateDelete } = useDelete();
   const { dataGridProps, search } = useDataGrid<IUser, HttpError>({
     initialPageSize: 10,
     meta: { populate: '*' },
@@ -113,45 +116,30 @@ export const ListUsers: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
         sortable: false,
-        getActions: ({ id }) => [
+        getActions: ({ row }) => [
           <GridActionsCellItem
-            key={1}
-            icon={<CheckOutlinedIcon color="success" />}
-            sx={{ padding: '2px 6px' }}
-            label=""
-            showInMenu
-            onClick={() => {
-              mutate({
-                resource: 'users',
-                id,
-                values: {
-                  status: {
-                    id: 2,
-                    text: 'Ready',
-                  },
-                },
-              });
-            }}
-          />,
+              key={1}
+              label=""
+           
+              icon={<Edit color="success" />}
+              onClick={() => edit('users', row.id)}
+            />,
 
           <GridActionsCellItem
             key={2}
-            icon={<CloseOutlinedIcon color="error" />}
+            // icon={<CloseOutlinedIcon color="error" />}
             sx={{ padding: '2px 6px' }}
             label=""
-            showInMenu
-            onClick={() =>
-              mutate({
+          
+            icon={<Delete color="error" />}
+            onClick={() => {
+              mutateDelete({
                 resource: 'users',
-                id,
-                values: {
-                  status: {
-                    id: 5,
-                    text: 'Cancelled',
-                  },
-                },
-              })
-            }
+                id: row.id,
+                mutationMode: 'undoable',
+                undoableTimeout: 10000,
+              });
+            }}
           />,
         ],
       },

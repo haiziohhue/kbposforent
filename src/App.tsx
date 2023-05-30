@@ -55,8 +55,9 @@ import { EditCaisse, ListCaisses } from './pages/settings/gestionMenu/caisses';
 import { EditTable, ListTables } from './pages/settings/gestionMenu/tables';
 import { MenusList } from './pages/menus';
 import { ListTresor } from './pages/tresoriers';
-import { CreateUser, ListUsers } from './pages/settings/user';
+import { CreateUser, EditUser, ListUsers } from './pages/settings/users';
 import { AuthPage } from './pages/auth/AuthPage';
+import { CreateCategoryDepense, ListCategoryDepense } from './pages/settings/tresor';
 
 function App() {
   return (
@@ -179,6 +180,17 @@ function App() {
                     icon: <People />,
                   },
                 },
+                {
+                  name: 'categorie-depenses',
+                  list: '/settings/tresor',
+                  create: '/settings/tresor/create',
+                
+                  meta: {
+                    canDelete: true,
+                    parent: 'settings',
+                    icon: <AccountBalanceWallet />,
+                  },
+                },
               ]}
               options={{
                 syncWithLocation: true,
@@ -246,7 +258,12 @@ function App() {
                     <Route path="/settings/users">
                       <Route index element={<ListUsers />} />
                       <Route path="create" element={<CreateUser />} />
-                      {/* <Route path="edit/:id" element={<EditTable />} /> */}
+                      <Route path="edit/:id" element={<EditUser/>} />
+                    </Route>
+                    <Route path="/settings/tresor">
+                      <Route index element={<ListCategoryDepense />} />
+                      <Route path="create" element={<CreateCategoryDepense />} />
+                      <Route path="edit/:id" element={<EditUser/>} />
                     </Route>
                   </Route>
                   {/* <Route path="/categories">
