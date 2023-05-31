@@ -4,7 +4,7 @@ import axios from "axios";
 import InputMask from "react-input-mask";
 import {
   IResourceComponentsProps,
-  useTranslate,
+
   useApiUrl,
   HttpError,
   useCustom,
@@ -33,9 +33,8 @@ import { ICaisse, IRole, IUser } from "../../../interfaces";
 import { API_URL, TOKEN_KEY } from "../../../constants";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -46,7 +45,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
   const {
     refineCore: { onFinish, formLoading },
     control,
-    watch,
     register,
     handleSubmit,
     setValue,
@@ -68,7 +66,7 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
       setValue("date_naissance", date);
     }
   }, [date, setValue]);
-  console.log(date);
+
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [imageURL, setImageURL] = useState("");
 
@@ -481,11 +479,11 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                           size="small"
                           {...field}
                           onChange={(_, value) => {
-                            field.onChange(value?.value);
+                            field.onChange(value?.id);
                           }}
                           options={[
-                            { name: "Admin", value: 4 },
-                            { name: "Caissier", value: 3 },
+                            { label: "Admin", id: 4 },
+                            { label: "Caissier", id: 3 },
                           ]}
                           renderInput={(params) => (
                             <TextField

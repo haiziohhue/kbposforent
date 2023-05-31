@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
   CrudFilters,
   HttpError,
-  useTranslate,
+
   useNavigation,
   useUpdate,
   useExport,
   getDefaultFilter,
-} from '@refinedev/core';
+} from "@refinedev/core";
 import {
   useDataGrid,
   NumberField,
@@ -17,31 +17,32 @@ import {
   useAutocomplete,
   List,
   ExportButton,
-} from '@refinedev/mui';
+  CreateButton,
+} from "@refinedev/mui";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import Autocomplete from '@mui/material/Autocomplete';
-import CardContent from '@mui/material/CardContent';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
-import { DataGrid, GridColumns, GridActionsCellItem } from '@mui/x-data-grid';
-import { useForm } from '@refinedev/react-hook-form';
-import { Controller } from 'react-hook-form';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import Autocomplete from "@mui/material/Autocomplete";
+import CardContent from "@mui/material/CardContent";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+
+import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
+import { Controller } from "react-hook-form";
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import {
-  IOrderFilterVariables,
+
   ITresor,
   ITresorFilterVariables,
-} from '../../interfaces';
+} from "../../interfaces";
 
-import { TresorTypes } from '../../components/tresor/TresorTypes';
+import { TresorTypes } from "../../components/tresor/TresorTypes";
+import { CreateDepense } from "./create";
 
 export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
@@ -52,27 +53,27 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     ITresorFilterVariables
   >({
     initialPageSize: 10,
-    meta: { populate: '*' },
+    meta: { populate: "*" },
     onSearch: (params) => {
       const filters: CrudFilters = [];
-      const { q, type, user } = params;
+      const { titre, type, user } = params;
 
       filters.push({
-        field: 'q',
-        operator: 'eq',
-        value: q !== '' ? q : undefined,
+        field: "titre",
+        operator: "eq",
+        value: titre !== "" ? titre : undefined,
       });
 
       filters.push({
-        field: 'table.id',
-        operator: 'eq',
-        value: (type ?? [].length) > 0 ? type : undefined,
+        field: "type",
+        operator: "in",
+        value: (type ?? []).length > 0 ? type : undefined,
       });
 
       filters.push({
-        field: 'user.id',
-        operator: 'eq',
-        value: user,
+        field: "user.id",
+        operator: "eq",
+        value:user,
       });
 
       return filters;
@@ -82,19 +83,19 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<GridColumns<ITresor>>(
     () => [
       {
-        field: 'id',
-        headerName: 'N° Operation',
-        headerAlign: 'center',
-        align: 'center',
+        field: "id",
+        headerName: "N° Operation",
+        headerAlign: "center",
+        align: "center",
         flex: 1,
         minWidth: 100,
       },
 
       {
-        field: 'type',
-        headerName: 'Type',
-        headerAlign: 'center',
-        align: 'center',
+        field: "type",
+        headerName: "Type",
+        headerAlign: "center",
+        align: "center",
         renderCell: function render({ row }) {
           return <TresorTypes status={row?.type} />;
         },
@@ -102,47 +103,47 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         minWidth: 100,
       },
       {
-        field: 'titre',
-        headerName: 'Titre',
-        headerAlign: 'center',
-        align: 'center',
+        field: "titre",
+        headerName: "Objet",
+        headerAlign: "center",
+        align: "center",
         flex: 1,
-        minWidth: 100,
+        minWidth: 150,
       },
 
       {
-        field: 'total',
-        headerName: 'Total',
-        headerAlign: 'center',
-        align: 'center',
+        field: "total",
+        headerName: "Total",
+        headerAlign: "center",
+        align: "center",
         renderCell: function render({ row }) {
           return (
             <NumberField
               options={{
-                currency: 'USD',
-                style: 'currency',
+                currency: "DZD",
+                style: "currency",
               }}
-              value={row.montant}
-              sx={{ fontSize: '14px' }}
+              value={row?.montant}
+              sx={{ fontSize: "14px" }}
             />
           );
         },
         flex: 1,
-        minWidth: 100,
+        minWidth: 150,
       },
 
       {
-        field: 'user',
-        headerName: 'User',
-        // valueGetter: ({ row }) => row.user.fullName,
+        field: "user",
+        headerName: "User",
+         valueGetter: ({ row }) => row.user?.username,
         flex: 1,
-        minWidth: 150,
+        minWidth: 100,
         sortable: false,
       },
 
       {
-        field: 'createdAt',
-        headerName: 'Date',
+        field: "createdAt",
+        headerName: "Date",
         flex: 1,
         minWidth: 170,
         renderCell: function render({ row }) {
@@ -150,33 +151,33 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
             <DateField
               value={row.createdAt}
               format="LLL"
-              sx={{ fontSize: '14px' }}
+              sx={{ fontSize: "14px" }}
             />
           );
         },
       },
       {
-        field: 'actions',
-        type: 'actions',
-        headerName: 'Actions',
+        field: "actions",
+        type: "actions",
+        headerName: "Actions",
         flex: 1,
-        minWidth: 100,
+        minWidth: 80,
         sortable: false,
         getActions: ({ id }) => [
           <GridActionsCellItem
             key={1}
             icon={<CheckOutlinedIcon color="success" />}
-            sx={{ padding: '2px 6px' }}
+            sx={{ padding: "2px 6px" }}
             label=""
             showInMenu
             onClick={() => {
               mutate({
-                resource: 'tresoriers',
+                resource: "tresoriers",
                 id,
                 values: {
                   status: {
                     id: 2,
-                    text: 'Ready',
+                    text: "Ready",
                   },
                 },
               });
@@ -186,17 +187,17 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
           <GridActionsCellItem
             key={2}
             icon={<CloseOutlinedIcon color="error" />}
-            sx={{ padding: '2px 6px' }}
+            sx={{ padding: "2px 6px" }}
             label=""
             showInMenu
             onClick={() =>
               mutate({
-                resource: 'cammandes',
+                resource: "cammandes",
                 id,
                 values: {
                   status: {
                     id: 5,
-                    text: 'Cancelled',
+                    text: "Cancelled",
                   },
                 },
               })
@@ -211,7 +212,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { show } = useNavigation();
 
   // const { isLoading, triggerExport } = useExport<IOrder>({
-  //   sorter,
+ 
   //   filters,
   //   pageSize: 50,
   //   maxItemCount: 50,
@@ -230,154 +231,74 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
     HttpError,
-    IOrderFilterVariables
+    ITresorFilterVariables
   >({
     defaultValues: {
-      etat: getDefaultFilter('etat', filters, 'in'),
-      q: getDefaultFilter('q', filters, 'eq'),
-      table: getDefaultFilter('table.id', filters, 'eq'),
-      caisse: getDefaultFilter('caisse.id', filters, 'eq'),
-      user: getDefaultFilter('user.id', filters, 'eq'),
+      titre: getDefaultFilter("titre", filters, "eq"),
+      type: getDefaultFilter("type", filters, "in"),
+      user: getDefaultFilter("user.id", filters, "eq"),
     },
   });
 
-  const { autocompleteProps: tableAutocompleteProps } = useAutocomplete({
-    resource: 'tables',
-    defaultValue: getDefaultFilter('table.id', filters, 'eq'),
-  });
-  const { autocompleteProps: caisseAutocompleteProps } = useAutocomplete({
-    resource: 'caisses',
-    defaultValue: getDefaultFilter('caisse.id', filters, 'eq'),
-  });
+
   // const { autocompleteProps: orderAutocompleteProps } = useAutocomplete({
   //   resource: 'orderStatuses',
   // });
 
   const { autocompleteProps: userAutocompleteProps } = useAutocomplete({
-    resource: 'users',
-    defaultValue: getDefaultFilter('user.id', filters, 'eq'),
+    resource: "users",
+    defaultValue: getDefaultFilter("user.id", filters, "eq"),
+  });
+  //
+  const createDrawerFormProps = useModalForm<ITresor, HttpError, ITresor>({
+    refineCoreProps: { action: "create" },
   });
 
+  const {
+    modal: { show: showCreateModal },
+  } = createDrawerFormProps;
+
+  //
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} lg={3}>
-        <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
-          <CardHeader title="Filtrer" />
-          <CardContent sx={{ pt: 0 }}>
-            <Box
-              component="form"
-              sx={{ display: 'flex', flexDirection: 'column' }}
-              autoComplete="off"
-              onSubmit={handleSubmit(search)}
-            >
-              <TextField
-                {...register('q')}
-                label="Recherche"
-                placeholder="N° Commande etc"
-                margin="normal"
-                fullWidth
-                autoFocus
-                size="small"
-              />
-              <Controller
+    <>
+      <CreateDepense {...createDrawerFormProps} />
+      <Grid container spacing={2}>
+        <Grid item xs={12} lg={3}>
+          <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
+            <CardHeader title="Filtrer" />
+            <CardContent sx={{ pt: 0 }}>
+              <Box
+                component="form"
+                sx={{ display: "flex", flexDirection: "column" }}
+                autoComplete="off"
+                onSubmit={handleSubmit(search)}
+              >
+                <TextField
+                  {...register("titre")}
+                  label="Recherche"
+                  placeholder="Objet"
+                  margin="normal"
+                  fullWidth
+                  autoFocus
+                  size="small"
+                />
+             
+             <Controller
                 control={control}
-                name="table"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...tableAutocompleteProps}
-                    {...field}
-                    // onChange={(_, value) => {
-                    //   field.onChange(value.map((p) => p.nom ?? p));
-                    // }}
-                    onChange={(_, value) => {
-                      field.onChange(value?.id ?? value);
-                    }}
-                    getOptionLabel={(item) => {
-                      return item?.nom ? item.nom : item;
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Table"
-                        placeholder="Table"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="caisse"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...caisseAutocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value?.id ?? value);
-                    }}
-                    getOptionLabel={(item) => {
-                      return item?.nom ? item.nom : item;
-                    }}
-                    // getOptionLabel={(item) => {
-                    //   return item.title
-                    //     ? item.title
-                    //     : caisseAutocompleteProps?.options?.find(
-                    //         (p) => p.id.toString() === item.toString()
-                    //       )?.title ?? '';
-                    // }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Caisse"
-                        placeholder="Caisse"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="user"
+                name="type"
                 render={({ field }) => (
                   <Autocomplete
                     {...userAutocompleteProps}
                     {...field}
                     onChange={(_, value) => {
-                      field.onChange(value?.id ?? value);
+                      field.onChange(value);
                     }}
-                    getOptionLabel={(item) => {
-                      return item.fullName
-                        ? item.fullName
-                        : userAutocompleteProps?.options?.find(
-                            (p) => p.id.toString() === item.toString()
-                          )?.fullName ?? '';
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
+                    options={["vente", "Dépense"]}
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Utilisateur"
-                        placeholder="Utilisateur"
+                        label="Type"
+                        placeholder="Type"
                         margin="normal"
                         variant="outlined"
                         size="small"
@@ -386,50 +307,91 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                   />
                 )}
               />
-              <br />
-              <Button type="submit" variant="contained">
-                Filtrer
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={12} lg={9}>
-        <List
-          wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-          headerProps={
-            {
-              // action: (
-              //   <ExportButton onClick={triggerExport} loading={isLoading} />
-              // ),
+                <Controller
+                  control={control}
+                  name="user"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...userAutocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value?.id ?? value);
+                      }}
+                      getOptionLabel={(item) => {
+                        return item?.username ? item.username : item;
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Utilisateur"
+                          placeholder="Utilisateur"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <br />
+                <Button type="submit" variant="contained">
+                  Filtrer
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} lg={9}>
+          <List
+            wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
+            headerProps={
+              {
+                // action: (
+                //   <ExportButton onClick={triggerExport} loading={isLoading} />
+                // ),
+              }
             }
-          }
-          createButtonProps={
-            {
-              // sx: {
-              //   display: 'none',
-              // },
+            headerButtons={
+              <CreateButton
+                onClick={() => showCreateModal()}
+                variant="contained"
+                sx={{ marginBottom: "5px" }}
+              >
+                Ajouter Dépenes
+              </CreateButton>
             }
-          }
-        >
-          <DataGrid
-            {...dataGridProps}
-            columns={columns}
-            filterModel={undefined}
-            autoHeight
-            onRowClick={({ id }) => {
-              show('tresoriers', id);
-            }}
-            rowsPerPageOptions={[10, 20, 50, 100]}
-            sx={{
-              ...dataGridProps.sx,
-              '& .MuiDataGrid-row': {
-                cursor: 'pointer',
-              },
-            }}
-          />
-        </List>
+            createButtonProps={
+              {
+                // sx: {
+                //   display: 'none',
+                // },
+              }
+            }
+          >
+            <DataGrid
+              {...dataGridProps}
+              columns={columns}
+              filterModel={undefined}
+              autoHeight
+              onRowClick={({ id }) => {
+                show("tresoriers", id);
+              }}
+              rowsPerPageOptions={[10, 20, 50, 100]}
+              sx={{
+                ...dataGridProps.sx,
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
+              }}
+            />
+          </List>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };

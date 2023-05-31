@@ -19,6 +19,7 @@ import { Edit, MoreVert } from '@mui/icons-material';
 import { API_URL } from '../../constants';
 import { ICartMenu, IMenu } from '../../interfaces';
 import { CartContext } from '../../contexts/cart/CartProvider';
+import { ColorModeContext } from '../../contexts/color-mode';
 
 type MenuCard = {
   menu: IMenu;
@@ -27,6 +28,7 @@ type MenuCard = {
   onAddToCart: (menu: IMenu) => void;
 };
 export const MenuCard: React.FC<MenuCard> = ({
+  
   menu,
   selectedCards,
   onCardSelect,
@@ -34,7 +36,7 @@ export const MenuCard: React.FC<MenuCard> = ({
 }) => {
   const { titre, image, prix } = menu;
   const { dispatch } = useContext(CartContext);
-
+  const { mode } = useContext(ColorModeContext);
   const handleCardClick = () => {
     if (isSelected) {
       // Remove the card from selectedCards
@@ -65,7 +67,7 @@ export const MenuCard: React.FC<MenuCard> = ({
     dispatch({ type: 'ADD_ITEM', payload: newItem });
     console.log(newItem);
   };
-  console.log(selectedCards);
+ 
   return (
     <Card
       sx={{
@@ -73,7 +75,9 @@ export const MenuCard: React.FC<MenuCard> = ({
         flexDirection: 'column',
         position: 'relative',
         height: '300px',
-        backgroundColor: isSelected ? '#ffebee' : 'white',
+        backgroundColor:  isSelected
+        ? (mode === 'light' ? 'rgba(211, 47, 47, 0.08)' : 'rgba(239, 83, 80, 0.16)')
+        : 'default',
       }}
       onClick={handleCardClick}
     >

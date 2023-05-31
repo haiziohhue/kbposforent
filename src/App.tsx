@@ -1,25 +1,25 @@
-import { Authenticated, Refine } from '@refinedev/core';
-import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
+import { Authenticated, Refine } from "@refinedev/core";
+import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
   ErrorComponent,
   notificationProvider,
   RefineSnackbarProvider,
   ThemedLayoutV2,
-} from '@refinedev/mui';
+} from "@refinedev/mui";
 
-import { CssBaseline, GlobalStyles } from '@mui/material';
+import { CssBaseline, GlobalStyles } from "@mui/material";
 import routerBindings, {
   CatchAllNavigate,
   NavigateToResource,
   UnsavedChangesNotifier,
-} from '@refinedev/react-router-v6';
-import { DataProvider } from '@refinedev/strapi-v4';
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { authProvider, axiosInstance } from './authProvider';
-import { Header } from './components/header';
-import { API_URL } from './constants';
-import { ColorModeContextProvider } from './contexts/color-mode';
+} from "@refinedev/react-router-v6";
+import { DataProvider } from "@refinedev/strapi-v4";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { authProvider, axiosInstance } from "./authProvider";
+import { Header } from "./components/header";
+import { API_URL } from "./constants";
+import { ColorModeContextProvider } from "./contexts/color-mode";
 
 import {
   MenuBook,
@@ -31,34 +31,40 @@ import {
   Fastfood,
   RestaurantMenu,
   Widgets,
-  Restaurant,
+  LocalGroceryStore,
   Category,
   Payments,
   People,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 import {
   CreateMenu,
   EditMenu,
   ListMenus,
-} from './pages/settings/gestionMenu/menus';
+} from "./pages/settings/gestionMenu/menus";
 import {
   CreateOrder,
   EditOrder,
   ListOrdes,
   ShowOrder,
-} from './pages/commandes';
+} from "./pages/commandes";
 import {
   EditCategory,
   ListCategories,
-} from './pages/settings/gestionMenu/categories';
-import { EditCaisse, ListCaisses } from './pages/settings/gestionMenu/caisses';
-import { EditTable, ListTables } from './pages/settings/gestionMenu/tables';
-import { MenusList } from './pages/menus';
-import { ListTresor } from './pages/tresoriers';
-import { CreateUser, EditUser, ListUsers } from './pages/settings/users';
-import { AuthPage } from './pages/auth/AuthPage';
-import { CreateCategoryDepense, ListCategoryDepense } from './pages/settings/tresor';
-import { CreateIngredient, ListIngredients } from './pages/settings/gestionStock/ingredients';
+} from "./pages/settings/gestionMenu/categories";
+import { EditCaisse, ListCaisses } from "./pages/settings/gestionMenu/caisses";
+import { EditTable, ListTables } from "./pages/settings/gestionMenu/tables";
+import { MenusList } from "./pages/menus";
+import { ListTresor } from "./pages/tresoriers";
+import { CreateUser, EditUser, ListUsers } from "./pages/settings/users";
+import { AuthPage } from "./pages/auth/AuthPage";
+import {
+  CreateCategoryDepense,
+  ListCategoryDepense,
+} from "./pages/settings/tresor";
+import {
+  CreateIngredient,
+  ListIngredients,
+} from "./pages/settings/gestionStock/ingredients";
 
 function App() {
   return (
@@ -66,7 +72,7 @@ function App() {
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <CssBaseline />
-          <GlobalStyles styles={{ html: { WebkitFontSmoothing: 'auto' } }} />
+          <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
           <RefineSnackbarProvider>
             <Refine
               authProvider={authProvider}
@@ -75,140 +81,140 @@ function App() {
               routerProvider={routerBindings}
               resources={[
                 {
-                  name: 'menus',
-                  list: '/menus',
-                  create: '/commandes/create',
-                  edit: '',
-                  show: '',
+                  name: "menus",
+                  list: "/menus",
+                  create: "/commandes/create",
+                  edit: "",
+                  show: "",
                   meta: {
-                    label: 'Caisse',
+                    label: "Caisse",
                     canDelete: true,
                     icon: <AccountBalance />,
                   },
                 },
                 {
-                  name: 'commandes',
-                  list: '/commandes',
-                  create: '/commandes/create',
-                  edit: '/commandes/edit/:id',
-                  show: '/commandes/show/:id',
+                  name: "commandes",
+                  list: "/commandes",
+                  create: "/commandes/create",
+                  edit: "/commandes/edit/:id",
+                  show: "/commandes/show/:id",
                   meta: {
                     canDelete: true,
                     icon: <AddShoppingCart />,
                   },
                 },
                 {
-                  name: 'tresoriers',
-                  list: '/tresoriers',
-                  create: '',
-                  edit: '',
-                  show: '',
+                  name: "tresoriers",
+                  list: "/tresoriers",
+                  create: "/tresoriers/create",
+                  edit: "",
+                  show: "",
                   meta: {
-                    label: 'Trésorerie',
+                    label: "Trésorerie",
                     canDelete: true,
                     icon: <Payments />,
                   },
                 },
 
                 {
-                  name: 'settings',
+                  name: "settings",
                   meta: {
-                    label: 'Paramètres',
+                    label: "Paramètres",
                     icon: <Settings />,
                   },
                 },
 
                 {
-                  name: 'gestiondemenu',
+                  name: "gestiondemenu",
                   meta: {
-                    label: 'Gestion de Menu',
-                    parent: 'settings',
+                    label: "Gestion de Menu",
+                    parent: "settings",
                     icon: <Fastfood />,
                   },
                 },
                 {
-                  name: 'gestionStock',
+                  name: "gestionStock",
                   meta: {
-                    label: 'Gestion de Stock',
-                    parent: 'settings',
-                    icon: <Fastfood />,
+                    label: "Gestion de Stock",
+                    parent: "settings",
+                    icon: <Widgets />,
                   },
                 },
                 {
-                  name: 'categories',
-                  list: '/settings/gestionMenu/categories',
-                  create: '/settings/gestionMenu/categories/create',
-                  edit: '/settings/gestionMenu/categories/edit/:id',
+                  name: "categories",
+                  list: "/settings/gestionMenu/categories",
+                  create: "/settings/gestionMenu/categories/create",
+                  edit: "/settings/gestionMenu/categories/edit/:id",
                   meta: {
                     canDelete: true,
-                    parent: 'gestiondemenu',
+                    parent: "gestiondemenu",
                     icon: <Category />,
                   },
                 },
                 {
-                  name: 'menus',
-                  list: 'settings/gestionMenu/menus',
-                  create: '/settings/gestionMenu/menus/create',
-                  edit: '/settings/gestionMenu/menus/edit/:id',
+                  name: "menus",
+                  list: "settings/gestionMenu/menus",
+                  create: "/settings/gestionMenu/menus/create",
+                  edit: "/settings/gestionMenu/menus/edit/:id",
                   meta: {
                     canDelete: true,
-                    parent: 'gestiondemenu',
+                    parent: "gestiondemenu",
                     icon: <MenuBook />,
                   },
                 },
                 {
-                  name: 'tables',
-                  list: '/settings/gestionMenu/tables',
-                  create: '/settings/gestionMenu/tables/create',
-                  edit: '/settings/gestionMenu/tables/edit/:id',
+                  name: "tables",
+                  list: "/settings/gestionMenu/tables",
+                  create: "/settings/gestionMenu/tables/create",
+                  edit: "/settings/gestionMenu/tables/edit/:id",
                   meta: {
                     canDelete: true,
-                    parent: 'gestiondemenu',
+                    parent: "gestiondemenu",
                     icon: <TableRestaurant />,
                   },
                 },
                 {
-                  name: 'caisses',
-                  list: '/settings/gestionMenu/caisses',
-                  create: '/settings/gestionMenu/caisses/create',
-                  edit: '/settings/gestionMenu/caisses/edit/:id',
+                  name: "caisses",
+                  list: "/settings/gestionMenu/caisses",
+                  create: "/settings/gestionMenu/caisses/create",
+                  edit: "/settings/gestionMenu/caisses/edit/:id",
                   meta: {
                     canDelete: true,
-                    parent: 'gestiondemenu',
+                    parent: "gestiondemenu",
                     icon: <AccountBalanceWallet />,
                   },
                 },
                 {
-                  name: 'users',
-                  list: '/settings/users',
-                  create: '/settings/users/create',
-                  edit: '/settings/users/edit/:id',
+                  name: "users",
+                  list: "/settings/users",
+                  create: "/settings/users/create",
+                  edit: "/settings/users/edit/:id",
                   meta: {
                     canDelete: true,
-                    parent: 'settings',
+                    parent: "settings",
                     icon: <People />,
                   },
                 },
                 {
-                  name: 'categorie-depenses',
-                  list: '/settings/tresor',
-                  create: '/settings/tresor/create',
-                
+                  name: "categorie-depenses",
+                  list: "/settings/tresor",
+                  create: "/settings/tresor/create",
+
                   meta: {
                     canDelete: true,
-                    parent: 'settings',
+                    parent: "settings",
                     icon: <AccountBalanceWallet />,
                   },
                 },
                 {
-                  name: 'ingredients',
-                  list: '/settings/gestionStock/ingredients',
-                  create: '/settings/gestionStock/ingredients/create',
-                  edit: '/settings/gestionStock/ingredients/edit/:id',
+                  name: "ingredients",
+                  list: "/settings/gestionStock/ingredients",
+                  create: "/settings/gestionStock/ingredients/create",
+                  edit: "/settings/gestionStock/ingredients/edit/:id",
                   meta: {
                     canDelete: true,
-                    parent: 'gestionStock',
-                    icon: <People />,
+                    parent: "gestionStock",
+                    icon: <LocalGroceryStore />,
                   },
                 },
               ]}
@@ -278,7 +284,7 @@ function App() {
                     <Route path="/settings/users">
                       <Route index element={<ListUsers />} />
                       <Route path="create" element={<CreateUser />} />
-                      <Route path="edit/:id" element={<EditUser/>} />
+                      <Route path="edit/:id" element={<EditUser />} />
                     </Route>
                     <Route path="/settings/gestionStock">
                       <Route path="/settings/gestionStock/ingredients">
@@ -289,8 +295,11 @@ function App() {
                     </Route>
                     <Route path="/settings/tresor">
                       <Route index element={<ListCategoryDepense />} />
-                      <Route path="create" element={<CreateCategoryDepense />} />
-                      <Route path="edit/:id" element={<EditUser/>} />
+                      <Route
+                        path="create"
+                        element={<CreateCategoryDepense />}
+                      />
+                      <Route path="edit/:id" element={<EditUser />} />
                     </Route>
                   </Route>
                   {/* <Route path="/categories">

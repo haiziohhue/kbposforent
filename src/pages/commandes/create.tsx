@@ -16,22 +16,26 @@ import {
   Stack,
   TextField,
   Typography,
-} from '@mui/material';
-import { HttpError, IResourceComponentsProps, useGetIdentity, useList } from '@refinedev/core';
-import { Create, useAutocomplete } from '@refinedev/mui';
-import React, { useContext, useEffect, useState } from 'react';
-import { ICaisse, ICartMenu, IOrder, ITable, IUser } from '../../interfaces';
-import { useForm } from '@refinedev/react-hook-form';
-import { Controller } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { CartContext } from '../../contexts/cart/CartProvider';
-import { Add, CloseOutlined, Remove } from '@mui/icons-material';
-import { API_URL } from '../../constants';
-import axios from 'axios';
+} from "@mui/material";
+import {
+  HttpError,
+  IResourceComponentsProps,
+  useGetIdentity,
+  useList,
+} from "@refinedev/core";
+import { Create, useAutocomplete } from "@refinedev/mui";
+import React, { useContext, useEffect, useState } from "react";
+import { ICaisse, ICartMenu, IOrder, ITable, IUser } from "../../interfaces";
+import { useForm } from "@refinedev/react-hook-form";
+import { Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { CartContext } from "../../contexts/cart/CartProvider";
+import { Add, CloseOutlined, Remove } from "@mui/icons-material";
+import { API_URL } from "../../constants";
+import axios from "axios";
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const { data: user } = useGetIdentity<IUser>();
-  console.log(user);
   const navigate = useNavigate();
   const {
     refineCore: { onFinish, formLoading },
@@ -46,46 +50,70 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
 
   //
   const { autocompleteProps } = useAutocomplete<ITable>({
-    resource: 'tables',
+    resource: "tables",
   });
 
   //
 
   const { data: caisses, isLoading } = useList<ICaisse>({
-    resource: 'caisses',
+    resource: "caisses",
   });
-  console.log("caisse",caisses)
+  //
+
+  const { data: users } = useList<IUser>({
+    resource: "users",
+  });
+  //
+  const userId = user && user?.id;
+  //
   const caisseId = user?.caisse?.id ?? 0;
-  console.log(caisseId)
-  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>();// to change the default value based on the user
+  console.log(caisseId);
+  // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
+  //   caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId)
+  // );
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
+    () => {
+      const storedCaisse = localStorage.getItem("selectedCaisse");
+      if (storedCaisse) {
+        return JSON.parse(storedCaisse);
+      } else {
+        return caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId);
+      }
+    }
+  );
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    caisseId: number
+    caisseId: ICaisse
   ) => {
     setSelectedCaisse(caisseId);
   };
   useEffect(() => {
-    setValue('caisse', selectedCaisse);
-    setValue('etat', 'En cours');
-  }, [selectedCaisse, setValue]);
+    localStorage.setItem("selectedCaisse", JSON.stringify(selectedCaisse));
+    setValue("caisse", selectedCaisse);
+    setValue(
+      "users_permissions_user",
+      users?.data.find((user: IUser) => user.id === userId)
+    );
+    setValue("etat", "En cours");
+  }, [selectedCaisse, setValue, userId, users?.data]);
 
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
 
   const handleRemoveItem = (itemId: number) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: itemId });
+    dispatch({ type: "REMOVE_ITEM", payload: itemId });
   };
 
   const handleQuantityChange = (itemId: number, newQuantity: number) => {
     dispatch({
-      type: 'UPDATE_QUANTITY',
+      type: "UPDATE_QUANTITY",
       payload: { id: itemId, quantity: newQuantity },
     });
   };
 
   const handleClearCart = () => {
-    dispatch({ type: 'CLEAR_CART' });
+    dispatch({ type: "CLEAR_CART" });
   };
   // Calculate the subtotal for each item
   const calculateSubtotal = (item: ICartMenu) => {
@@ -120,21 +148,21 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       const response = await axios.post(`${API_URL}/api/commandes`, {
         data: payload,
       });
-      console.log('Request succeeded:', response.data);
+      console.log("Request succeeded:", response.data);
       handleClearCart();
       navigate(`/commandes`);
     } catch (error) {
-      console.error('Request failed:', error);
+      console.error("Request failed:", error);
     }
   };
   return (
     <Create
       saveButtonProps={saveButtonProps}
-      title={<div style={{ display: 'none' }} />}
-      goBack={<div style={{ display: 'none' }} />}
+      title={<div style={{ display: "none" }} />}
+      goBack={<div style={{ display: "none" }} />}
       footerButtonProps={{
         sx: {
-          display: 'none',
+          display: "none",
         },
       }}
       // wrapperProps={{ sx: { overflowY: 'scroll', height: '100vh' } }}
@@ -147,12 +175,12 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
             <Stack>
               <List
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
+                  display: "flex",
+                  flexDirection: "row",
                   gap: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexWrap: "wrap",
                 }}
               >
                 {caisses?.data.map((caisse: ICaisse) => (
@@ -160,12 +188,14 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                     key={caisse.id}
                     onClick={(
                       event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                    ) => handleListItemClick(event, caisse?.id)}
+                    ) => handleListItemClick(event, caisse)}
                     variant={
-                      selectedCaisse === caisse?.id ? 'contained' : 'outlined'
+                      selectedCaisse?.id === caisse?.id
+                        ? "contained"
+                        : "outlined"
                     }
                     sx={{
-                      borderRadius: '30px',
+                      borderRadius: "30px",
                     }}
                     disabled={isLoading}
                     defaultValue={caisseId}
@@ -173,8 +203,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                     <ListItemText primary={caisse.nom} />
                     <input
                       type="hidden"
-                      {...register('caisse')}
-                   
+                      {...register("caisse")}
                       value={caisse?.id}
                     />
                   </Button>
@@ -187,7 +216,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                 control={control}
                 name="type"
                 rules={{
-                  required: 'This field is required',
+                  required: "This field is required",
                 }}
                 // defaultValue={'sur place'}
                 render={({ field }) => (
@@ -197,7 +226,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                     onChange={(_, value) => {
                       field.onChange(value);
                     }}
-                    options={['Sur place', 'Emporté']}
+                    options={["Sur place", "Emporté"]}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -215,13 +244,13 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
               )}
             </FormControl>
             {/* Table */}
-            {watch('type') === 'Sur place' && (
+            {watch("type") === "Sur place" && (
               <FormControl>
                 <Controller
                   control={control}
                   name="table"
                   rules={{
-                    required: 'This field is required',
+                    required: "This field is required",
                   }}
                   render={({ field }) => (
                     <Autocomplete
@@ -232,7 +261,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                         field.onChange(value?.id);
                       }}
                       getOptionLabel={(item) => {
-                        return item.nom ? item.nom : '';
+                        return item.nom ? item.nom : "";
                       }}
                       isOptionEqualToValue={(option, value) =>
                         value === undefined ||
@@ -261,7 +290,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
           {/* Cart */}
           <Stack
             sx={{
-              width: '100%',
+              width: "100%",
               // overflow: 'scroll',
               gap: 1.5,
             }}
@@ -269,9 +298,9 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
             {cartItems.length === 0 ? (
               <Box
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <img
@@ -290,11 +319,11 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                     <Card
                       key={item.id}
                       sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        position: 'relative',
-                        height: '100%',
-                        width: '100%',
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "relative",
+                        height: "100%",
+                        width: "100%",
                         padding: 1,
                       }}
                     >
@@ -304,8 +333,8 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                           <IconButton
                             onClick={() => handleRemoveItem(item.id)}
                             sx={{
-                              width: '30px',
-                              height: '30px',
+                              width: "30px",
+                              height: "30px",
                             }}
                           >
                             <CloseOutlined />
@@ -315,9 +344,9 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                       <Stack direction="row" sx={{ gap: 1 }}>
                         <Box
                           sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
                         >
                           <CardMedia
@@ -325,7 +354,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                             sx={{
                               width: { xs: 60, sm: 60, lg: 80, xl: 144 },
                               height: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                              borderRadius: '50%',
+                              borderRadius: "50%",
                             }}
                             alt={item.menus.titre}
                             //   image={image?.url}
@@ -340,8 +369,8 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                         <Box>
                           <CardContent
                             sx={{
-                              display: 'flex',
-                              flexDirection: 'column',
+                              display: "flex",
+                              flexDirection: "column",
                               gap: 1,
                               flex: 1,
                               padding: 1,
@@ -350,37 +379,47 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                             <Typography
                               sx={{
                                 fontWeight: 800,
-                                fontSize: '16px',
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis',
+                                fontSize: "16px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
                               }}
                             >
-                              {item.menus.titre}
+                              {item.menus.titre} {""}
+                              {""}
+                              <span
+                                style={{
+                                  fontWeight: 600,
+                                  fontSize: "14px",
+                                  marginLeft: 10,
+                                }}
+                              >
+                                x{item?.quantity}
+                              </span>
                             </Typography>
                             <Typography
                               sx={{
                                 fontWeight: 600,
-                                fontSize: '16px',
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis',
+                                fontSize: "16px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
                               }}
                             >
-                              {item?.quantity}x {calculateSubtotal(item)}
+                              {calculateSubtotal(item)}
                             </Typography>
                           </CardContent>
                           <CardActions
                             sx={{
-                              display: 'flex',
+                              display: "flex",
                             }}
                           >
                             <Box
                               sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                gap: '8px',
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                gap: "8px",
                               }}
                             >
                               <Button
@@ -398,10 +437,10 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                               <Typography
                                 sx={{
                                   fontWeight: 600,
-                                  fontSize: '18px',
-                                  overflow: 'hidden',
-                                  whiteSpace: 'nowrap',
-                                  textOverflow: 'ellipsis',
+                                  fontSize: "18px",
+                                  overflow: "hidden",
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis",
                                 }}
                               >
                                 {item?.quantity}
@@ -436,10 +475,10 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
         </Box>
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <Button variant="contained" type="submit">

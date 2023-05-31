@@ -6,11 +6,9 @@ import {
   Autocomplete,
   Avatar,
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -27,10 +25,10 @@ import {
 } from '@mui/material';
 import { Create, SaveButton, useAutocomplete } from '@refinedev/mui';
 import { Controller } from 'react-hook-form';
-import { API_URL, TOKEN_KEY } from '../../../../constants';
+import { API_URL } from '../../../../constants';
 import axios from 'axios';
-import { LoadingButton } from '@mui/lab';
-import { CloseOutlined, FileUpload } from '@mui/icons-material';
+
+import { CloseOutlined } from '@mui/icons-material';
 
 export const CreateMenu: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
@@ -236,7 +234,7 @@ export const CreateMenu: React.FC<
                       height: '40px',
                     }}
                     startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
+                      <InputAdornment position="start">DA</InputAdornment>
                     }
                   />
                   {errors.prix && (

@@ -45,27 +45,30 @@ export interface IOrder {
   // menus?: IMenu[];
   total: number;
   createdAt?: string;
+  users_permissions_user?: IUser;
 }
 
 export interface IOrderFilterVariables {
-  q?: string;
+  code?: string;
   table?: string;
   caisse?: string;
-  user?: string;
-  etat?: string[];
+  users_permissions_user?: string;
+  etat?: "Validé" | "En cours" | "Annulé";
+  type?: "Emporté" | "Sur place";
 }
 
 export interface ITresor {
   id: number;
-  type: "vente" | "Dépense";
-  titre: string;
-  date: string;
+  type?: "vente" | "Dépense";
+  titre?: string;
+  date?: string;
   montant: number;
-  paiment: "Chèque" | "Espèce";
-  categorie_depense: ICatDepense;
+  paiment?: "Chèque" | "Espèce";
+  categorie_depense?: ICatDepense;
   createdAt?: string;
   user?: IUser;
   beneficier?: IUser;
+  note?: string;
 }
 
 export interface IUser {
@@ -80,11 +83,11 @@ export interface IUser {
   date_naissance?: Date;
   adresse?: string;
   caisse?: ICaisse;
-  role: { name: string; value: number };
+  role?: { label?: string; id?: number };
   //  role: IRole;
 }
 export interface ITresorFilterVariables {
-  q?: string;
+  titre?: string;
   type?: string;
   user?: string;
 }
@@ -105,4 +108,14 @@ export interface LoginFormTypes {
   remember?: boolean;
   providerName?: string;
   redirectPath?: string;
+}
+
+export interface IIngredients {
+  id: number;
+  nom?: string;
+  quantite?: number;
+  date_expiration?: Date;
+  cout?: number;
+  source?: string;
+  note?: string;
 }

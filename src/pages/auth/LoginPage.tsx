@@ -21,6 +21,7 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
+  InputLabel,
 } from "@mui/material";
 import {
   BaseRecord,
@@ -81,6 +82,11 @@ export const LoginPage: React.FC<LoginProps> = ({
   //
   const [showPassword, setshowPassword] = useState<boolean>(false);
   const handleClickShowPassword = () => setshowPassword((show) => !show);
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
   //
   const PageTitle =
     title === false ? null : (
@@ -181,7 +187,7 @@ export const LoginPage: React.FC<LoginProps> = ({
               mt: 0,
             }}
           />
-          <TextField
+          {/* <TextField
             {...register("password", {
               required: true,
             })}
@@ -198,33 +204,40 @@ export const LoginPage: React.FC<LoginProps> = ({
             sx={{
               mb: 0,
             }}
-          />
+          /> */}
           {/* Password */}
-          <FormControl variant="outlined" fullWidth>
+          <FormControl
+            variant="outlined"
+            sx={{
+              mb: 0,
+            }}
+            fullWidth
+          >
+            <InputLabel htmlFor="outlined-adornment-password">
+              Password
+            </InputLabel>
             <OutlinedInput
-             id="password"
-              type={showPassword ? "text" : "password"}
               {...register("password", {
                 required: true,
               })}
-            
-              error={!!errors.password?.message}
+              autoComplete="current-password"
+              placeholder="●●●●●●●●"
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
-                    color="primary"
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               }
-              sx={{ backgroundColor: "white" }}
-             
-              fullWidth
-              name="password"
+              label="Password"
             />
           </FormControl>
           <Box
