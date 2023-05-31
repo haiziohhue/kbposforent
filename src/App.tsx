@@ -58,6 +58,7 @@ import { ListTresor } from './pages/tresoriers';
 import { CreateUser, EditUser, ListUsers } from './pages/settings/users';
 import { AuthPage } from './pages/auth/AuthPage';
 import { CreateCategoryDepense, ListCategoryDepense } from './pages/settings/tresor';
+import { CreateIngredient, ListIngredients } from './pages/settings/gestionStock/ingredients';
 
 function App() {
   return (
@@ -121,6 +122,14 @@ function App() {
                   name: 'gestiondemenu',
                   meta: {
                     label: 'Gestion de Menu',
+                    parent: 'settings',
+                    icon: <Fastfood />,
+                  },
+                },
+                {
+                  name: 'gestionStock',
+                  meta: {
+                    label: 'Gestion de Stock',
                     parent: 'settings',
                     icon: <Fastfood />,
                   },
@@ -191,6 +200,17 @@ function App() {
                     icon: <AccountBalanceWallet />,
                   },
                 },
+                {
+                  name: 'ingredients',
+                  list: '/settings/gestionStock/ingredients',
+                  create: '/settings/gestionStock/ingredients/create',
+                  edit: '/settings/gestionStock/ingredients/edit/:id',
+                  meta: {
+                    canDelete: true,
+                    parent: 'gestionStock',
+                    icon: <People />,
+                  },
+                },
               ]}
               options={{
                 syncWithLocation: true,
@@ -259,6 +279,13 @@ function App() {
                       <Route index element={<ListUsers />} />
                       <Route path="create" element={<CreateUser />} />
                       <Route path="edit/:id" element={<EditUser/>} />
+                    </Route>
+                    <Route path="/settings/gestionStock">
+                      <Route path="/settings/gestionStock/ingredients">
+                        <Route index element={<ListIngredients />} />
+                        <Route path="create" element={<CreateIngredient />} />
+                        {/* <Route path="edit/:id" element={<EditMenu />} /> */}
+                      </Route>
                     </Route>
                     <Route path="/settings/tresor">
                       <Route index element={<ListCategoryDepense />} />
