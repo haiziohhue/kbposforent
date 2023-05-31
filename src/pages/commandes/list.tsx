@@ -32,7 +32,7 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 
 import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
-import { useForm } from "@refinedev/react-hook-form";
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -40,12 +40,13 @@ import { IOrder, IOrderFilterVariables } from "../../interfaces";
 import { OrderStatus } from "../../components/order/OrderStatus";
 import { OrderTypes } from "../../components/order/OrderTypes";
 import { Delete, Edit } from "@mui/icons-material";
+import { ShowOrder } from "./show";
 
 export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
-  const { dataGridProps, search, filters, sorter } = useDataGrid<
+  const { dataGridProps, search, filters } = useDataGrid<
     IOrder,
     HttpError,
     IOrderFilterVariables
@@ -170,36 +171,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         minWidth: 150,
         sortable: false,
       },
-      // {
-      //   field: 'products',
-      //   headerName: t('orders.fields.products'),
-      //   headerAlign: 'center',
-      //   align: 'center',
-      //   sortable: false,
-      //   renderCell: function render({ row }) {
-      //     // return (
-      //     //   <CustomTooltip
-      //     //     arrow
-      //     //     placement="top"
-      //     //     title={
-      //     //       <Stack sx={{ padding: '2px' }}>
-      //     //         {row.products.map((product) => (
-      //     //           <li key={product.id}>{product.name}</li>
-      //     //         ))}
-      //     //       </Stack>
-      //     //     }
-      //     //   >
-      //     //     <Typography sx={{ fontSize: '14px' }}>
-      //     //       {t('orders.fields.itemsAmount', {
-      //     //         amount: row.products.length,
-      //     //       })}
-      //     //     </Typography>
-      //     //   </CustomTooltip>
-      //     // );
-      //   },
-      //   flex: 1,
-      //   minWidth: 100,
-      // },
+
       {
         field: "createdAt",
         headerName: "Date-Creation",
@@ -281,22 +253,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
 
   const { show } = useNavigation();
 
-  // const { isLoading, triggerExport } = useExport<IOrder>({
-  //   sorter,
-  //   filters,
-  //   pageSize: 50,
-  //   maxItemCount: 50,
-  //   mapData: (item) => {
-  //     return {
-  //       id: item.id,
-  //       amount: item.amount,
-  //       orderNumber: item.orderNumber,
-  //       status: item.status.text,
-  //       store: item.store.title,
-  //       user: item.user.firstName,
-  //     };
-  //   },
-  // });
+
 
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
@@ -333,8 +290,22 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     resource: "users",
     defaultValue: getDefaultFilter("users_permissions_user.id", filters, "eq"),
   });
-  console.log(userAutocompleteProps);
+
+
+  // 
+  const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
+  console.log(selectedRowId)
+  const createDrawerFormProps = useModalForm<IOrder, HttpError, IOrder>({
+    refineCoreProps: {  },
+});
+
+const {
+    modal: { show: showOrderDrawer },
+} = createDrawerFormProps;
+// 
   return (
+    <>
+       <ShowOrder id={selectedRowId}  {...createDrawerFormProps} />
     <Grid container spacing={2}>
       <Grid item xs={12} lg={3}>
         <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
@@ -528,8 +499,16 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
             columns={columns}
             filterModel={undefined}
             autoHeight
-            onRowClick={({ id }) => {
-              show("commandes", id);
+            // onRowClick={({ id }) => {
+            //   showOrderDrawer(id);
+            //   setSelectedRowId(id)
+            //   console.log(id)
+            // }}
+            onRowClick={(params) => {
+              const rowId = Number(params.id); // Convert the id to a number
+              setSelectedRowId(rowId);
+              showOrderDrawer(rowId);
+              console.log(rowId);
             }}
             rowsPerPageOptions={[10, 20, 50, 100]}
             sx={{
@@ -542,5 +521,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         </List>
       </Grid>
     </Grid>
+    </>
   );
 };

@@ -71,16 +71,27 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
   //   caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId)
   // );
-  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(
     () => {
-      const storedCaisse = localStorage.getItem("selectedCaisse");
+      const storedCaisse = localStorage?.getItem("selectedCaisse");
       if (storedCaisse) {
-        return JSON.parse(storedCaisse);
+        return JSON?.parse(storedCaisse);
       } else {
-        return caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId);
+        return caisses?.data?.find((caisse: ICaisse) => caisse.id === caisseId);
       }
     }
   );
+  // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(
+  //   () => {
+  //     const storedCaisse = localStorage?.getItem("selectedCaisse");
+  //     if (storedCaisse) {
+  //       return JSON.parse(storedCaisse);
+  //     } else {
+  //       const defaultCaisse = caisses?.data?.find((caisse: ICaisse) => caisse.id === caisseId);
+  //       return defaultCaisse || {} as ICaisse;
+  //     }
+  //   }
+  // );
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     caisseId: ICaisse
@@ -92,7 +103,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     setValue("caisse", selectedCaisse);
     setValue(
       "users_permissions_user",
-      users?.data.find((user: IUser) => user.id === userId)
+      users?.data?.find((user: IUser) => user?.id === userId)
     );
     setValue("etat", "En cours");
   }, [selectedCaisse, setValue, userId, users?.data]);

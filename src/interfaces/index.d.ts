@@ -14,6 +14,7 @@ export interface IMenu {
   prix: number;
   categorie?: ICategory;
   stock?: number;
+
 }
 
 export interface ICartMenu {
@@ -41,8 +42,8 @@ export interface IOrder {
   //   caisse: ICaisse;
   etat?: "Validé" | "En cours" | "Annulé";
   caisse?: ICaisse;
-  menus?: number[];
-  // menus?: IMenu[];
+  // menus?: number[];
+  menus?: IMenu[];
   total: number;
   createdAt?: string;
   users_permissions_user?: IUser;
