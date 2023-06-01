@@ -55,7 +55,8 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     meta: { populate: "*" },
     onSearch: (params) => {
       const filters: CrudFilters = [];
-      const { code, table, caisse, users_permissions_user, etat, type } = params;
+      const { code, table, caisse, users_permissions_user, etat, type } =
+        params;
 
       filters.push({
         field: "code",
@@ -194,54 +195,44 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
         sortable: false,
-        getActions: ({ row }) => [
-          // <GridActionsCellItem
-          //   key={1}
-          //   icon={<CheckOutlinedIcon color="success" />}
-          //   sx={{ padding: "2px 6px" }}
-          //   label=""
-          //   showInMenu
-          //   onClick={() => {
-          //     mutate({
-          //       resource: "commandes",
-          //       id,
-          //       values: {
-          //         status: {
-          //           id: 2,
-          //           text: "Ready",
-          //         },
-          //       },
-          //     });
-          //   }}
-          // />,
+        getActions: ({ id }) => [
           <GridActionsCellItem
-          key={2}
-          icon={<CheckOutlinedIcon color="success" />}
-          sx={{ padding: "2px 6px", color: '#4caf50' }}
-          label="Valider Commande"
-          showInMenu
-          onClick={() => edit("commandes", row.id)}
-        />,
+            key={2}
+            icon={<CheckOutlinedIcon color="success" />}
+            sx={{ padding: "2px 6px", color: "#4caf50" }}
+            label="Valider Commande"
+            showInMenu
+            onClick={() => {
+              mutate({
+                resource: "commandes",
+                id,
+                values: {
+                  etat: "Validé",
+                },
+              });
+            }}
+          />,
           <GridActionsCellItem
             key={2}
             icon={<Edit color="warning" />}
-            sx={{ padding: "2px 6px", color: '#ff9800' }}
+            sx={{ padding: "2px 6px", color: "#ff9800" }}
             label="Modifier Commande"
             showInMenu
-            onClick={() => edit("commandes", row.id)}
+            // onClick={() => edit("commandes", row.id)}
           />,
           <GridActionsCellItem
             key={2}
             icon={<CloseOutlinedIcon color="error" />}
-            sx={{ padding: "2px 6px", color:"#f44336"}}
+            sx={{ padding: "2px 6px", color: "#f44336" }}
             label="Annuler Commande"
             showInMenu
             onClick={() => {
-              mutateDelete({
+              mutate({
                 resource: "commandes",
-                id: row.id,
-                mutationMode: "undoable",
-                undoableTimeout: 10000,
+                id,
+                values: {
+                  etat: "Annulé",
+                },
               });
             }}
           />,
@@ -252,8 +243,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   );
 
   const { show } = useNavigation();
-
-
 
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
@@ -291,236 +280,235 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     defaultValue: getDefaultFilter("users_permissions_user.id", filters, "eq"),
   });
 
-
-  // 
-  const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
-  console.log(selectedRowId)
+  //
+  const [selectedRowId, setSelectedRowId] = React.useState<number>();
+  console.log(selectedRowId);
   const createDrawerFormProps = useModalForm<IOrder, HttpError, IOrder>({
-    refineCoreProps: {  },
-});
+    refineCoreProps: {},
+  });
 
-const {
+  const {
     modal: { show: showOrderDrawer },
-} = createDrawerFormProps;
-// 
+  } = createDrawerFormProps;
+  //
   return (
     <>
-       <ShowOrder id={selectedRowId}  {...createDrawerFormProps} />
-    <Grid container spacing={2}>
-      <Grid item xs={12} lg={3}>
-        <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
-          <CardHeader title="Filtrer" />
-          <CardContent sx={{ pt: 0 }}>
-            <Box
-              component="form"
-              sx={{ display: "flex", flexDirection: "column" }}
-              autoComplete="off"
-              onSubmit={handleSubmit(search)}
-            >
-              <TextField
-                {...register("code")}
-                label="Recherche"
-                placeholder="N° Commande"
-                margin="normal"
-                fullWidth
-                autoFocus
-                size="small"
-              />
-              <Controller
-                control={control}
-                name="table"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...tableAutocompleteProps}
-                    {...field}
-                    // onChange={(_, value) => {
-                    //   field.onChange(value.map((p) => p.nom ?? p));
-                    // }}
-                    onChange={(_, value) => {
-                      field.onChange(value?.id ?? value);
-                    }}
-                    getOptionLabel={(item) => {
-                      return item?.nom ? item.nom : item;
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Table"
-                        placeholder="Table"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="caisse"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...caisseAutocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value?.id ?? value);
-                    }}
-                    getOptionLabel={(item) => {
-                      return item?.nom ? item.nom : item;
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Caisse"
-                        placeholder="Caisse"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="users_permissions_user"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...userAutocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value?.id ?? value);
-                    }}
-                    getOptionLabel={(item) => {
-                      return item?.username ? item.username : item;
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      value === undefined ||
-                      option?.id?.toString() ===
-                        (value?.id ?? value)?.toString()
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Utilisateur"
-                        placeholder="Utilisateur"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="etat"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...userAutocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value);
-                    }}
-                    options={["Validé", "En cours", "Annulé"]}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Etat"
-                        placeholder="Etat"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="type"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...userAutocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value);
-                    }}
-                    options={["Emporté", "Sur place"]}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Type"
-                        placeholder="Type"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <br />
-              <Button type="submit" variant="contained">
-                Filtrer
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={12} lg={9}>
-        <List
-          wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-          headerProps={
-            {
-              // action: (
-              //   <ExportButton onClick={triggerExport} loading={isLoading} />
-              // ),
+      <ShowOrder id={selectedRowId} {...createDrawerFormProps} />
+      <Grid container spacing={2}>
+        <Grid item xs={12} lg={3}>
+          <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
+            <CardHeader title="Filtrer" />
+            <CardContent sx={{ pt: 0 }}>
+              <Box
+                component="form"
+                sx={{ display: "flex", flexDirection: "column" }}
+                autoComplete="off"
+                onSubmit={handleSubmit(search)}
+              >
+                <TextField
+                  {...register("code")}
+                  label="Recherche"
+                  placeholder="N° Commande"
+                  margin="normal"
+                  fullWidth
+                  autoFocus
+                  size="small"
+                />
+                <Controller
+                  control={control}
+                  name="table"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...tableAutocompleteProps}
+                      {...field}
+                      // onChange={(_, value) => {
+                      //   field.onChange(value.map((p) => p.nom ?? p));
+                      // }}
+                      onChange={(_, value) => {
+                        field.onChange(value?.id ?? value);
+                      }}
+                      getOptionLabel={(item) => {
+                        return item?.nom ? item.nom : item;
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Table"
+                          placeholder="Table"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="caisse"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...caisseAutocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value?.id ?? value);
+                      }}
+                      getOptionLabel={(item) => {
+                        return item?.nom ? item.nom : item;
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Caisse"
+                          placeholder="Caisse"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="users_permissions_user"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...userAutocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value?.id ?? value);
+                      }}
+                      getOptionLabel={(item) => {
+                        return item?.username ? item.username : item;
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Utilisateur"
+                          placeholder="Utilisateur"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="etat"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...userAutocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value);
+                      }}
+                      options={["Validé", "En cours", "Annulé"]}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Etat"
+                          placeholder="Etat"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="type"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...userAutocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value);
+                      }}
+                      options={["Emporté", "Sur place"]}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Type"
+                          placeholder="Type"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <br />
+                <Button type="submit" variant="contained">
+                  Filtrer
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} lg={9}>
+          <List
+            wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
+            headerProps={
+              {
+                // action: (
+                //   <ExportButton onClick={triggerExport} loading={isLoading} />
+                // ),
+              }
             }
-          }
-          createButtonProps={{
-            sx: {
-              display: "none",
-            },
-          }}
-        >
-          <DataGrid
-            {...dataGridProps}
-            columns={columns}
-            filterModel={undefined}
-            autoHeight
-            // onRowClick={({ id }) => {
-            //   showOrderDrawer(id);
-            //   setSelectedRowId(id)
-            //   console.log(id)
-            // }}
-            onRowClick={(params) => {
-              const rowId = Number(params.id); // Convert the id to a number
-              setSelectedRowId(rowId);
-              showOrderDrawer(rowId);
-              console.log(rowId);
-            }}
-            rowsPerPageOptions={[10, 20, 50, 100]}
-            sx={{
-              ...dataGridProps.sx,
-              "& .MuiDataGrid-row": {
-                cursor: "pointer",
+            createButtonProps={{
+              sx: {
+                display: "none",
               },
             }}
-          />
-        </List>
+          >
+            <DataGrid
+              {...dataGridProps}
+              columns={columns}
+              filterModel={undefined}
+              autoHeight
+              // onRowClick={({ id }) => {
+              //   showOrderDrawer(id);
+              //   setSelectedRowId(id)
+              //   console.log(id)
+              // }}
+              onRowClick={(params) => {
+                const rowId = Number(params.id); // Convert the id to a number
+                setSelectedRowId(rowId);
+                showOrderDrawer(rowId);
+                console.log(rowId);
+              }}
+              rowsPerPageOptions={[10, 20, 50, 100]}
+              sx={{
+                ...dataGridProps.sx,
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
+              }}
+            />
+          </List>
+        </Grid>
       </Grid>
-    </Grid>
     </>
   );
 };

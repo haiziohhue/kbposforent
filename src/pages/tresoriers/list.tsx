@@ -9,6 +9,7 @@ import {
   useUpdate,
   useExport,
   getDefaultFilter,
+  useDelete,
 } from "@refinedev/core";
 import {
   useDataGrid,
@@ -43,10 +44,12 @@ import {
 
 import { TresorTypes } from "../../components/tresor/TresorTypes";
 import { CreateDepense } from "./create";
+import { Delete, Edit } from "@mui/icons-material";
 
 export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
-
+  const { mutate: mutateDelete } = useDelete();
+  const { edit } = useNavigation();
   const { dataGridProps, search, filters } = useDataGrid<
     ITresor,
     HttpError,
@@ -156,52 +159,84 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
           );
         },
       },
+      // {
+      //   field: "actions",
+      //   type: "actions",
+      //   headerName: "Actions",
+      //   flex: 1,
+      //   minWidth: 80,
+      //   sortable: false,
+      //   getActions: ({ id }) => [
+      //     <GridActionsCellItem
+      //       key={1}
+      //       icon={<CheckOutlinedIcon color="success" />}
+      //       sx={{ padding: "2px 6px" }}
+      //       label=""
+      //       showInMenu
+      //       onClick={() => {
+      //         mutate({
+      //           resource: "tresoriers",
+      //           id,
+      //           values: {
+      //             status: {
+      //               id: 2,
+      //               text: "Ready",
+      //             },
+      //           },
+      //         });
+      //       }}
+      //     />,
+
+      //     <GridActionsCellItem
+      //       key={2}
+      //       icon={<CloseOutlinedIcon color="error" />}
+      //       sx={{ padding: "2px 6px" }}
+      //       label=""
+      //       showInMenu
+      //       onClick={() =>
+      //         mutate({
+      //           resource: "cammandes",
+      //           id,
+      //           values: {
+      //             status: {
+      //               id: 5,
+      //               text: "Cancelled",
+      //             },
+      //           },
+      //         })
+      //       }
+      //     />,
+      //   ],
+      // },
       {
         field: "actions",
         type: "actions",
         headerName: "Actions",
         flex: 1,
-        minWidth: 80,
+        minWidth: 100,
         sortable: false,
-        getActions: ({ id }) => [
+        getActions: ({ row }) => [
           <GridActionsCellItem
             key={1}
-            icon={<CheckOutlinedIcon color="success" />}
-            sx={{ padding: "2px 6px" }}
             label=""
-            showInMenu
-            onClick={() => {
-              mutate({
-                resource: "tresoriers",
-                id,
-                values: {
-                  status: {
-                    id: 2,
-                    text: "Ready",
-                  },
-                },
-              });
-            }}
+            icon={<Edit color="success" />}
+            onClick={() => edit("tresoriers", row.id)}
           />,
 
           <GridActionsCellItem
             key={2}
-            icon={<CloseOutlinedIcon color="error" />}
+            // icon={<CloseOutlinedIcon color="error" />}
             sx={{ padding: "2px 6px" }}
             label=""
-            showInMenu
-            onClick={() =>
-              mutate({
-                resource: "cammandes",
-                id,
-                values: {
-                  status: {
-                    id: 5,
-                    text: "Cancelled",
-                  },
-                },
-              })
-            }
+            icon={<Delete color="error" />}
+            onClick={() => {
+              mutateDelete({
+                resource: "tresoriers",
+                id: row.id,
+                mutationMode: "undoable",
+                undoableTimeout: 10000,
+              });
+            }}
           />,
         ],
       },
@@ -211,22 +246,6 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
 
   const { show } = useNavigation();
 
-  // const { isLoading, triggerExport } = useExport<IOrder>({
- 
-  //   filters,
-  //   pageSize: 50,
-  //   maxItemCount: 50,
-  //   mapData: (item) => {
-  //     return {
-  //       id: item.id,
-  //       amount: item.amount,
-  //       orderNumber: item.orderNumber,
-  //       status: item.status.text,
-  //       store: item.store.title,
-  //       user: item.user.firstName,
-  //     };
-  //   },
-  // });
 
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
@@ -241,9 +260,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   });
 
 
-  // const { autocompleteProps: orderAutocompleteProps } = useAutocomplete({
-  //   resource: 'orderStatuses',
-  // });
+ 
 
   const { autocompleteProps: userAutocompleteProps } = useAutocomplete({
     resource: "users",

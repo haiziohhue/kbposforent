@@ -22,6 +22,7 @@ import {
   IResourceComponentsProps,
   useGetIdentity,
   useList,
+  useUpdate,
 } from "@refinedev/core";
 import { Create, useAutocomplete } from "@refinedev/mui";
 import React, { useContext, useEffect, useState } from "react";
@@ -36,6 +37,7 @@ import axios from "axios";
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const { data: user } = useGetIdentity<IUser>();
+  const { mutate } = useUpdate();
   const navigate = useNavigate();
   const {
     refineCore: { onFinish, formLoading },
@@ -67,20 +69,18 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const userId = user && user?.id;
   //
   const caisseId = user?.caisse?.id ?? 0;
-  console.log(caisseId);
+const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé')
   // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
   //   caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId)
   // );
-  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(
-    () => {
-      const storedCaisse = localStorage?.getItem("selectedCaisse");
-      if (storedCaisse) {
-        return JSON?.parse(storedCaisse);
-      } else {
-        return caisses?.data?.find((caisse: ICaisse) => caisse.id === caisseId);
-      }
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(() => {
+    const storedCaisse = localStorage?.getItem("selectedCaisse");
+    if (storedCaisse) {
+      return JSON?.parse(storedCaisse);
+    } else {
+      return caisses?.data?.find((caisse: ICaisse) => caisse.id === caisseId);
     }
-  );
+  });
   // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(
   //   () => {
   //     const storedCaisse = localStorage?.getItem("selectedCaisse");
@@ -139,19 +139,25 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     }
     return total;
   };
-  //
-
-  // const onFinishHandler = async (data: IOrder) => {
-  //   await onFinish({
-  //     ...data,
-  //     menus: cartItems.map((item) => item.menus.id),
-  //     total: calculateTotal(),
-  //   });
+  // 
+  // const [updateTableEtat] = useMutation<ITable, HttpError, ITable>({
+  //   resource: "tables",
+  //   action: "update",
+  // });
+  // const handleListTableClick = (
+  //   event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  //   selectedTable: ITable
+  // ) => {
+  //   const updatedTable = { ...selectedTable, etat: "Occupé" }; // Replace "Occupé" with the desired value
+  //   updateTableEtat.mutate(updatedTable.id, updatedTable);
+  //   console.log(selectedTable)
   // };
+  //
   const onFinishHandler = async (data: IOrder) => {
     const payload = {
       ...data,
-      menus: cartItems.map((item) => item.menus.id),
+      // menus: cartItems.map((item) => (item.menus.id)),
+       menus: cartItems.map((item) => ({menu:[item.id],quantite:item.quantity})),
       total: calculateTotal(),
     };
 
@@ -162,6 +168,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       console.log("Request succeeded:", response.data);
       handleClearCart();
       navigate(`/commandes`);
+    
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -274,6 +281,9 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                       getOptionLabel={(item) => {
                         return item.nom ? item.nom : "";
                       }}
+                      getOptionDisabled={(option) =>
+                        option.etat === "Occupé"
+                      }
                       isOptionEqualToValue={(option, value) =>
                         value === undefined ||
                         option?.id?.toString() ===
@@ -286,6 +296,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                           variant="outlined"
                           error={!!errors.table?.message}
                           required
+                       
                         />
                       )}
                     />
@@ -304,6 +315,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
               width: "100%",
               // overflow: 'scroll',
               gap: 1.5,
+              my: 5,
             }}
           >
             {cartItems.length === 0 ? (
@@ -482,7 +494,26 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
             )}
           </Stack>
           <Divider />
-          <p>Total: {calculateTotal()}</p>
+          <Stack direction='row' justifyContent='space-between' px={2} my={2}>
+            <Typography
+              sx={{
+                fontWeight: 800,
+                fontSize: "16px",
+                textOverflow: "ellipsis",
+              }}
+            >
+              Total:
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 800,
+                fontSize: "16px",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {calculateTotal()}
+            </Typography>
+          </Stack>
         </Box>
         <Box
           sx={{
@@ -490,6 +521,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            my:3
           }}
         >
           <Button variant="contained" type="submit">
@@ -503,3 +535,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     </Create>
   );
 };
+function useMutation<T, U, V>(arg0: { resource: string; action: string; }): [any] {
+  throw new Error("Function not implemented.");
+}
+

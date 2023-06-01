@@ -14,6 +14,7 @@ export interface IMenu {
   prix: number;
   categorie?: ICategory;
   stock?: number;
+  quantite?:number;
 
 }
 
@@ -32,6 +33,7 @@ export interface ICaisse {
 export interface ITable {
   id: number;
   nom: string;
+  etat?:"Disponible" | "Occupé";
 }
 
 export interface IOrder {
