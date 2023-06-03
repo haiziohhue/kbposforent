@@ -26,7 +26,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { mode, setMode } = useContext(ColorModeContext);
 
   const { data: user } = useGetIdentity<IUser>();
-  console.log(user);
+
 
   return (
     <AppBar position={sticky ? 'sticky' : 'relative'}>

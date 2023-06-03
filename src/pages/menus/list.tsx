@@ -2,8 +2,8 @@ import {
   IResourceComponentsProps,
   useTable,
   getDefaultFilter,
-} from '@refinedev/core';
-import React, { useState } from 'react';
+} from "@refinedev/core";
+import React, { useContext, useState } from "react";
 
 import {
   Grid,
@@ -13,28 +13,29 @@ import {
   Paper,
   Stack,
   Typography,
-} from '@mui/material';
-import { Search } from '@mui/icons-material';
+} from "@mui/material";
+import { Search } from "@mui/icons-material";
 
-import { CategoryFilter } from '../settings/gestionMenu/menus/CategoryFilter';
+import { CategoryFilter } from "../settings/gestionMenu/menus/CategoryFilter";
 
-import { ICartMenu, IMenu } from '../../interfaces';
-import { MenuCard } from './card';
-import { CreateOrder } from '../commandes';
+import { ICartMenu, IMenu } from "../../interfaces";
+import { MenuCard } from "./card";
+import { CreateOrder, EditOrder } from "../commandes";
+import { OrderContext } from "../../contexts/order/OrderContext";
 
 export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
   const [cartItems, setCartItems] = useState<ICartMenu[]>([]);
-
+  const orderContext = useContext(OrderContext);
+  const { selectedOrderId } = orderContext || {};
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
     useTable<IMenu>({
       resource: `menus`,
       initialPageSize: 12,
-      meta: { populate: ['image'] },
+      meta: { populate: ["image"] },
     });
 
   const menus: IMenu[] = tableQueryResult.data?.data || [];
- 
 
   const addToCart = (menu: IMenu) => {
     const newItem: ICartMenu = {
@@ -44,8 +45,6 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     };
     setCartItems((prevCartItems) => [...prevCartItems, newItem]);
   };
-
-
 
   return (
     <>
@@ -71,8 +70,8 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               <Paper
                 component="form"
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   width: 400,
                 }}
               >
@@ -80,23 +79,23 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                   sx={{ ml: 1, flex: 1 }}
                   placeholder="Recherche"
                   inputProps={{
-                    'aria-label': 'product search',
+                    "aria-label": "product search",
                   }}
-                  value={getDefaultFilter('titre', filters, 'contains')}
+                  value={getDefaultFilter("titre", filters, "contains")}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setFilters([
                       {
-                        field: 'titre',
-                        operator: 'contains',
+                        field: "titre",
+                        operator: "contains",
                         value:
-                          e.target.value !== '' ? e.target.value : undefined,
+                          e.target.value !== "" ? e.target.value : undefined,
                       },
                     ]);
                   }}
                 />
                 <IconButton
                   type="submit"
-                  sx={{ p: '10px' }}
+                  sx={{ p: "10px" }}
                   aria-label="search"
                 >
                   <Search />
@@ -107,26 +106,27 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               <CategoryFilter setFilters={setFilters} filters={filters} />
             </Stack>
             <Grid container>
-              {menus.length > 0  ? (
-                menus.filter((menu: IMenu) => menu.active === true)
-                .map((menu: IMenu) => (
-                  <Grid
-                    item
-                    xs={6}
-                    md={6}
-                    lg={4}
-                    xl={3}
-                    key={menu.id}
-                    sx={{ padding: '8px' }}
-                  >
-                    <MenuCard
-                      menu={menu}
-                      selectedCards={selctedMenu}
-                      onCardSelect={setSelectedMenu}
-                      onAddToCart={() => addToCart(menu)}
-                    />
-                  </Grid>
-                ))
+              {menus.length > 0 ? (
+                menus
+                  .filter((menu: IMenu) => menu.active === true)
+                  .map((menu: IMenu) => (
+                    <Grid
+                      item
+                      xs={6}
+                      md={6}
+                      lg={4}
+                      xl={3}
+                      key={menu.id}
+                      sx={{ padding: "8px" }}
+                    >
+                      <MenuCard
+                        menu={menu}
+                        selectedCards={selctedMenu}
+                        onCardSelect={setSelectedMenu}
+                        onAddToCart={() => addToCart(menu)}
+                      />
+                    </Grid>
+                  ))
               ) : (
                 <Grid container justifyContent="center" padding={3}>
                   <Typography variant="body2">Pas de Menus</Typography>
@@ -139,9 +139,9 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               color="primary"
               shape="rounded"
               sx={{
-                display: 'flex',
-                justifyContent: 'end',
-                paddingY: '20px',
+                display: "flex",
+                justifyContent: "end",
+                paddingY: "20px",
               }}
               onChange={(event: React.ChangeEvent<unknown>, page: number) => {
                 event.preventDefault();
@@ -156,8 +156,8 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
           md={4}
           sx={{
             display: {
-              xs: 'none',
-              md: 'block',
+              xs: "none",
+              md: "block",
             },
           }}
         >
@@ -169,6 +169,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
             }}
           > */}
           <CreateOrder />
+          {selectedOrderId && <EditOrder id={selectedOrderId}/>}
           {/* </Paper> */}
         </Grid>
       </Grid>

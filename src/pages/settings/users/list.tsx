@@ -22,7 +22,7 @@ export const ListUsers: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
-  const { dataGridProps, search, filters } = useDataGrid<IUser, HttpError>({
+  const { dataGridProps, filters } = useDataGrid<IUser, HttpError>({
     initialPageSize: 10,
     meta: { populate: "*" },
   });

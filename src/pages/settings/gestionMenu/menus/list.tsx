@@ -42,7 +42,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
   } = createDrawerFormProps;
 
   const editDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
-    refineCoreProps: { action: 'edit', meta: { populate: ['image'] } },
+    refineCoreProps: { action: 'edit', meta: { populate: "*"} },
   });
 
   const {

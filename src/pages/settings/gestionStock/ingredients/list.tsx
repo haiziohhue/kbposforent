@@ -3,7 +3,6 @@ import {
   IResourceComponentsProps,
   HttpError,
   useNavigation,
-  useUpdate,
   useDelete,
 } from "@refinedev/core";
 import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
@@ -12,20 +11,16 @@ import Grid from "@mui/material/Grid";
 
 import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
 
-import { Avatar } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { IIngredients } from "../../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateIngredient } from "./create";
+import { EditIngredient } from "./edit";
 
 export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
-  const { mutate } = useUpdate();
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
-  const { dataGridProps, search, filters } = useDataGrid<
-    IIngredients,
-    HttpError
-  >({
+  const { dataGridProps } = useDataGrid<IIngredients, HttpError>({
     initialPageSize: 10,
     meta: { populate: "*" },
   });
@@ -92,7 +87,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
             key={1}
             label=""
             icon={<Edit color="success" />}
-            onClick={() => edit("ingredients", row.id)}
+            onClick={() => showEditModal(row.id)}
           />,
 
           <GridActionsCellItem
@@ -118,24 +113,6 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
 
   const { show } = useNavigation();
 
-  // const { isLoading, triggerExport } = useExport<IUser>({
-  //   filters,
-  //   pageSize: 50,
-  //   maxItemCount: 50,
-  //   mapData: (item) => {
-  //     return {
-  //       id: item.id,
-  //       username: item.username,
-  //       nom: item.nom,
-  //       prenom: item.prenom,
-  //       email: item.email,
-  //       phone: item.phone,
-  //       date_naissance: item.date_naissance,
-  //       adresse: item.adresse,
-  //     };
-  //   },
-  // });
-
   //
   const createDrawerFormProps = useModalForm<
     IIngredients,
@@ -149,10 +126,22 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showCreateModal },
   } = createDrawerFormProps;
 
+  const editDrawerFormProps = useModalForm<
+    IIngredients,
+    HttpError,
+    IIngredients
+  >({
+    refineCoreProps: { action: "edit", meta: { populate: "*" } },
+  });
+
+  const {
+    modal: { show: showEditModal },
+  } = editDrawerFormProps;
   //
   return (
     <>
       <CreateIngredient {...createDrawerFormProps} />
+      <EditIngredient {...editDrawerFormProps} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>

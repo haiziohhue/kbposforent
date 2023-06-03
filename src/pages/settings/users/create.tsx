@@ -39,7 +39,7 @@ import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const CreateUser: React.FC<IResourceComponentsProps> = () => {
-  const stepTitles = ["Données Generales", "?"];
+  const stepTitles = ["Données Generales", "Données Professionnelles"];
   const apiUrl = useApiUrl();
 
   const {
@@ -538,7 +538,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                           </IconButton>
                         </InputAdornment>
                       }
-                      sx={{ backgroundColor: "white" }}
                       fullWidth
                     />
                     {errors.password && (

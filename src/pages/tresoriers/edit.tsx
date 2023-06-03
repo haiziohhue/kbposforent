@@ -18,12 +18,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
+import {  Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
 import { CloseOutlined } from "@mui/icons-material";
 import { ICatDepense, ITresor, IUser } from "../../interfaces";
 
-export const CreateDepense: React.FC<
+export const EditDepense: React.FC<
   UseModalFormReturnType<ITresor, HttpError, ITresor>
 > = ({
   saveButtonProps,
@@ -66,7 +66,7 @@ export const CreateDepense: React.FC<
       onClose={close}
       PaperProps={{ sx: { width: "100%", height: "800px" } }}
     >
-      <Create
+      <Edit
         saveButtonProps={saveButtonProps}
         title={<Typography fontSize={24}>Ajouter Dépense</Typography>}
         headerProps={{
@@ -277,7 +277,7 @@ export const CreateDepense: React.FC<
           <SaveButton {...saveButtonProps} />
           {/* <Button onClick={close}>Annuler</Button> */}
         </DialogActions>
-      </Create>
+      </Edit>
     </Dialog>
   );
 };

@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
   CrudFilters,
   HttpError,
-  useTranslate,
   useNavigation,
   useUpdate,
-  useExport,
   getDefaultFilter,
   useDelete,
+  useCreate,
 } from "@refinedev/core";
 import {
   useDataGrid,
@@ -31,7 +30,12 @@ import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 
-import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColumns,
+  GridActionsCellItem,
+  GridCellParams,
+} from "@mui/x-data-grid";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
@@ -41,11 +45,17 @@ import { OrderStatus } from "../../components/order/OrderStatus";
 import { OrderTypes } from "../../components/order/OrderTypes";
 import { Delete, Edit } from "@mui/icons-material";
 import { ShowOrder } from "./show";
+import { OrderContext } from "../../contexts/order/OrderContext";
+import { EditOrder } from "./edit";
 
 export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
+  const { mutate: mutateCreate } = useCreate();
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
+  const orderContext = useContext(OrderContext);
+  const { handleEditOrder } = orderContext || {};
+  //
   const { dataGridProps, search, filters } = useDataGrid<
     IOrder,
     HttpError,
@@ -104,7 +114,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         headerAlign: "center",
         align: "center",
         flex: 1,
-        minWidth: 100,
+        minWidth: 150,
       },
       {
         field: "etat",
@@ -115,7 +125,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
           return <OrderStatus status={row.etat} />;
         },
         flex: 1,
-        minWidth: 100,
+        minWidth: 90,
       },
       {
         field: "type",
@@ -126,7 +136,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
           return <OrderTypes status={row.type} />;
         },
         flex: 1,
-        minWidth: 100,
+        minWidth: 90,
       },
       {
         field: "total",
@@ -146,43 +156,40 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
           );
         },
         flex: 1,
-        minWidth: 100,
+        minWidth: 120,
       },
       {
         field: "table",
         headerName: "Table",
         valueGetter: ({ row }) => row?.table?.nom,
         flex: 1,
-        minWidth: 150,
-        sortable: false,
+        minWidth: 90,
       },
       {
         field: "caisse",
         headerName: "Caisse",
         valueGetter: ({ row }) => row?.caisse?.nom,
         flex: 1,
-        minWidth: 150,
-        sortable: false,
+        minWidth: 100,
       },
       {
         field: "user",
         headerName: "User",
         valueGetter: ({ row }) => row?.users_permissions_user?.username,
         flex: 1,
-        minWidth: 150,
-        sortable: false,
+        minWidth: 100,
       },
 
       {
         field: "createdAt",
         headerName: "Date-Creation",
         flex: 1,
-        minWidth: 170,
+        minWidth: 120,
         renderCell: function render({ row }) {
           return (
             <DateField
               value={row.createdAt}
-              format="LLL"
+              format="LL"
               sx={{ fontSize: "14px" }}
             />
           );
@@ -193,51 +200,142 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         type: "actions",
         headerName: "Actions",
         flex: 1,
-        minWidth: 100,
+        minWidth: 150,
         sortable: false,
-        getActions: ({ id }) => [
-          <GridActionsCellItem
-            key={2}
-            icon={<CheckOutlinedIcon color="success" />}
-            sx={{ padding: "2px 6px", color: "#4caf50" }}
-            label="Valider Commande"
-            showInMenu
-            onClick={() => {
-              mutate({
-                resource: "commandes",
-                id,
-                values: {
-                  etat: "Validé",
-                },
-              });
-            }}
-          />,
-          <GridActionsCellItem
-            key={2}
-            icon={<Edit color="warning" />}
-            sx={{ padding: "2px 6px", color: "#ff9800" }}
-            label="Modifier Commande"
-            showInMenu
-            // onClick={() => edit("commandes", row.id)}
-          />,
-          <GridActionsCellItem
-            key={2}
-            icon={<CloseOutlinedIcon color="error" />}
-            sx={{ padding: "2px 6px", color: "#f44336" }}
-            label="Annuler Commande"
-            showInMenu
-            onClick={() => {
-              mutate({
-                resource: "commandes",
-                id,
-                values: {
-                  etat: "Annulé",
-                },
-              });
-            }}
-          />,
-        ],
+        renderCell: (params: GridCellParams) => {
+          const { row, id } = params;
+          if (row.etat === "En cours") {
+            return (
+              <>
+                <GridActionsCellItem
+                  key={2}
+                  icon={<CheckOutlinedIcon color="success" />}
+                  sx={{ padding: "2px 6px", color: "#4caf50" }}
+                  label=""
+                  showInMenu
+                  // onClick={() => {
+                  //   mutate({
+                  //     resource: "commandes",
+                  //     id,
+                  //     values: {
+                  //       etat: "Validé",
+                  //     },
+                  //   });
+                  // }}
+                  onClick={() => {
+                    mutate({
+                      resource: "commandes",
+                      id,
+                      values: {
+                        etat: "Validé",
+                      },
+                    });
+                    mutateCreate({
+                      resource: "tresoriers",
+                      values: {
+                        type: "Vente",
+                        titre: "Vente",
+                        user: row?.users_permissions_user?.id,
+                        montant: row?.total,
+                      },
+                    });
+                  }}
+                />
+
+                <GridActionsCellItem
+                  key={2}
+                  icon={<Edit color="warning" />}
+                  sx={{ padding: "2px 6px", color: "#ff9800" }}
+                  label=""
+                  showInMenu
+                //  onClick={() => handleEditOrder(id)}
+                />
+
+                <GridActionsCellItem
+                  key={2}
+                  icon={<CloseOutlinedIcon color="error" />}
+                  sx={{ padding: "2px 6px", color: "#f44336" }}
+                  label=""
+                  showInMenu
+                  onClick={() => {
+                    mutate({
+                      resource: "commandes",
+                      id,
+                      values: {
+                        etat: "Annulé",
+                      },
+                    });
+                  }}
+                />
+              </>
+            );
+          } else if (row.etat === "Annulé") {
+            return (
+              <>
+                <GridActionsCellItem
+                  key={2}
+                  icon={<Edit color="warning" />}
+                  sx={{ padding: "2px 6px", color: "#ff9800" }}
+                  label=""
+                  showInMenu
+                  // onClick={() => edit("commandes", row.id)}
+                />
+              </>
+            );
+          }
+        },
       },
+      // {
+      //   field: "actions",
+      //   type: "actions",
+      //   headerName: "Actions",
+      //   flex: 1,
+      //   minWidth: 100,
+      //   sortable: false,
+      //   getActions: ({ id}) => [
+
+      //     <GridActionsCellItem
+      //       key={2}
+      //       icon={<CheckOutlinedIcon color="success" />}
+      //       sx={{ padding: "2px 6px", color: "#4caf50" }}
+      //       label="Valider Commande"
+      //       showInMenu
+      //       onClick={() => {
+      //         mutate({
+      //           resource: "commandes",
+      //           id,
+      //           values: {
+      //             etat: "Validé",
+      //           },
+      //         });
+      //       }}
+      //     />,
+      //     <GridActionsCellItem
+      //       key={2}
+      //       icon={<Edit color="warning" />}
+      //       sx={{ padding: "2px 6px", color: "#ff9800" }}
+      //       label="Modifier Commande"
+      //       showInMenu
+      //       // onClick={() => edit("commandes", row.id)}
+      //     />,
+      //     <GridActionsCellItem
+      //       key={2}
+      //       icon={<CloseOutlinedIcon color="error" />}
+      //       sx={{ padding: "2px 6px", color: "#f44336" }}
+      //       label="Annuler Commande"
+      //       showInMenu
+      //       onClick={() => {
+      //         mutate({
+      //           resource: "commandes",
+      //           id,
+      //           values: {
+      //             etat: "Annulé",
+      //           },
+      //         });
+      //       }}
+      //     />,
+      //   ],
+      // },
     ],
     []
   );
@@ -293,6 +391,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   //
   return (
     <>
+    <EditOrder id={selectedRowId}/>
       <ShowOrder id={selectedRowId} {...createDrawerFormProps} />
       <Grid container spacing={2}>
         <Grid item xs={12} lg={3}>

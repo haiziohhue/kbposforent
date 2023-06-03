@@ -4,7 +4,6 @@ import {
   BaseRecord,
   CrudFilters,
   HttpError,
-
   useNavigation,
   useUpdate,
   useExport,
@@ -31,25 +30,23 @@ import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 
-import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColumns,
+  GridActionsCellItem,
+  GridCellParams,
+} from "@mui/x-data-grid";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import {
-
-  ITresor,
-  ITresorFilterVariables,
-} from "../../interfaces";
+import { ITresor, ITresorFilterVariables } from "../../interfaces";
 
 import { TresorTypes } from "../../components/tresor/TresorTypes";
 import { CreateDepense } from "./create";
 import { Delete, Edit } from "@mui/icons-material";
+import { EditDepense } from "./edit";
 
 export const ListTresor: React.FC<IResourceComponentsProps> = () => {
-  const { mutate } = useUpdate();
   const { mutate: mutateDelete } = useDelete();
-  const { edit } = useNavigation();
   const { dataGridProps, search, filters } = useDataGrid<
     ITresor,
     HttpError,
@@ -76,7 +73,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
       filters.push({
         field: "user.id",
         operator: "eq",
-        value:user,
+        value: user,
       });
 
       return filters;
@@ -138,7 +135,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
       {
         field: "user",
         headerName: "User",
-         valueGetter: ({ row }) => row.user?.username,
+        valueGetter: ({ row }) => row.user?.username,
         flex: 1,
         minWidth: 100,
         sortable: false,
@@ -159,55 +156,6 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
           );
         },
       },
-      // {
-      //   field: "actions",
-      //   type: "actions",
-      //   headerName: "Actions",
-      //   flex: 1,
-      //   minWidth: 80,
-      //   sortable: false,
-      //   getActions: ({ id }) => [
-      //     <GridActionsCellItem
-      //       key={1}
-      //       icon={<CheckOutlinedIcon color="success" />}
-      //       sx={{ padding: "2px 6px" }}
-      //       label=""
-      //       showInMenu
-      //       onClick={() => {
-      //         mutate({
-      //           resource: "tresoriers",
-      //           id,
-      //           values: {
-      //             status: {
-      //               id: 2,
-      //               text: "Ready",
-      //             },
-      //           },
-      //         });
-      //       }}
-      //     />,
-
-      //     <GridActionsCellItem
-      //       key={2}
-      //       icon={<CloseOutlinedIcon color="error" />}
-      //       sx={{ padding: "2px 6px" }}
-      //       label=""
-      //       showInMenu
-      //       onClick={() =>
-      //         mutate({
-      //           resource: "cammandes",
-      //           id,
-      //           values: {
-      //             status: {
-      //               id: 5,
-      //               text: "Cancelled",
-      //             },
-      //           },
-      //         })
-      //       }
-      //     />,
-      //   ],
-      // },
       {
         field: "actions",
         type: "actions",
@@ -215,37 +163,75 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
         sortable: false,
-        getActions: ({ row }) => [
-          <GridActionsCellItem
-            key={1}
-            label=""
-            icon={<Edit color="success" />}
-            onClick={() => edit("tresoriers", row.id)}
-          />,
+        renderCell: (params: GridCellParams) => {
+          const { row } = params;
+          if (row.type === "Dépense") {
+            return (
+              <>
+                <GridActionsCellItem
+                  key={1}
+                  label=""
+                  icon={<Edit color="success" />}
+                  onClick={() => showEditModal(row.id)}
+                />
 
-          <GridActionsCellItem
-            key={2}
-            // icon={<CloseOutlinedIcon color="error" />}
-            sx={{ padding: "2px 6px" }}
-            label=""
-            icon={<Delete color="error" />}
-            onClick={() => {
-              mutateDelete({
-                resource: "tresoriers",
-                id: row.id,
-                mutationMode: "undoable",
-                undoableTimeout: 10000,
-              });
-            }}
-          />,
-        ],
+                <GridActionsCellItem
+                  key={2}
+                  sx={{ padding: "2px 6px" }}
+                  label=""
+                  icon={<Delete color="error" />}
+                  onClick={() => {
+                    mutateDelete({
+                      resource: "tresoriers",
+                      id: row.id,
+                      mutationMode: "undoable",
+                      undoableTimeout: 10000,
+                    });
+                  }}
+                />
+              </>
+            );
+          }
+        },
       },
+      // {
+      //   field: "actions",
+      //   type: "actions",
+      //   headerName: "Actions",
+      //   flex: 1,
+      //   minWidth: 100,
+      //   sortable: false,
+      //   getActions: ({ row }) => [
+      //     <GridActionsCellItem
+      //       key={1}
+      //       label=""
+      //       icon={<Edit color="success" />}
+      //       // onClick={() => edit("tresoriers", row.id)}
+      //       onClick={()=> showEditModal(row.id)}
+      //     />,
+
+      //     <GridActionsCellItem
+      //       key={2}
+      //       // icon={<CloseOutlinedIcon color="error" />}
+      //       sx={{ padding: "2px 6px" }}
+      //       label=""
+      //       icon={<Delete color="error" />}
+      //       onClick={() => {
+      //         mutateDelete({
+      //           resource: "tresoriers",
+      //           id: row.id,
+      //           mutationMode: "undoable",
+      //           undoableTimeout: 10000,
+      //         });
+      //       }}
+      //     />,
+      //   ],
+      // },
     ],
     []
   );
 
   const { show } = useNavigation();
-
 
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
@@ -259,9 +245,6 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     },
   });
 
-
- 
-
   const { autocompleteProps: userAutocompleteProps } = useAutocomplete({
     resource: "users",
     defaultValue: getDefaultFilter("user.id", filters, "eq"),
@@ -274,11 +257,18 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const {
     modal: { show: showCreateModal },
   } = createDrawerFormProps;
+  const editDrawerFormProps = useModalForm<ITresor, HttpError, ITresor>({
+    refineCoreProps: { action: "edit", meta: { populate: "*" } },
+  });
 
+  const {
+    modal: { show: showEditModal },
+  } = editDrawerFormProps;
   //
   return (
     <>
       <CreateDepense {...createDrawerFormProps} />
+      <EditDepense {...editDrawerFormProps} />
       <Grid container spacing={2}>
         <Grid item xs={12} lg={3}>
           <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
@@ -299,31 +289,31 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                   autoFocus
                   size="small"
                 />
-             
-             <Controller
-                control={control}
-                name="type"
-                render={({ field }) => (
-                  <Autocomplete
-                    {...userAutocompleteProps}
-                    {...field}
-                    onChange={(_, value) => {
-                      field.onChange(value);
-                    }}
-                    options={["vente", "Dépense"]}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Type"
-                        placeholder="Type"
-                        margin="normal"
-                        variant="outlined"
-                        size="small"
-                      />
-                    )}
-                  />
-                )}
-              />
+
+                <Controller
+                  control={control}
+                  name="type"
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...userAutocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value);
+                      }}
+                      options={["vente", "Dépense"]}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Type"
+                          placeholder="Type"
+                          margin="normal"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  )}
+                />
                 <Controller
                   control={control}
                   name="user"

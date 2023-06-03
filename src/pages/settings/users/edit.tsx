@@ -4,12 +4,11 @@ import axios from "axios";
 import InputMask from "react-input-mask";
 import {
   IResourceComponentsProps,
-  useTranslate,
   useApiUrl,
   HttpError,
   useCustom,
 } from "@refinedev/core";
-import { Create, Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
+import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -40,7 +39,7 @@ import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const EditUser: React.FC<IResourceComponentsProps> = () => {
-  const stepTitles = ["Données Generales", "?"];
+  const stepTitles = ["Données Generales", "Données Professionnelles"];
   const apiUrl = useApiUrl();
 
   const {
@@ -58,6 +57,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
       isBackValidate: false,
     },
     warnWhenUnsavedChanges: true,
+    refineCoreProps: { meta: { populate: "*" } },
   });
 
   // const imageInput = watch("photo");
@@ -146,6 +146,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                         display: "none",
                       }}
                       onChange={onChangeHandler}
+                    
                     />
                     <input id="file" {...register("photo")} type="hidden" />
                     <Avatar
@@ -162,6 +163,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                           lg: "200px",
                         },
                       }}
+
                       src={imageURL}
                       alt="User Picture"
                     />
@@ -387,9 +389,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                     <Controller
                       control={control}
                       name="caisse"
-                      // rules={{
-                      //   required: "Store required",
-                      // }}
+                      defaultValue={null as any}
                       render={({ field }) => (
                         <Autocomplete
                           size="small"
@@ -476,16 +476,17 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                       rules={{
                         required: "This field is required",
                       }}
+                       defaultValue={null as any}
                       render={({ field }) => (
                         <Autocomplete
                           size="small"
                           {...field}
                           onChange={(_, value) => {
-                            field.onChange(value?.value);
+                            field.onChange(value?.id);
                           }}
                           options={[
-                            { name: "Admin", value: 4 },
-                            { name: "Caissier", value: 3 },
+                            { label: "Admin", id: 4 },
+                            { label: "Caissier", id: 3 },
                           ]}
                           renderInput={(params) => (
                             <TextField
@@ -574,21 +575,22 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                     variant="outlined"
                   />
                   {errors.username && (
-                    <FormHelperText error>{errors.username.message}</FormHelperText>
+                    <FormHelperText error>
+                      {errors.username.message}
+                    </FormHelperText>
                   )}
                 </FormControl>
               </Grid>
             </Grid>
           </>
         );
-     
     }
   };
 
   return (
     <Edit
       isLoading={formLoading}
-      title={<Typography fontSize={24}>Ajouter Utilisateur</Typography>}
+      title={<Typography fontSize={24}>Modifier Utilisateur</Typography>}
       footerButtons={
         <>
           {currentStep > 0 && (

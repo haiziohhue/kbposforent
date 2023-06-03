@@ -62,11 +62,12 @@ export interface IOrderFilterVariables {
 
 export interface ITresor {
   id: number;
-  type?: "vente" | "Dépense";
+  type?: "Vente" | "Dépense";
   titre?: string;
   date?: string;
   montant: number;
-  paiment?: "Chèque" | "Espèce";
+  // paiment?: "Chèque" | "Espèce";
+  paiement?: "Chèque" | "Espèce";
   categorie_depense?: ICatDepense;
   createdAt?: string;
   user?: IUser;
@@ -88,6 +89,20 @@ export interface IUser {
   caisse?: ICaisse;
   role?: { label?: string; id?: number };
   //  role: IRole;
+}
+export interface IUserMe {
+  id: number;
+  nom?: string;
+  prenom?: string;
+  phone?: string;
+  photo?: null | { url: string };
+  email?: string;
+  password?: string;
+  username?: string;
+  date_naissance?: Date;
+  adresse?: string;
+  caisse?: ICaisse;
+  role: IRole;
 }
 export interface ITresorFilterVariables {
   titre?: string;

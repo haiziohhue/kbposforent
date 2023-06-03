@@ -68,30 +68,35 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   //
   const userId = user && user?.id;
   //
-  const caisseId = user?.caisse?.id ?? 0;
-const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé')
+
   // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
   //   caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId)
   // );
-  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(() => {
-    const storedCaisse = localStorage?.getItem("selectedCaisse");
-    if (storedCaisse) {
-      return JSON?.parse(storedCaisse);
+
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | null>(null);
+  useEffect(() => {
+    const caisseId = user?.caisse?.id;
+    if (caisseId) {
+      const foundCaisse = caisses?.data?.find(
+        (caisse: ICaisse) => caisse.id === caisseId
+      );
+      setSelectedCaisse(foundCaisse || null);
+      localStorage.setItem("selectedCaisseId", String(caisseId));
     } else {
-      return caisses?.data?.find((caisse: ICaisse) => caisse.id === caisseId);
+      setSelectedCaisse(null);
+      localStorage.removeItem("selectedCaisseId");
     }
-  });
-  // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse>(
-  //   () => {
-  //     const storedCaisse = localStorage?.getItem("selectedCaisse");
-  //     if (storedCaisse) {
-  //       return JSON.parse(storedCaisse);
-  //     } else {
-  //       const defaultCaisse = caisses?.data?.find((caisse: ICaisse) => caisse.id === caisseId);
-  //       return defaultCaisse || {} as ICaisse;
-  //     }
-  //   }
-  // );
+  }, [caisses, user?.caisse?.id]);
+  console.log(selectedCaisse);
+  // ...
+
+  useEffect(() => {
+    const storedCaisseId = localStorage.getItem("selectedCaisseId");
+    const foundCaisse = caisses?.data?.find(
+      (caisse: ICaisse) => caisse.id === Number(storedCaisseId)
+    );
+    setSelectedCaisse(foundCaisse || null);
+  }, [caisses]);
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     caisseId: ICaisse
@@ -99,8 +104,6 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
     setSelectedCaisse(caisseId);
   };
   useEffect(() => {
-    localStorage.setItem("selectedCaisse", JSON.stringify(selectedCaisse));
-    setValue("caisse", selectedCaisse);
     setValue(
       "users_permissions_user",
       users?.data?.find((user: IUser) => user?.id === userId)
@@ -139,25 +142,15 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
     }
     return total;
   };
-  // 
-  // const [updateTableEtat] = useMutation<ITable, HttpError, ITable>({
-  //   resource: "tables",
-  //   action: "update",
-  // });
-  // const handleListTableClick = (
-  //   event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  //   selectedTable: ITable
-  // ) => {
-  //   const updatedTable = { ...selectedTable, etat: "Occupé" }; // Replace "Occupé" with the desired value
-  //   updateTableEtat.mutate(updatedTable.id, updatedTable);
-  //   console.log(selectedTable)
-  // };
-  //
+
   const onFinishHandler = async (data: IOrder) => {
     const payload = {
       ...data,
       // menus: cartItems.map((item) => (item.menus.id)),
-       menus: cartItems.map((item) => ({menu:[item.id],quantite:item.quantity})),
+      menus: cartItems.map((item) => ({
+        menu: [item.id],
+        quantite: item.quantity,
+      })),
       total: calculateTotal(),
     };
 
@@ -168,7 +161,6 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
       console.log("Request succeeded:", response.data);
       handleClearCart();
       navigate(`/commandes`);
-    
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -216,7 +208,7 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
                       borderRadius: "30px",
                     }}
                     disabled={isLoading}
-                    defaultValue={caisseId}
+                    defaultValue={caisse.id}
                   >
                     <ListItemText primary={caisse.nom} />
                     <input
@@ -281,9 +273,7 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
                       getOptionLabel={(item) => {
                         return item.nom ? item.nom : "";
                       }}
-                      getOptionDisabled={(option) =>
-                        option.etat === "Occupé"
-                      }
+                      getOptionDisabled={(option) => option.etat === "Occupé"}
                       isOptionEqualToValue={(option, value) =>
                         value === undefined ||
                         option?.id?.toString() ===
@@ -296,7 +286,6 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
                           variant="outlined"
                           error={!!errors.table?.message}
                           required
-                       
                         />
                       )}
                     />
@@ -494,7 +483,7 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
             )}
           </Stack>
           <Divider />
-          <Stack direction='row' justifyContent='space-between' px={2} my={2}>
+          <Stack direction="row" justifyContent="space-between" px={2} my={2}>
             <Typography
               sx={{
                 fontWeight: 800,
@@ -521,7 +510,7 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            my:3
+            my: 3,
           }}
         >
           <Button variant="contained" type="submit">
@@ -535,7 +524,3 @@ const [tableState, setTableState] = useState<"Disponible" | "Occupé">('Occupé'
     </Create>
   );
 };
-function useMutation<T, U, V>(arg0: { resource: string; action: string; }): [any] {
-  throw new Error("Function not implemented.");
-}
-
