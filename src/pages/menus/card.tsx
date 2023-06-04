@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState } from "react";
 
-import { BaseKey } from '@refinedev/core';
+import { BaseKey } from "@refinedev/core";
 import {
   Box,
   Button,
@@ -14,12 +14,13 @@ import {
   Popover,
   Tooltip,
   Typography,
-} from '@mui/material';
-import { Edit, MoreVert } from '@mui/icons-material';
-import { API_URL } from '../../constants';
-import { ICartMenu, IMenu } from '../../interfaces';
-import { CartContext } from '../../contexts/cart/CartProvider';
-import { ColorModeContext } from '../../contexts/color-mode';
+} from "@mui/material";
+import { Edit, MoreVert } from "@mui/icons-material";
+import { API_URL } from "../../constants";
+import { ICartMenu, IMenu } from "../../interfaces";
+import { CartContext } from "../../contexts/cart/CartProvider";
+import { ColorModeContext } from "../../contexts/color-mode";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
 type MenuCard = {
   menu: IMenu;
@@ -28,7 +29,6 @@ type MenuCard = {
   onAddToCart: (menu: IMenu) => void;
 };
 export const MenuCard: React.FC<MenuCard> = ({
-  
   menu,
   selectedCards,
   onCardSelect,
@@ -64,28 +64,30 @@ export const MenuCard: React.FC<MenuCard> = ({
       menus: menu,
       quantity: 1,
     };
-    dispatch({ type: 'ADD_ITEM', payload: newItem });
+    dispatch({ type: "ADD_ITEM", payload: newItem });
     console.log(newItem);
   };
- 
+
   return (
     <Card
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        height: '300px',
-        backgroundColor:  isSelected
-        ? (mode === 'light' ? 'rgba(211, 47, 47, 0.08)' : 'rgba(239, 83, 80, 0.16)')
-        : 'default',
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        height: "300px",
+        backgroundColor: isSelected
+          ? mode === "light"
+            ? "rgba(211, 47, 47, 0.08)"
+            : "rgba(239, 83, 80, 0.16)"
+          : "default",
       }}
       onClick={handleCardClick}
     >
       <CardHeader sx={{ padding: 0, mt: 2 }} />
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <CardMedia
@@ -93,7 +95,7 @@ export const MenuCard: React.FC<MenuCard> = ({
           sx={{
             width: { xs: 60, sm: 84, lg: 108, xl: 144 },
             height: { xs: 60, sm: 84, lg: 108, xl: 144 },
-            borderRadius: '50%',
+            borderRadius: "50%",
           }}
           alt={titre}
           //   image={image?.url}
@@ -102,9 +104,9 @@ export const MenuCard: React.FC<MenuCard> = ({
       </Box>
       <CardContent
         sx={{
-          paddingX: '36px',
-          display: 'flex',
-          flexDirection: 'column',
+          paddingX: "36px",
+          display: "flex",
+          flexDirection: "column",
           gap: 1,
           flex: 1,
         }}
@@ -114,10 +116,10 @@ export const MenuCard: React.FC<MenuCard> = ({
           <Typography
             sx={{
               fontWeight: 800,
-              fontSize: '18px',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
+              fontSize: "18px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
             }}
           >
             {titre}
@@ -128,32 +130,36 @@ export const MenuCard: React.FC<MenuCard> = ({
           <Typography
             sx={{
               fontWeight: 500,
-              fontSize: '24px',
-              overflowWrap: 'break-word',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
+              fontSize: "24px",
+              overflowWrap: "break-word",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
             }}
           >{`${prix} DA`}</Typography>
         </Tooltip>
       </CardContent>
       <CardActions
         sx={{
-          display: 'flex',
-          paddingX: '36px',
+          display: "flex",
+          paddingX: "36px",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '8px',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
           {isSelected && (
-            <Button variant="contained" onClick={handleAddToCart}>
-              Add to Cart
+            <Button
+              variant="contained"
+              onClick={handleAddToCart}
+              endIcon={<AddShoppingCartIcon />}
+            >
+              Ajouter
             </Button>
           )}
         </Box>

@@ -36,6 +36,7 @@ import {
   Category,
   Payments,
   People,
+  TextSnippet,
 } from "@mui/icons-material";
 import {
   CreateMenu,
@@ -69,6 +70,7 @@ import {
 import { useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
 import axios from "axios";
+import { CreateRestaurantData, EditRestaurantData, ListRestaurantData } from "./pages/settings/generales";
 
 function App() {
   //
@@ -225,6 +227,19 @@ function App() {
                       canDelete: true,
                       parent: "settings",
                       icon: <People />,
+                      label:'Utilisateur'
+                    },
+                  },
+                  {
+                    name: "data-restaurants",
+                    list: "/settings/data-restaurants",
+                    create: "/settings/data-restaurants/create",
+                    edit: "/settings/data-restaurants/edit/:id",
+                    meta: {
+                      canDelete: true,
+                      parent: "settings",
+                      icon: <TextSnippet />,
+                      label:"Paramètre Générale"
                     },
                   },
                   {
@@ -328,6 +343,11 @@ function App() {
                           <Route index element={<ListUsers />} />
                           <Route path="create" element={<CreateUser />} />
                           <Route path="edit/:id" element={<EditUser />} />
+                        </Route>
+                        <Route path="/settings/data-restaurants">
+                          <Route index element={<ListRestaurantData />} />
+                          <Route path="create" element={<CreateRestaurantData />} />
+                          <Route path="edit/:id" element={<EditRestaurantData />} />
                         </Route>
                         <Route path="/settings/gestionStock">
                           <Route path="/settings/gestionStock/ingredients">

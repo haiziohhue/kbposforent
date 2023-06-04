@@ -47,7 +47,7 @@ export const EditIngredient: React.FC<
     >
       <Edit
         saveButtonProps={saveButtonProps}
-        title={<Typography fontSize={24}>Ajouter Ingredient</Typography>}
+        title={<Typography fontSize={24}>Modifier Ingredient</Typography>}
         headerProps={{
           avatar: (
             <IconButton

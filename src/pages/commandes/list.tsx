@@ -391,7 +391,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   //
   return (
     <>
-    <EditOrder id={selectedRowId}/>
+    {/* <EditOrder id={selectedRowId}/> */}
       <ShowOrder id={selectedRowId} {...createDrawerFormProps} />
       <Grid container spacing={2}>
         <Grid item xs={12} lg={3}>

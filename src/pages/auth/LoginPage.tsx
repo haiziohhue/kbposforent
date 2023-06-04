@@ -99,12 +99,13 @@ export const LoginPage: React.FC<LoginProps> = ({
         }}
       >
         {title ?? (
-          <ThemedTitle
-            collapsed={false}
-            wrapperStyles={{
-              gap: "8px",
-            }}
-          />
+                <img
+                src="images/Kb_pos_logo_large.svg"
+                alt="Kb Pos Logo"
+                style={{
+                  width: 200,
+                }}
+              />
         )}
       </div>
     );
@@ -158,7 +159,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           color="primary"
           fontWeight={700}
         >
-          {translate("pages.login.title", "Sign in to your account")}
+          {translate("pages.login.title", "Connectez-vous à votre compte")}
         </Typography>
         <Box
           component="form"
@@ -271,7 +272,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                 )}
               />
             )}
-            {forgotPasswordLink ?? (
+            {/* {forgotPasswordLink ?? (
               <MuiLink
                 variant="body2"
                 color="primary"
@@ -285,7 +286,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   "Forgot password?"
                 )}
               </MuiLink>
-            )}
+            )} */}
           </Box>
           <Button
             type="submit"

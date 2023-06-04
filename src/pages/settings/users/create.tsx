@@ -121,7 +121,7 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
     method: "get",
   });
   const roles = data?.data ?? [];
-  console.log(roles);
+
 
   const renderFormByStep = (step: number) => {
     switch (step) {

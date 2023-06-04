@@ -14,8 +14,7 @@ export interface IMenu {
   prix: number;
   categorie?: ICategory;
   stock?: number;
-  quantite?:number;
-
+  quantite?: number;
 }
 
 export interface ICartMenu {
@@ -33,7 +32,7 @@ export interface ICaisse {
 export interface ITable {
   id: number;
   nom: string;
-  etat?:"Disponible" | "Occupé";
+  etat?: "Disponible" | "Occupé";
 }
 
 export interface IOrder {
@@ -136,4 +135,12 @@ export interface IIngredients {
   cout?: number;
   source?: string;
   note?: string;
+}
+
+export interface IGeneraleDta {
+  id: number;
+  nom?: string;
+  adresse?: string;
+  phone1?: string;
+  phone2?: string;
 }

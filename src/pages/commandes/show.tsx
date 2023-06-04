@@ -1,41 +1,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
-  useApiUrl,
+
   HttpError,
-  useShow,
-  useOne,
-  useCustom,
+ 
   useUpdate,
 } from "@refinedev/core";
 import {
   UseModalFormReturnType,
   useModalForm,
 } from "@refinedev/react-hook-form";
-import { Controller } from "react-hook-form";
-import { Show, useAutocomplete } from "@refinedev/mui";
+
+import { Show } from "@refinedev/mui";
 
 import Drawer from "@mui/material/Drawer";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Input from "@mui/material/Input";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import Avatar from "@mui/material/Avatar";
+
 import Typography from "@mui/material/Typography";
-import FormLabel from "@mui/material/FormLabel";
+
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import FormControl from "@mui/material/FormControl";
-import Autocomplete from "@mui/material/Autocomplete";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormHelperText from "@mui/material/FormHelperText";
-import TextField from "@mui/material/TextField";
+
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
-import { IMenu, IOrder } from "../../interfaces";
+import PrintIcon from "@mui/icons-material/Print";
+import {  IOrder } from "../../interfaces";
 import { API_URL } from "../../constants";
 import {
   Button,
@@ -63,7 +53,7 @@ export const ShowOrder: React.FC<
     const fetchRecord = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/commandes/${id}?populate=caisse&populate=table&populate=menus.menu.image`
+          `${API_URL}/api/commandes/${id}?populate=caisse&populate=table&populate=menus.menu.image&populate=users_permissions_user`
         );
         const data = await response.json();
         console.log(data?.data.attributes);
@@ -267,6 +257,7 @@ export const ShowOrder: React.FC<
                 justifyContent="space-between"
                 gap={2}
                 mt={6}
+                mb={3}
               >
                 <Button
                   variant="outlined"
@@ -284,7 +275,6 @@ export const ShowOrder: React.FC<
                         etat: "Validé",
                       },
                     });
-                    showCreateModal();
                   }}
                 >
                   Validé
@@ -320,32 +310,26 @@ export const ShowOrder: React.FC<
                 >
                   Annulé
                 </Button>
-                {/* <Button
-                  variant="outlined"
-                  startIcon={<CloseOutlinedIcon color="error" />}
-                  sx={{
-                    color: "#f44336",
-                    borderColor: "#f44336",
-                    width: "100%",
-                  }}
-                  onClick={() => {
-                    mutate({
-                      resource: "commandes",
-                      id,
-                      values: {
-                        etat: "Annulé",
-                      },
-                    });
-                  }}
-                >
-                  Imprimer
-                </Button> */}
               </Stack>
+              <Button
+                variant="outlined"
+                startIcon={<PrintIcon color="secondary" />}
+                sx={{
+                  color: "#673ab7",
+                  borderColor: "#673ab7",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  showCreateModal();
+                }}
+              >
+                Imprimer
+              </Button>
             </Box>
           </Stack>
         </Show>
       </Drawer>
-      <PrintReceipt {...createModalFormProps} menus={record?.menus} />
+      <PrintReceipt {...createModalFormProps} record={record} />
     </>
   );
 };
