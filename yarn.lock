@@ -942,7 +942,23 @@
     temp "^0.9.4"
     tslib "^2.3.1"
 
-"@refinedev/core@^4.1.2", "@refinedev/core@^4.5.4", "@refinedev/core@^4.5.8":
+"@refinedev/core@4.18.0", "@refinedev/core@^4.18.0":
+  version "4.18.0"
+  resolved "https://registry.yarnpkg.com/@refinedev/core/-/core-4.18.0.tgz#d3b38df6fd831a242b07ba6a81e65e1022692965"
+  integrity sha512-Ml4bwI/zOTNKszb9pVD03NEt5SxgyaclnRcvYbFqGR53ffr3ZQz9y5rlNynHEKo335J9q1Ypzw0V6lF6V4geBg==
+  dependencies:
+    "@tanstack/react-query" "^4.10.1"
+    "@tanstack/react-query-devtools" "^4.10.1"
+    export-to-csv-fix-source-map "^0.2.1"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+    papaparse "^5.3.0"
+    pluralize "^8.0.0"
+    qs "^6.10.1"
+    tslib "^2.3.1"
+    warn-once "^0.1.0"
+
+"@refinedev/core@^4.5.4":
   version "4.14.3"
   resolved "https://registry.yarnpkg.com/@refinedev/core/-/core-4.14.3.tgz#f39f7bb0c2cd056f093b54b11c1ae0502f9f3656"
   integrity sha512-bUnfk+UDBtlj83rXgtEpt+8J8d7OaF/T6Tdx/5JX59holDnkdft2D0xek0bRHNJyM3aRtyWov0tNICkRuAeRzQ==
@@ -958,13 +974,13 @@
     tslib "^2.3.1"
     warn-once "^0.1.0"
 
-"@refinedev/inferencer@^3.1.4":
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/@refinedev/inferencer/-/inferencer-3.3.4.tgz#5f8e6aab385aa54039d5132c8b27a82a7d3ae0b4"
-  integrity sha512-r3jDymRBek58SK33NabcS56JMPWhl0NuWc3GVBSPNRzmnYwv5a5ygAwd05j2H8Wdt4Vfc2EksC9FtINvuEO7pA==
+"@refinedev/inferencer@3.5.8":
+  version "3.5.8"
+  resolved "https://registry.yarnpkg.com/@refinedev/inferencer/-/inferencer-3.5.8.tgz#26760c0f3b442358b72587ec932f4d90998556e1"
+  integrity sha512-0ZFimj4WMfdJGcx7F0IJiUAKhGsb1sL3/1FAab4McnAZyqCoN730or0pwpa7kr5yN9BDM6zgxuYwb1d12fUImw==
   dependencies:
     "@aliemir/react-live" "^4.0.0"
-    "@refinedev/core" "^4.1.2"
+    "@refinedev/core" "^4.18.0"
     "@tabler/icons" "^1.1.0"
     dayjs "^1.10.7"
     lodash "^4.17.21"
@@ -983,10 +999,10 @@
   dependencies:
     kbar "^0.1.0-beta.36"
 
-"@refinedev/mui@^4.10.0":
-  version "4.16.2"
-  resolved "https://registry.yarnpkg.com/@refinedev/mui/-/mui-4.16.2.tgz#6930180ea7fd9b59a3f8d5c506b874f33b958d51"
-  integrity sha512-OUjn91IQ2WKZmcHUd4CflGNb0lAU8z/rCan2Fx+4F8mpyUiLGW7ZQUnFj/3gnSzAtolyRow/bbOe9geDrq8XgQ==
+"@refinedev/mui@4.18.2":
+  version "4.18.2"
+  resolved "https://registry.yarnpkg.com/@refinedev/mui/-/mui-4.18.2.tgz#14113dc80edd0431ef255ef93cde77eff5fa2d5a"
+  integrity sha512-7RJaixiAU/iotH9RshAXAgRO5dYEaNbPkpfl3FEGf2wawFXDXCc6hlQ1P/zDigQYzwFi5EZdYDNS01pOfzNpuw==
   dependencies:
     "@emotion/react" "^11.8.2"
     "@emotion/styled" "^11.8.1"
@@ -1013,10 +1029,10 @@
   dependencies:
     react-hook-form "^7.30.0"
 
-"@refinedev/react-router-v6@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@refinedev/react-router-v6/-/react-router-v6-4.1.0.tgz#41c44b992ecb3a37342223af577de18cbd660868"
-  integrity sha512-I6cjLX7vSrpI9i598aQV4eusD7uAeShuzhULKXXb9Ou/kcs+aLDjpICUJQqpEfhQg2mQTNt5i3xg6BpXDDHK6w==
+"@refinedev/react-router-v6@4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@refinedev/react-router-v6/-/react-router-v6-4.3.2.tgz#8331a88f7b0615e686be53db711adb7b237a523d"
+  integrity sha512-ip40qVj0YV0GWwUEN6aMK277kU8Jb+vqFFfIBQYLMcq6vOxgL0gzNpQ46zsCsKheRY6xpKD3JruG2J922jZQMQ==
   dependencies:
     qs "^6.10.1"
     react-router-dom "^6.8.1"
@@ -1028,10 +1044,10 @@
   dependencies:
     "@tanstack/react-table" "^8.2.6"
 
-"@refinedev/strapi-v4@^4.0.0":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@refinedev/strapi-v4/-/strapi-v4-4.3.1.tgz#b81a49b65a1a72f15a5c2e02cc90085fec20a78d"
-  integrity sha512-eor8no0HOM8oTDGG+o7HbQSfayES2YyKXkBB8NdW/elSwSVG+acMqvtX7vaNxWD3xiTF8Pnmk1XU/r4NG0N1qw==
+"@refinedev/strapi-v4@5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@refinedev/strapi-v4/-/strapi-v4-5.0.2.tgz#99abef1471175c4a74b7f4dacfa0107f272ac766"
+  integrity sha512-Sts3DMRPAMRqyT0yGbsc1jCiNhncXdHdjDKolo9iEhpl4MHAua+S8YHW3NQUkqhgVJwarCEdRzImuVk9+ueOsA==
   dependencies:
     axios "^0.26.1"
     qs "^6.10.1"

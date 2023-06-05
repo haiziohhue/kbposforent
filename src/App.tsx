@@ -1,12 +1,12 @@
-import { Authenticated, Refine, useGetIdentity } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
   ErrorComponent,
   notificationProvider,
   RefineSnackbarProvider,
-  Sider,
   ThemedLayoutV2,
+  ThemedSiderV2,
 } from "@refinedev/mui";
 
 import { CssBaseline, GlobalStyles } from "@mui/material";
@@ -70,7 +70,12 @@ import {
 import { useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
 import axios from "axios";
-import { CreateRestaurantData, EditRestaurantData, ListRestaurantData } from "./pages/settings/generales";
+import {
+  CreateRestaurantData,
+  EditRestaurantData,
+  ListRestaurantData,
+} from "./pages/settings/generales";
+import { Title } from "./components/title";
 
 function App() {
   //
@@ -227,7 +232,7 @@ function App() {
                       canDelete: true,
                       parent: "settings",
                       icon: <People />,
-                      label:'Utilisateur'
+                      label: "Utilisateur",
                     },
                   },
                   {
@@ -239,7 +244,7 @@ function App() {
                       canDelete: true,
                       parent: "settings",
                       icon: <TextSnippet />,
-                      label:"Paramètre Générale"
+                      label: "Paramètre Générale",
                     },
                   },
                   {
@@ -278,11 +283,8 @@ function App() {
                       >
                         <ThemedLayoutV2
                           Header={() => <Header sticky />}
-                          // Sider={() => (
-                          //   <>
-                          //   <Sider/>
-                          //   </>
-                          // )}
+                          Sider={() => <ThemedSiderV2 Title={Title} />}
+                          // Sider={() => <ThemedSiderV2 />}
                         >
                           <Outlet />
                         </ThemedLayoutV2>
@@ -346,8 +348,14 @@ function App() {
                         </Route>
                         <Route path="/settings/data-restaurants">
                           <Route index element={<ListRestaurantData />} />
-                          <Route path="create" element={<CreateRestaurantData />} />
-                          <Route path="edit/:id" element={<EditRestaurantData />} />
+                          <Route
+                            path="create"
+                            element={<CreateRestaurantData />}
+                          />
+                          <Route
+                            path="edit/:id"
+                            element={<EditRestaurantData />}
+                          />
                         </Route>
                         <Route path="/settings/gestionStock">
                           <Route path="/settings/gestionStock/ingredients">

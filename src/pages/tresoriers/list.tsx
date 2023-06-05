@@ -44,6 +44,7 @@ import { TresorTypes } from "../../components/tresor/TresorTypes";
 import { CreateDepense } from "./create";
 import { Delete, Edit } from "@mui/icons-material";
 import { EditDepense } from "./edit";
+import { InputAdornment } from "@mui/material";
 
 export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
@@ -265,6 +266,19 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showEditModal },
   } = editDrawerFormProps;
   //
+  const calculateTotalSum = (rows: ITresor[]): number => {
+    return rows.reduce(
+      (sum, row) => sum + parseInt(row.montant.toString(), 10),
+      0
+    );
+  };
+  const formattedNumber = new Intl.NumberFormat("en-DZ", {
+    style: "currency",
+    currency: "DZD",
+    minimumFractionDigits: 2,
+  }).format(calculateTotalSum(dataGridProps.rows as ITresor[]));
+
+  //
   return (
     <>
       <CreateDepense {...createDrawerFormProps} />
@@ -352,6 +366,26 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
               </Box>
             </CardContent>
           </Card>
+          <Box sx={{ mt: 10 }}>
+            {/* <TextField
+            label="Total Sum"
+            type="number"
+            variant="outlined"
+            value={formattedNumber}
+            disabled
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">DZD</InputAdornment>
+              ),
+            }}
+          /> */}
+            <TextField
+              label="Total"
+              value={formattedNumber}
+              disabled
+              fullWidth
+            />
+          </Box>
         </Grid>
         <Grid item xs={12} lg={9}>
           <List

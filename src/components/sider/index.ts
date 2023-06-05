@@ -35,12 +35,10 @@ import {
   pickNotDeprecated,
   useWarnAboutChange,
 } from "@refinedev/core";
-import { RefineThemedLayoutV2SiderProps } from "../types";
-
-import { ThemedTitleV2 as DefaultTitle } from "@components";
-import { useSiderVisible } from "@hooks";
-
-export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
+import { RefineThemedLayoutV2SiderProps } from "@refinedev/ui-types";
+import { useSiderVisible } from "@refinedev/mui";
+import { ThemedTitleV2 as DefaultTitle } from "../title";
+export const Sider: React.FC<RefineThemedLayoutV2SiderProps> = ({
   Title: TitleFromProps,
   render,
   meta,
