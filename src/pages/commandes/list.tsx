@@ -16,15 +16,13 @@ import {
   DateField,
   useAutocomplete,
   List,
-  ExportButton,
 } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+
 import Autocomplete from "@mui/material/Autocomplete";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
@@ -43,25 +41,31 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { IOrder, IOrderFilterVariables } from "../../interfaces";
 import { OrderStatus } from "../../components/order/OrderStatus";
 import { OrderTypes } from "../../components/order/OrderTypes";
-import { Delete, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import { ShowOrder } from "./show";
-import { OrderContext } from "../../contexts/order/OrderContext";
-import { EditOrder } from "./edit";
+
+import { useNavigate } from "react-router-dom";
 
 export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
   const { mutate: mutateCreate } = useCreate();
-  const { edit } = useNavigation();
-  const { mutate: mutateDelete } = useDelete();
-  const orderContext = useContext(OrderContext);
-  const { handleEditOrder } = orderContext || {};
+
   //
+  const navigate = useNavigate();
   const { dataGridProps, search, filters } = useDataGrid<
     IOrder,
     HttpError,
     IOrderFilterVariables
   >({
     initialPageSize: 10,
+    sorters: {
+      permanent: [
+        {
+          field: "code",
+          order: "desc",
+        },
+      ],
+    },
     meta: { populate: "*" },
     onSearch: (params) => {
       const filters: CrudFilters = [];
@@ -105,7 +109,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColumns<IOrder>>(
     () => [
       {
@@ -213,15 +217,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   sx={{ padding: "2px 6px", color: "#4caf50" }}
                   label=""
                   showInMenu
-                  // onClick={() => {
-                  //   mutate({
-                  //     resource: "commandes",
-                  //     id,
-                  //     values: {
-                  //       etat: "Validé",
-                  //     },
-                  //   });
-                  // }}
                   onClick={() => {
                     mutate({
                       resource: "commandes",
@@ -248,7 +243,9 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   sx={{ padding: "2px 6px", color: "#ff9800" }}
                   label=""
                   showInMenu
-                //  onClick={() => handleEditOrder(id)}
+                  onClick={() => {
+                    navigate("/menus?selectedOrder=" + params.row.id);
+                  }}
                 />
 
                 <GridActionsCellItem
@@ -278,64 +275,15 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   sx={{ padding: "2px 6px", color: "#ff9800" }}
                   label=""
                   showInMenu
-                  // onClick={() => edit("commandes", row.id)}
+                  onClick={() => {
+                    navigate("/menus?selectedOrder=" + params.row.id);
+                  }}
                 />
               </>
             );
           }
         },
       },
-      // {
-      //   field: "actions",
-      //   type: "actions",
-      //   headerName: "Actions",
-      //   flex: 1,
-      //   minWidth: 100,
-      //   sortable: false,
-      //   getActions: ({ id}) => [
-
-      //     <GridActionsCellItem
-      //       key={2}
-      //       icon={<CheckOutlinedIcon color="success" />}
-      //       sx={{ padding: "2px 6px", color: "#4caf50" }}
-      //       label="Valider Commande"
-      //       showInMenu
-      //       onClick={() => {
-      //         mutate({
-      //           resource: "commandes",
-      //           id,
-      //           values: {
-      //             etat: "Validé",
-      //           },
-      //         });
-      //       }}
-      //     />,
-      //     <GridActionsCellItem
-      //       key={2}
-      //       icon={<Edit color="warning" />}
-      //       sx={{ padding: "2px 6px", color: "#ff9800" }}
-      //       label="Modifier Commande"
-      //       showInMenu
-      //       // onClick={() => edit("commandes", row.id)}
-      //     />,
-      //     <GridActionsCellItem
-      //       key={2}
-      //       icon={<CloseOutlinedIcon color="error" />}
-      //       sx={{ padding: "2px 6px", color: "#f44336" }}
-      //       label="Annuler Commande"
-      //       showInMenu
-      //       onClick={() => {
-      //         mutate({
-      //           resource: "commandes",
-      //           id,
-      //           values: {
-      //             etat: "Annulé",
-      //           },
-      //         });
-      //       }}
-      //     />,
-      //   ],
-      // },
     ],
     []
   );
@@ -369,9 +317,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     resource: "caisses",
     defaultValue: getDefaultFilter("caisse.id", filters, "eq"),
   });
-  // const { autocompleteProps: orderAutocompleteProps } = useAutocomplete({
-  //   resource: 'orderStatuses',
-  // });
 
   const { autocompleteProps: userAutocompleteProps } = useAutocomplete({
     resource: "users",
@@ -391,7 +336,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   //
   return (
     <>
-    {/* <EditOrder id={selectedRowId}/> */}
+      {/* <EditOrder id={selectedRowId}/> */}
       <ShowOrder id={selectedRowId} {...createDrawerFormProps} />
       <Grid container spacing={2}>
         <Grid item xs={12} lg={3}>

@@ -54,6 +54,14 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     ITresorFilterVariables
   >({
     initialPageSize: 10,
+    sorters: {
+      permanent: [
+        {
+          field: "id",
+          order: "desc",
+        },
+      ],
+    },
     meta: { populate: "*" },
     onSearch: (params) => {
       const filters: CrudFilters = [];
@@ -403,7 +411,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                 variant="contained"
                 sx={{ marginBottom: "5px" }}
               >
-                Ajouter Dépenes
+                Ajouter Dépenses
               </CreateButton>
             }
             createButtonProps={

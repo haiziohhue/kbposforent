@@ -10,12 +10,10 @@ import {
   CardHeader,
   CardMedia,
   Divider,
-  IconButton,
-  Popover,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Edit, MoreVert } from "@mui/icons-material";
+
 import { API_URL } from "../../constants";
 import { ICartMenu, IMenu } from "../../interfaces";
 import { CartContext } from "../../contexts/cart/CartProvider";
@@ -26,13 +24,12 @@ type MenuCard = {
   menu: IMenu;
   selectedCards: IMenu[];
   onCardSelect: (selectedCards: IMenu[]) => void;
-  onAddToCart: (menu: IMenu) => void;
+  // onAddToCart: (menu: IMenu) => void;
 };
 export const MenuCard: React.FC<MenuCard> = ({
   menu,
   selectedCards,
   onCardSelect,
-  onAddToCart,
 }) => {
   const { titre, image, prix } = menu;
   const { dispatch } = useContext(CartContext);
@@ -53,19 +50,14 @@ export const MenuCard: React.FC<MenuCard> = ({
   const isSelected = selectedCards.some(
     (selectedMenu) => selectedMenu.id === menu.id
   );
-  // const handleAddToCart = () => {
-  //   onAddToCart(menu);
-  // };
+
   const handleAddToCart = () => {
     const newItem: ICartMenu = {
       id: menu.id,
-      // name: menu.titre || '',
-      // price: menu.prix,
       menus: menu,
       quantity: 1,
     };
     dispatch({ type: "ADD_ITEM", payload: newItem });
-    console.log(newItem);
   };
 
   return (
@@ -74,7 +66,7 @@ export const MenuCard: React.FC<MenuCard> = ({
         display: "flex",
         flexDirection: "column",
         position: "relative",
-        height: "300px",
+        height: "100%",
         backgroundColor: isSelected
           ? mode === "light"
             ? "rgba(211, 47, 47, 0.08)"
@@ -98,7 +90,6 @@ export const MenuCard: React.FC<MenuCard> = ({
             borderRadius: "50%",
           }}
           alt={titre}
-          //   image={image?.url}
           image={`${API_URL}${image?.url}`}
         />
       </Box>
@@ -108,7 +99,6 @@ export const MenuCard: React.FC<MenuCard> = ({
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          flex: 1,
         }}
       >
         <Divider />
@@ -134,7 +124,6 @@ export const MenuCard: React.FC<MenuCard> = ({
               overflowWrap: "break-word",
               overflow: "hidden",
               textOverflow: "ellipsis",
-              display: "-webkit-box",
             }}
           >{`${prix} DA`}</Typography>
         </Tooltip>

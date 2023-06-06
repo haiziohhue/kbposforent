@@ -1,6 +1,6 @@
 import { Authenticated, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
+import "./App.css";
 import {
   ErrorComponent,
   notificationProvider,
@@ -9,7 +9,7 @@ import {
   ThemedSiderV2,
 } from "@refinedev/mui";
 
-import { CssBaseline, GlobalStyles } from "@mui/material";
+import { CssBaseline, GlobalStyles, Typography } from "@mui/material";
 import routerBindings, {
   CatchAllNavigate,
   NavigateToResource,
@@ -104,7 +104,22 @@ function App() {
       });
   }, []);
 
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <Typography>....Loading</Typography>
+      </div>
+    );
+  }
   //
+
   return (
     <BrowserRouter>
       <RefineKbarProvider>
@@ -315,8 +330,8 @@ function App() {
                       <Route path="/tresoriers">
                         <Route index element={<ListTresor />} />
                         {/* <Route path="create" element={<CreateOrder />} />
-                    <Route path="edit/:id" element={<EditOrder />} />
-                    <Route path="show/:id" element={<ShowOrder />} /> */}
+                      <Route path="edit/:id" element={<EditOrder />} />
+                      <Route path="show/:id" element={<ShowOrder />} /> */}
                       </Route>
                       {/* Settings */}
                       <Route path="/settings">

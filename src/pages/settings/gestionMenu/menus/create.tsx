@@ -1,7 +1,7 @@
-import { UseModalFormReturnType } from '@refinedev/react-hook-form';
-import React, { useState } from 'react';
-import { ICategory, IMenu } from '../../../../interfaces';
-import { HttpError } from '@refinedev/core';
+import { UseModalFormReturnType } from "@refinedev/react-hook-form";
+import React, { useState } from "react";
+import { ICategory, IMenu } from "../../../../interfaces";
+import { HttpError } from "@refinedev/core";
 import {
   Autocomplete,
   Avatar,
@@ -22,13 +22,13 @@ import {
   Stack,
   TextField,
   Typography,
-} from '@mui/material';
-import { Create, SaveButton, useAutocomplete } from '@refinedev/mui';
-import { Controller } from 'react-hook-form';
-import { API_URL } from '../../../../constants';
-import axios from 'axios';
+} from "@mui/material";
+import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
+import { Controller } from "react-hook-form";
+import { API_URL } from "../../../../constants";
+import axios from "axios";
 
-import { CloseOutlined } from '@mui/icons-material';
+import { CloseOutlined } from "@mui/icons-material";
 
 export const CreateMenu: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
@@ -44,10 +44,10 @@ export const CreateMenu: React.FC<
   formState: { errors },
 }) => {
   const { autocompleteProps } = useAutocomplete<ICategory>({
-    resource: 'categories',
+    resource: "categories",
   });
   const [isUploadLoading, setIsUploadLoading] = useState(false);
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState("");
 
   const onChangeHandler = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -60,7 +60,7 @@ export const CreateMenu: React.FC<
       const target = event.target;
       const file: File = (target.files as FileList)[0];
 
-      formData.append('files', file);
+      formData.append("files", file);
 
       const res = await axios.post(`${API_URL}/api/upload`, formData, {
         // headers: {
@@ -69,11 +69,11 @@ export const CreateMenu: React.FC<
       });
 
       setImageURL(`${API_URL}${res.data[0].url}`);
-      setValue('image', res.data[0].id, { shouldValidate: true });
+      setValue("image", res.data[0].id, { shouldValidate: true });
 
       setIsUploadLoading(false);
     } catch (error) {
-      setError('image', { message: 'Upload failed. Please try again.' });
+      setError("image", { message: "Upload failed. Please try again." });
       setIsUploadLoading(false);
     }
   };
@@ -85,15 +85,16 @@ export const CreateMenu: React.FC<
     >
       <Create
         saveButtonProps={saveButtonProps}
+        breadcrumb={<div style={{ display: "none" }} />}
         title={<Typography fontSize={24}>Ajouter Menu</Typography>}
         headerProps={{
           avatar: (
             <IconButton
               onClick={() => close()}
               sx={{
-                width: '30px',
-                height: '30px',
-                mb: '5px',
+                width: "30px",
+                height: "30px",
+                mb: "5px",
               }}
             >
               <CloseOutlined />
@@ -103,19 +104,19 @@ export const CreateMenu: React.FC<
         }}
         footerButtonProps={{
           sx: {
-            display: 'none',
+            display: "none",
           },
         }}
-        wrapperProps={{ sx: { overflowY: 'scroll', height: '100vh' } }}
+        wrapperProps={{ sx: { overflowY: "scroll", height: "100vh" } }}
       >
         <DialogContent>
           <Box
             component="form"
             autoComplete="off"
-            sx={{ display: 'flex', flexDirection: 'column' }}
+            sx={{ display: "flex", flexDirection: "column" }}
           >
             <form onSubmit={handleSubmit(onFinish)}>
-              <FormControl sx={{ width: '100%' }}>
+              <FormControl sx={{ width: "100%" }}>
                 <FormLabel required>Image</FormLabel>
                 <Stack
                   display="flex"
@@ -128,36 +129,24 @@ export const CreateMenu: React.FC<
                 >
                   <label htmlFor="images-input">
                     <Input
-                    
                       id="images-input"
                       type="file"
                       sx={{
-                        display: 'none',
+                        display: "none",
                       }}
                       onChange={onChangeHandler}
                     />
                     <input
-                    
                       id="file"
-                      {...register('image', {
-                        required: 'This field is required',
+                      {...register("image", {
+                        required: "This field is required",
                       })}
                       type="hidden"
                     />
-                    {/* <LoadingButton
-                    loading={isUploadLoading}
-                    loadingPosition="end"
-                    endIcon={<FileUpload />}
-                    variant="contained"
-                    component="span"
-                  >
-                    Upload
-                  </LoadingButton> */}
 
                     <Avatar
-                    
                       sx={{
-                        cursor: 'pointer',
+                        cursor: "pointer",
                         width: {
                           xs: 100,
                           md: 180,
@@ -175,7 +164,7 @@ export const CreateMenu: React.FC<
                     variant="body2"
                     style={{
                       fontWeight: 800,
-                      marginTop: '8px',
+                      marginTop: "8px",
                     }}
                   >
                     Ajouter une Image
@@ -193,10 +182,10 @@ export const CreateMenu: React.FC<
                   <FormLabel required>Nom</FormLabel>
                   <OutlinedInput
                     id="titre"
-                    {...register('titre', {
-                      required: 'This field is required',
+                    {...register("titre", {
+                      required: "This field is required",
                     })}
-                    style={{ height: '40px' }}
+                    style={{ height: "40px" }}
                   />
                   {errors.titre && (
                     <FormHelperText error>
@@ -208,8 +197,8 @@ export const CreateMenu: React.FC<
                   <FormLabel required>Description</FormLabel>
                   <OutlinedInput
                     id="description"
-                    {...register('description', {
-                      required: 'This field is required',
+                    {...register("description", {
+                      required: "This field is required",
                     })}
                     multiline
                     minRows={5}
@@ -225,16 +214,16 @@ export const CreateMenu: React.FC<
                   <FormLabel required>Prix</FormLabel>
                   <OutlinedInput
                     id="prix"
-                    {...register('prix', {
-                      required: 'This field is required',
+                    {...register("prix", {
+                      required: "This field is required",
                     })}
                     type="number"
                     style={{
-                      width: '150px',
-                      height: '40px',
+                      width: "180px",
+                      height: "40px",
                     }}
                     startAdornment={
-                      <InputAdornment position="start">DA</InputAdornment>
+                      <InputAdornment position="start">DZD</InputAdornment>
                     }
                   />
                   {errors.prix && (
@@ -246,7 +235,7 @@ export const CreateMenu: React.FC<
                     control={control}
                     name="categorie"
                     rules={{
-                      required: 'This field is required',
+                      required: "This field is required",
                     }}
                     render={({ field }) => (
                       <Autocomplete
@@ -257,7 +246,7 @@ export const CreateMenu: React.FC<
                           field.onChange(value?.id);
                         }}
                         getOptionLabel={(item) => {
-                          return item.nom ? item.nom : '';
+                          return item.nom ? item.nom : "";
                         }}
                         isOptionEqualToValue={(option, value) =>
                           value === undefined ||
@@ -283,21 +272,21 @@ export const CreateMenu: React.FC<
                   )}
                 </FormControl>
                 <FormControl>
-                  <FormLabel sx={{ marginTop: '10px' }} required>
+                  <FormLabel sx={{ marginTop: "10px" }} required>
                     Active
                   </FormLabel>
                   <Controller
                     control={control}
-                    {...register('active')}
+                    {...register("active")}
                     // defaultValue={true}
                     render={({ field }) => (
                       <RadioGroup
                         id="active"
                         {...field}
                         onChange={(event) => {
-                          const value = event.target.value === 'true';
+                          const value = event.target.value === "true";
 
-                          setValue('active', value, {
+                          setValue("active", value, {
                             shouldValidate: true,
                           });
 
@@ -308,12 +297,12 @@ export const CreateMenu: React.FC<
                         <FormControlLabel
                           value={true}
                           control={<Radio />}
-                          label={'Enable'}
+                          label={"Enable"}
                         />
                         <FormControlLabel
                           value={false}
                           control={<Radio />}
-                          label={'Disable'}
+                          label={"Disable"}
                         />
                       </RadioGroup>
                     )}

@@ -177,7 +177,6 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       }}
       // wrapperProps={{ sx: { overflowY: 'scroll', height: '100vh' } }}
     >
-      {/* <CaisseFilter /> */}
       <form onSubmit={handleSubmit(onFinishHandler)}>
         <Box sx={{ gap: 2 }}>
           <Stack gap={1} marginY={1.5}>
@@ -299,189 +298,197 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
           </Stack>
           <Divider />
           {/* Cart */}
-          <Stack
+          <Box
             sx={{
+              height: "50vh",
               width: "100%",
-              // overflow: 'scroll',
+              overflowY: "scroll",
               gap: 1.5,
-              my: 5,
             }}
           >
-            {cartItems.length === 0 ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src="images/empty_cart_1.svg"
-                  alt="empty shopping cart"
-                  style={{
-                    padding: 6,
-                    width: 150,
+            <Stack
+              sx={{
+                width: "100%",
+                gap: 1.5,
+                my: 3,
+              }}
+            >
+              {cartItems.length === 0 ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
-                />
-              </Box>
-            ) : (
-              <>
-                {cartItems.map((item) => (
-                  <>
-                    <Card
-                      key={item.id}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        position: "relative",
-                        height: "100%",
-                        width: "100%",
-                        padding: 1,
-                      }}
-                    >
-                      <CardHeader
-                        sx={{ padding: 0, mt: 1 }}
-                        avatar={
-                          <IconButton
-                            onClick={() => handleRemoveItem(item.id)}
-                            sx={{
-                              width: "30px",
-                              height: "30px",
-                            }}
-                          >
-                            <CloseOutlined />
-                          </IconButton>
-                        }
-                      />
-                      <Stack direction="row" sx={{ gap: 1 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <CardMedia
-                            component="img"
-                            sx={{
-                              width: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                              height: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                              borderRadius: "50%",
-                            }}
-                            alt={item.menus.titre}
-                            //   image={image?.url}
-                            image={`${API_URL}${item.menus.image?.url}`}
-                          />
-                        </Box>
-                        <Divider
-                          orientation="vertical"
-                          variant="middle"
-                          flexItem
+                >
+                  <img
+                    src="images/empty_cart_1.svg"
+                    alt="empty shopping cart"
+                    style={{
+                      padding: 6,
+                      width: 150,
+                    }}
+                  />
+                </Box>
+              ) : (
+                <>
+                  {cartItems.map((item) => (
+                    <>
+                      <Card
+                        key={item.id}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          position: "relative",
+                          height: "100%",
+                          width: "100%",
+                          padding: 1,
+                        }}
+                      >
+                        <CardHeader
+                          sx={{ padding: 0, mt: 1 }}
+                          avatar={
+                            <IconButton
+                              onClick={() => handleRemoveItem(item.id)}
+                              sx={{
+                                width: "30px",
+                                height: "30px",
+                              }}
+                            >
+                              <CloseOutlined />
+                            </IconButton>
+                          }
                         />
-                        <Box>
-                          <CardContent
+                        <Stack direction="row" sx={{ gap: 1 }}>
+                          <Box
                             sx={{
                               display: "flex",
-                              flexDirection: "column",
-                              gap: 1,
-                              flex: 1,
-                              padding: 1,
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
-                            <Typography
+                            <CardMedia
+                              component="img"
                               sx={{
-                                fontWeight: 800,
-                                fontSize: "16px",
-                                overflow: "hidden",
-                                whiteSpace: "nowrap",
-                                textOverflow: "ellipsis",
+                                width: { xs: 60, sm: 60, lg: 80, xl: 144 },
+                                height: { xs: 60, sm: 60, lg: 80, xl: 144 },
+                                borderRadius: "50%",
                               }}
-                            >
-                              {item.menus.titre} {""}
-                              {""}
-                              <span
-                                style={{
-                                  fontWeight: 600,
-                                  fontSize: "14px",
-                                  marginLeft: 10,
-                                }}
-                              >
-                                x{item?.quantity}
-                              </span>
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontWeight: 600,
-                                fontSize: "16px",
-                                overflow: "hidden",
-                                whiteSpace: "nowrap",
-                                textOverflow: "ellipsis",
-                              }}
-                            >
-                              {calculateSubtotal(item)}
-                            </Typography>
-                          </CardContent>
-                          <CardActions
-                            sx={{
-                              display: "flex",
-                            }}
-                          >
-                            <Box
+                              alt={item.menus.titre}
+                              //   image={image?.url}
+                              image={`${API_URL}${item.menus.image?.url}`}
+                            />
+                          </Box>
+                          <Divider
+                            orientation="vertical"
+                            variant="middle"
+                            flexItem
+                          />
+                          <Box>
+                            <CardContent
                               sx={{
                                 display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                gap: "8px",
+                                flexDirection: "column",
+                                gap: 1,
+                                flex: 1,
+                                padding: 1,
                               }}
                             >
-                              <Button
-                                variant="contained"
-                                size="small"
-                                onClick={() =>
-                                  handleQuantityChange(
-                                    item.id,
-                                    item.quantity + 1
-                                  )
-                                }
-                              >
-                                <Add />
-                              </Button>
                               <Typography
                                 sx={{
-                                  fontWeight: 600,
-                                  fontSize: "18px",
+                                  fontWeight: 800,
+                                  fontSize: "16px",
                                   overflow: "hidden",
                                   whiteSpace: "nowrap",
                                   textOverflow: "ellipsis",
                                 }}
                               >
-                                {item?.quantity}
+                                {item.menus.titre} {""}
+                                {""}
+                                <span
+                                  style={{
+                                    fontWeight: 600,
+                                    fontSize: "14px",
+                                    marginLeft: 10,
+                                  }}
+                                >
+                                  x{item?.quantity}
+                                </span>
                               </Typography>
-                              {item.quantity > 1 && (
+                              <Typography
+                                sx={{
+                                  fontWeight: 600,
+                                  fontSize: "16px",
+                                  overflow: "hidden",
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
+                                {calculateSubtotal(item)}
+                              </Typography>
+                            </CardContent>
+                            <CardActions
+                              sx={{
+                                display: "flex",
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                }}
+                              >
                                 <Button
                                   variant="contained"
+                                  size="small"
                                   onClick={() =>
                                     handleQuantityChange(
                                       item.id,
-                                      item.quantity === 1
-                                        ? 1
-                                        : item.quantity - 1
+                                      item.quantity + 1
                                     )
                                   }
                                 >
-                                  <Remove />
+                                  <Add />
                                 </Button>
-                              )}
-                            </Box>
-                          </CardActions>
-                        </Box>
-                      </Stack>
-                    </Card>
-                  </>
-                ))}
-              </>
-            )}
-          </Stack>
+                                <Typography
+                                  sx={{
+                                    fontWeight: 600,
+                                    fontSize: "18px",
+                                    overflow: "hidden",
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                  }}
+                                >
+                                  {item?.quantity}
+                                </Typography>
+                                {item.quantity > 1 && (
+                                  <Button
+                                    variant="contained"
+                                    onClick={() =>
+                                      handleQuantityChange(
+                                        item.id,
+                                        item.quantity === 1
+                                          ? 1
+                                          : item.quantity - 1
+                                      )
+                                    }
+                                  >
+                                    <Remove />
+                                  </Button>
+                                )}
+                              </Box>
+                            </CardActions>
+                          </Box>
+                        </Stack>
+                      </Card>
+                    </>
+                  ))}
+                </>
+              )}
+            </Stack>
+          </Box>
           <Divider />
           <Stack direction="row" justifyContent="space-between" px={2} my={2}>
             <Typography

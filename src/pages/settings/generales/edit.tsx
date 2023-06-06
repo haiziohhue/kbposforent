@@ -16,7 +16,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {  Edit, SaveButton } from "@refinedev/mui";
+import { Edit, SaveButton } from "@refinedev/mui";
 import { CloseOutlined } from "@mui/icons-material";
 import { IGeneraleDta } from "../../../interfaces";
 
@@ -34,11 +34,12 @@ export const EditRestaurantData: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { width: "100%", height: "800px" } }}
+      PaperProps={{ sx: { width: "100%", height: "600px" } }}
     >
       <Edit
         saveButtonProps={saveButtonProps}
         title={<Typography fontSize={24}>Modifier</Typography>}
+        breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (
             <IconButton
@@ -161,8 +162,6 @@ export const EditRestaurantData: React.FC<
                     </FormHelperText>
                   )}
                 </FormControl>
-             
-               
               </Stack>
             </form>
           </Box>

@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-
-  HttpError,
- 
-  useUpdate,
-} from "@refinedev/core";
+import { HttpError, useUpdate } from "@refinedev/core";
 import {
   UseModalFormReturnType,
   useModalForm,
@@ -25,7 +20,7 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import PrintIcon from "@mui/icons-material/Print";
-import {  IOrder } from "../../interfaces";
+import { IOrder } from "../../interfaces";
 import { API_URL } from "../../constants";
 import {
   Button,
@@ -252,33 +247,98 @@ export const ShowOrder: React.FC<
                   </Typography>
                 </Stack>
               </Stack>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                gap={2}
-                mt={6}
-                mb={3}
-              >
+              {record?.etat === "En cours" ? (
+                <>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    gap={2}
+                    mt={6}
+                    mb={3}
+                  >
+                    <Button
+                      variant="outlined"
+                      startIcon={<CheckOutlinedIcon color="success" />}
+                      sx={{
+                        color: "#4caf50",
+                        borderColor: "#4caf50",
+                        width: "100%",
+                      }}
+                      onClick={() => {
+                        mutate({
+                          resource: "commandes",
+                          id,
+                          values: {
+                            etat: "Validé",
+                          },
+                        });
+                      }}
+                    >
+                      Validé
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<Edit color="warning" />}
+                      sx={{
+                        color: "#ff9800",
+                        borderColor: "#ff9800",
+                        width: "100%",
+                      }}
+                    >
+                      Modifier
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<CloseOutlinedIcon color="error" />}
+                      sx={{
+                        color: "#f44336",
+                        borderColor: "#f44336",
+                        width: "100%",
+                      }}
+                      onClick={() => {
+                        mutate({
+                          resource: "commandes",
+                          id,
+                          values: {
+                            etat: "Annulé",
+                          },
+                        });
+                      }}
+                    >
+                      Annulé
+                    </Button>
+                  </Stack>
+                  <Button
+                    variant="outlined"
+                    startIcon={<PrintIcon color="secondary" />}
+                    sx={{
+                      color: "#673ab7",
+                      borderColor: "#673ab7",
+                      width: "100%",
+                    }}
+                    onClick={() => {
+                      showCreateModal();
+                    }}
+                  >
+                    Imprimer
+                  </Button>
+                </>
+              ) : record?.etat === "Validé" ? (
                 <Button
                   variant="outlined"
-                  startIcon={<CheckOutlinedIcon color="success" />}
+                  startIcon={<PrintIcon color="secondary" />}
                   sx={{
-                    color: "#4caf50",
-                    borderColor: "#4caf50",
+                    color: "#673ab7",
+                    borderColor: "#673ab7",
                     width: "100%",
                   }}
                   onClick={() => {
-                    mutate({
-                      resource: "commandes",
-                      id,
-                      values: {
-                        etat: "Validé",
-                      },
-                    });
+                    showCreateModal();
                   }}
                 >
-                  Validé
+                  Imprimer
                 </Button>
+              ) : (
                 <Button
                   variant="outlined"
                   startIcon={<Edit color="warning" />}
@@ -290,41 +350,7 @@ export const ShowOrder: React.FC<
                 >
                   Modifier
                 </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<CloseOutlinedIcon color="error" />}
-                  sx={{
-                    color: "#f44336",
-                    borderColor: "#f44336",
-                    width: "100%",
-                  }}
-                  onClick={() => {
-                    mutate({
-                      resource: "commandes",
-                      id,
-                      values: {
-                        etat: "Annulé",
-                      },
-                    });
-                  }}
-                >
-                  Annulé
-                </Button>
-              </Stack>
-              <Button
-                variant="outlined"
-                startIcon={<PrintIcon color="secondary" />}
-                sx={{
-                  color: "#673ab7",
-                  borderColor: "#673ab7",
-                  width: "100%",
-                }}
-                onClick={() => {
-                  showCreateModal();
-                }}
-              >
-                Imprimer
-              </Button>
+              )}
             </Box>
           </Stack>
         </Show>

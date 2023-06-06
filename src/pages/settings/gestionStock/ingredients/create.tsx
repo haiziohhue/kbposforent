@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
-
   Box,
   Dialog,
   DialogActions,
@@ -15,7 +14,6 @@ import {
   InputAdornment,
   OutlinedInput,
   Stack,
-
   Typography,
 } from "@mui/material";
 import { Create, SaveButton } from "@refinedev/mui";
@@ -37,17 +35,17 @@ export const CreateIngredient: React.FC<
   refineCore: { onFinish },
   handleSubmit,
   formState: { errors },
-  setValue,
 }) => {
   return (
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { width: "100%", height: "800px" } }}
+      PaperProps={{ sx: { width: "100%", height: "700px" } }}
     >
       <Create
         saveButtonProps={saveButtonProps}
         title={<Typography fontSize={24}>Ajouter Ingredient</Typography>}
+        breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (
             <IconButton
@@ -149,7 +147,7 @@ export const CreateIngredient: React.FC<
                         {errors.source.message}
                       </FormHelperText>
                     )}
-                  </FormControl >
+                  </FormControl>
                   {/* date_expiration */}
                   <FormControl fullWidth>
                     <FormLabel>Date d'Expiration</FormLabel>

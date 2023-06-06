@@ -34,11 +34,12 @@ export const CreateRestaurantData: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { width: "100%", height: "800px" } }}
+      PaperProps={{ sx: { width: "100%", height: "600px" } }}
     >
       <Create
         saveButtonProps={saveButtonProps}
         title={<Typography fontSize={24}>Ajouter</Typography>}
+        breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (
             <IconButton
@@ -161,8 +162,6 @@ export const CreateRestaurantData: React.FC<
                     </FormHelperText>
                   )}
                 </FormControl>
-          
-              
               </Stack>
             </form>
           </Box>

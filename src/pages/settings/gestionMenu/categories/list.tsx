@@ -2,12 +2,12 @@ import {
   HttpError,
   IResourceComponentsProps,
   useDelete,
-} from '@refinedev/core';
-import React, { useCallback } from 'react';
-import { ICategory } from '../../../../interfaces';
-import { useForm, useModalForm } from '@refinedev/react-hook-form';
-import { ColumnDef, flexRender, Row } from '@tanstack/react-table';
-import { useTable } from '@refinedev/react-table';
+} from "@refinedev/core";
+import React, { useCallback } from "react";
+import { ICategory } from "../../../../interfaces";
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
+import { ColumnDef, flexRender, Row } from "@tanstack/react-table";
+import { useTable } from "@refinedev/react-table";
 import {
   Button,
   IconButton,
@@ -21,15 +21,15 @@ import {
   TableRow,
   TextField,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 import {
   AddCircleOutline,
   Delete,
   Edit,
   RemoveCircleOutline,
-} from '@mui/icons-material';
-import { CreateButton, EditButton, List, SaveButton } from '@refinedev/mui';
-import { CreateCategory } from './create';
+} from "@mui/icons-material";
+import { CreateButton, EditButton, List, SaveButton } from "@refinedev/mui";
+import { CreateCategory } from "./create";
 
 export const ListCategories: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
@@ -40,12 +40,12 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
   } = useForm<ICategory>({
     refineCoreProps: {
       redirect: false,
-      action: 'edit',
+      action: "edit",
     },
   });
   // Modal
   const createModalFormProps = useModalForm<ICategory, HttpError, ICategory>({
-    refineCoreProps: { action: 'create' },
+    refineCoreProps: { action: "create" },
   });
   const {
     modal: { show: showCreateModal },
@@ -53,19 +53,12 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<ICategory>[]>(
     () => [
       {
-        id: 'nom',
-        accessorKey: 'nom',
-        header: 'Title',
+        id: "nom",
+        accessorKey: "nom",
+        header: "Title",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row" alignItems="center" spacing={3}>
-              <IconButton onClick={() => row.toggleExpanded()}>
-                {row.getIsExpanded() ? (
-                  <RemoveCircleOutline fontSize="small" />
-                ) : (
-                  <AddCircleOutline fontSize="small" />
-                )}
-              </IconButton>
               <Typography>{getValue() as string}</Typography>
             </Stack>
           );
@@ -80,9 +73,9 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
       //   },
       // },
       {
-        id: 'actions',
-        header: 'Actions',
-        accessorKey: 'id',
+        id: "actions",
+        header: "Actions",
+        accessorKey: "id",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row">
@@ -109,9 +102,9 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                   <IconButton
                     onClick={() => {
                       mutateDelete({
-                        resource: 'categories',
+                        resource: "categories",
                         id: row.original.id,
-                        mutationMode: 'undoable',
+                        mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
                       console.log(id);
@@ -159,7 +152,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
       <TableRow key={`edit-${id}-inputs`}>
         <TableCell
           sx={{
-            flex: '1',
+            flex: "1",
           }}
         >
           <Stack
@@ -168,26 +161,18 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
             alignContent="center"
             alignItems="center"
           >
-            <IconButton onClick={() => row.toggleExpanded()}>
-              {row.getIsExpanded() ? (
-                <RemoveCircleOutline fontSize="small" />
-              ) : (
-                <AddCircleOutline fontSize="small" />
-              )}
-            </IconButton>
-
             <TextField
               fullWidth
               id="title"
               type="text"
               size="small"
               defaultValue={nom}
-              {...register('nom', {
-                required: 'This field is required',
+              {...register("nom", {
+                required: "This field is required",
               })}
               InputProps={{
                 inputProps: {
-                  style: { textTransform: 'capitalize' },
+                  style: { textTransform: "capitalize" },
                   maxLength: 50,
                   onChange: (event) => {
                     const target = event.target as HTMLInputElement;
@@ -210,7 +195,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
 
         <TableCell
           sx={{
-            maxWidth: '150px',
+            maxWidth: "150px",
           }}
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
@@ -288,7 +273,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
               10,
               25,
               {
-                label: 'All',
+                label: "All",
                 value: tableQueryResult.data?.total ?? 100,
               },
             ]}

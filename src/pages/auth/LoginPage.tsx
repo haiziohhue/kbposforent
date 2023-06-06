@@ -41,7 +41,7 @@ import { ThemedTitle } from "@refinedev/mui";
 import { LoginFormTypes } from "../../interfaces";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
+import { Kb_pos_logo_large } from "../../assets";
 type LoginProps = LoginPageProps<BoxProps, CardContentProps, FormPropsType>;
 
 /**
@@ -99,13 +99,13 @@ export const LoginPage: React.FC<LoginProps> = ({
         }}
       >
         {title ?? (
-                <img
-                src="images/Kb_pos_logo_large.svg"
-                alt="Kb Pos Logo"
-                style={{
-                  width: 200,
-                }}
-              />
+          <img
+            src={Kb_pos_logo_large}
+            alt="Kb Pos Logo"
+            style={{
+              width: 200,
+            }}
+          />
         )}
       </div>
     );

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { CrudFilters, getDefaultFilter, useList } from '@refinedev/core';
-import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
-import { ICategory } from '../../../../interfaces';
+import { useState, useEffect } from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { CrudFilters, getDefaultFilter, useList } from "@refinedev/core";
+import Stack from "@mui/material/Stack";
+import Grid from "@mui/material/Grid";
+import { ICategory } from "../../../../interfaces";
 
 type ProductItemProps = {
   setFilters: (filters: CrudFilters) => void;
@@ -15,18 +15,18 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
   filters,
 }) => {
   const [filterCategories, setFilterCategories] = useState<string[]>(
-    getDefaultFilter('categorie.id', filters, 'in') ?? []
+    getDefaultFilter("categorie.id", filters, "in") ?? []
   );
 
   const { data: categories, isLoading } = useList<ICategory>({
-    resource: 'categories',
+    resource: "categories",
   });
 
   useEffect(() => {
     setFilters?.([
       {
-        field: 'categorie.id',
-        operator: 'in',
+        field: "categorie.id",
+        operator: "in",
         value: filterCategories.length > 0 ? filterCategories : undefined,
       },
     ]);
@@ -56,11 +56,11 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
         <Grid item p={0.5}>
           <LoadingButton
             onClick={() => setFilterCategories([])}
-            variant={filterCategories.length === 0 ? 'contained' : 'outlined'}
+            variant={filterCategories.length === 0 ? "contained" : "outlined"}
             size="small"
             loading={isLoading}
             sx={{
-              borderRadius: '50px',
+              borderRadius: "50px",
             }}
           >
             All
@@ -71,13 +71,13 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
             <LoadingButton
               variant={
                 filterCategories.includes(category.id.toString())
-                  ? 'contained'
-                  : 'outlined'
+                  ? "contained"
+                  : "outlined"
               }
               size="small"
               loading={isLoading}
               sx={{
-                borderRadius: '50px',
+                borderRadius: "50px",
               }}
               onClick={() => toggleFilterCategory(category.id.toString())}
             >

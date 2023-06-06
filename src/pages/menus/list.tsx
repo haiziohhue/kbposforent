@@ -17,17 +17,18 @@ import {
 import { Search } from "@mui/icons-material";
 
 import { CategoryFilter } from "../settings/gestionMenu/menus/CategoryFilter";
-
 import { ICartMenu, IMenu } from "../../interfaces";
 import { MenuCard } from "./card";
-import { CreateOrder, EditOrder } from "../commandes";
-import { OrderContext } from "../../contexts/order/OrderContext";
+import { CreateOrder } from "../commandes";
+import { useSearchParams } from "react-router-dom";
+import { NewEdit } from "../commandes/newEdit";
 
 export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
   const [cartItems, setCartItems] = useState<ICartMenu[]>([]);
-  const orderContext = useContext(OrderContext);
-  const { selectedOrderId } = orderContext || {};
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedOrder = searchParams.get("selectedOrder");
+
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
     useTable<IMenu>({
       resource: `menus`,
@@ -37,14 +38,14 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
 
   const menus: IMenu[] = tableQueryResult.data?.data || [];
 
-  const addToCart = (menu: IMenu) => {
-    const newItem: ICartMenu = {
-      id: menu.id,
-      menus: menu,
-      quantity: 1,
-    };
-    setCartItems((prevCartItems) => [...prevCartItems, newItem]);
-  };
+  // const addToCart = (menu: IMenu) => {
+  //   const newItem: ICartMenu = {
+  //     id: menu.id,
+  //     menus: menu,
+  //     quantity: 1,
+  //   };
+  //   setCartItems((prevCartItems) => [...prevCartItems, newItem]);
+  // };
 
   return (
     <>
@@ -66,7 +67,6 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               direction="row"
               gap={2}
             >
-              {/* <Typography variant="h5">Menus</Typography> */}
               <Paper
                 component="form"
                 sx={{
@@ -123,7 +123,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                         menu={menu}
                         selectedCards={selctedMenu}
                         onCardSelect={setSelectedMenu}
-                        onAddToCart={() => addToCart(menu)}
+                        // onAddToCart={() => addToCart(menu)}
                       />
                     </Grid>
                   ))
@@ -168,8 +168,8 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               my: 0.5,
             }}
           > */}
-          <CreateOrder />
-          {selectedOrderId && <EditOrder id={selectedOrderId}/>}
+
+          {selectedOrder ? <NewEdit /> : <CreateOrder />}
           {/* </Paper> */}
         </Grid>
       </Grid>
