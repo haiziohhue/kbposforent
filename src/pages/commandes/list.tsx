@@ -140,7 +140,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
           return <OrderTypes status={row.type} />;
         },
         flex: 1,
-        minWidth: 90,
+        minWidth: 100,
       },
       {
         field: "total",
@@ -325,7 +325,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
 
   //
   const [selectedRowId, setSelectedRowId] = React.useState<number>();
-  console.log(selectedRowId);
+
   const createDrawerFormProps = useModalForm<IOrder, HttpError, IOrder>({
     refineCoreProps: {},
   });
@@ -540,7 +540,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 const rowId = Number(params.id); // Convert the id to a number
                 setSelectedRowId(rowId);
                 showOrderDrawer(rowId);
-                console.log(rowId);
               }}
               rowsPerPageOptions={[10, 20, 50, 100]}
               sx={{

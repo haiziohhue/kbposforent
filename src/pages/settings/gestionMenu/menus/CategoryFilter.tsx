@@ -63,7 +63,7 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
               borderRadius: "50px",
             }}
           >
-            All
+            Tout
           </LoadingButton>
         </Grid>
         {categories?.data.map((category: ICategory) => (

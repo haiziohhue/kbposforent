@@ -9,7 +9,12 @@ import {
   ThemedSiderV2,
 } from "@refinedev/mui";
 
-import { CssBaseline, GlobalStyles, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  CssBaseline,
+  GlobalStyles,
+  Typography,
+} from "@mui/material";
 import routerBindings, {
   CatchAllNavigate,
   NavigateToResource,
@@ -67,7 +72,7 @@ import {
   CreateIngredient,
   ListIngredients,
 } from "./pages/settings/gestionStock/ingredients";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
 import axios from "axios";
 import {
@@ -76,9 +81,11 @@ import {
   ListRestaurantData,
 } from "./pages/settings/generales";
 import { Title } from "./components/title";
+import { AppContext } from "./contexts/user/AppProvider";
 
 function App() {
   //
+
   const [user, setUser] = useState<IUserMe | null>(null);
   const [loading, setloading] = useState(true);
 
@@ -94,12 +101,10 @@ function App() {
           setUser(res.data);
           setloading(false);
         } else {
-          setUser(null);
           setloading(false);
         }
       })
       .catch((e) => {
-        setUser(null);
         setloading(false);
       });
   }, []);
@@ -114,20 +119,847 @@ function App() {
           height: "100vh",
         }}
       >
-        <Typography>....Loading</Typography>
+        <CircularProgress color="error" size={60} />
       </div>
     );
   }
   //
 
-  return (
-    <BrowserRouter>
-      <RefineKbarProvider>
-        <ColorModeContextProvider>
-          <CssBaseline />
-          <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
-          <RefineSnackbarProvider>
-            {user?.role?.name === "Admin" ? (
+  // return (
+  //   <BrowserRouter>
+  //     <RefineKbarProvider>
+  //       <ColorModeContextProvider>
+  //         <CssBaseline />
+  //         <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+  //         <RefineSnackbarProvider>
+  //           {user?.role?.name === "Admin" ? (
+  //             <Refine
+  //               authProvider={authProvider}
+  //               dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+  //               notificationProvider={notificationProvider}
+  //               routerProvider={routerBindings}
+  //               resources={[
+  //                 {
+  //                   name: "menus",
+  //                   list: "/menus",
+  //                   create: "/commandes/create",
+  //                   edit: "",
+  //                   show: "",
+  //                   meta: {
+  //                     label: "Caisse",
+  //                     canDelete: true,
+  //                     icon: <AccountBalance />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "commandes",
+  //                   list: "/commandes",
+  //                   create: "/commandes/create",
+  //                   edit: "/commandes/edit/:id",
+  //                   show: "/commandes/show/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     icon: <AddShoppingCart />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "tresoriers",
+  //                   list: "/tresoriers",
+  //                   create: "/tresoriers/create",
+  //                   edit: "",
+  //                   show: "",
+  //                   meta: {
+  //                     label: "Trésorerie",
+  //                     canDelete: true,
+  //                     icon: <Payments />,
+  //                   },
+  //                 },
+
+  //                 {
+  //                   name: "settings",
+  //                   meta: {
+  //                     label: "Paramètres",
+  //                     icon: <Settings />,
+  //                   },
+  //                 },
+
+  //                 {
+  //                   name: "gestiondemenu",
+  //                   meta: {
+  //                     label: "Gestion de Menu",
+  //                     parent: "settings",
+  //                     icon: <Fastfood />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "gestionStock",
+  //                   meta: {
+  //                     label: "Gestion de Stock",
+  //                     parent: "settings",
+  //                     icon: <Widgets />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "categories",
+  //                   list: "/settings/gestionMenu/categories",
+  //                   create: "/settings/gestionMenu/categories/create",
+  //                   edit: "/settings/gestionMenu/categories/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "gestiondemenu",
+  //                     icon: <Category />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "menus",
+  //                   list: "settings/gestionMenu/menus",
+  //                   create: "/settings/gestionMenu/menus/create",
+  //                   edit: "/settings/gestionMenu/menus/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "gestiondemenu",
+  //                     icon: <MenuBook />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "tables",
+  //                   list: "/settings/gestionMenu/tables",
+  //                   create: "/settings/gestionMenu/tables/create",
+  //                   edit: "/settings/gestionMenu/tables/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "gestiondemenu",
+  //                     icon: <TableRestaurant />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "caisses",
+  //                   list: "/settings/gestionMenu/caisses",
+  //                   create: "/settings/gestionMenu/caisses/create",
+  //                   edit: "/settings/gestionMenu/caisses/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "gestiondemenu",
+  //                     icon: <AccountBalanceWallet />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "users",
+  //                   list: "/settings/users",
+  //                   create: "/settings/users/create",
+  //                   edit: "/settings/users/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "settings",
+  //                     icon: <People />,
+  //                     label: "Utilisateur",
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "data-restaurants",
+  //                   list: "/settings/data-restaurants",
+  //                   create: "/settings/data-restaurants/create",
+  //                   edit: "/settings/data-restaurants/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "settings",
+  //                     icon: <TextSnippet />,
+  //                     label: "Paramètre Générale",
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "categorie-depenses",
+  //                   list: "/settings/tresor",
+  //                   create: "/settings/tresor/create",
+
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "settings",
+  //                     icon: <AccountBalanceWallet />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "ingredients",
+  //                   list: "/settings/gestionStock/ingredients",
+  //                   create: "/settings/gestionStock/ingredients/create",
+  //                   edit: "/settings/gestionStock/ingredients/edit/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     parent: "gestionStock",
+  //                     icon: <LocalGroceryStore />,
+  //                   },
+  //                 },
+  //               ]}
+  //               options={{
+  //                 syncWithLocation: true,
+  //                 warnWhenUnsavedChanges: true,
+  //               }}
+  //             >
+  //               <Routes>
+  //                 <Route
+  //                   element={
+  //                     <Authenticated
+  //                       fallback={<CatchAllNavigate to="/login" />}
+  //                     >
+  //                       <ThemedLayoutV2
+  //                         Header={() => <Header sticky />}
+  //                         Sider={() => <ThemedSiderV2 Title={Title} />}
+  //                         // Sider={() => <ThemedSiderV2 />}
+  //                       >
+  //                         <Outlet />
+  //                       </ThemedLayoutV2>
+  //                     </Authenticated>
+  //                   }
+  //                 >
+  //                   <Route
+  //                     index
+  //                     element={<NavigateToResource resource="menus" />}
+  //                   />
+
+  //                   <>
+  //                     {/* Menus */}
+  //                     <Route path="/menus">
+  //                       <Route index element={<MenusList />} />
+  //                       <Route path="create" element={<CreateOrder />} />
+  //                       {/* <Route path="edit/:id" element={<EditOrder />} /> */}
+  //                       {/* <Route path="show/:id" element={<BlogPostShow />} />  */}
+  //                     </Route>
+  //                     {/* Orders */}
+  //                     <Route path="/commandes">
+  //                       <Route index element={<ListOrdes />} />
+  //                       <Route path="create" element={<CreateOrder />} />
+  //                       <Route path="edit/:id" element={<EditOrder />} />
+  //                       <Route path="show/:id" element={<ShowOrder />} />
+  //                     </Route>
+  //                     {/* Tresories */}
+  //                     <Route path="/tresoriers">
+  //                       <Route index element={<ListTresor />} />
+  //                       {/* <Route path="create" element={<CreateOrder />} />
+  //                     <Route path="edit/:id" element={<EditOrder />} />
+  //                     <Route path="show/:id" element={<ShowOrder />} /> */}
+  //                     </Route>
+  //                     {/* Settings */}
+  //                     <Route path="/settings">
+  //                       {/* <Route index element={<CategoryList />} /> */}
+  //                       <Route path="/settings/gestionMenu">
+  //                         <Route path="/settings/gestionMenu/menus">
+  //                           <Route index element={<ListMenus />} />
+  //                           <Route path="create" element={<CreateMenu />} />
+  //                           <Route path="edit/:id" element={<EditMenu />} />
+  //                         </Route>
+  //                         <Route path="/settings/gestionMenu/categories">
+  //                           <Route index element={<ListCategories />} />
+
+  //                           <Route path="edit/:id" element={<EditCategory />} />
+  //                         </Route>
+  //                         <Route path="/settings/gestionMenu/caisses">
+  //                           <Route index element={<ListCaisses />} />
+  //                           <Route path="edit/:id" element={<EditCaisse />} />
+  //                         </Route>
+  //                         <Route path="/settings/gestionMenu/tables">
+  //                           <Route index element={<ListTables />} />
+  //                           <Route path="edit/:id" element={<EditTable />} />
+  //                         </Route>
+  //                       </Route>
+  //                       <Route path="/settings/users">
+  //                         <Route index element={<ListUsers />} />
+  //                         <Route path="create" element={<CreateUser />} />
+  //                         <Route path="edit/:id" element={<EditUser />} />
+  //                       </Route>
+  //                       <Route path="/settings/data-restaurants">
+  //                         <Route index element={<ListRestaurantData />} />
+  //                         <Route
+  //                           path="create"
+  //                           element={<CreateRestaurantData />}
+  //                         />
+  //                         <Route
+  //                           path="edit/:id"
+  //                           element={<EditRestaurantData />}
+  //                         />
+  //                       </Route>
+  //                       <Route path="/settings/gestionStock">
+  //                         <Route path="/settings/gestionStock/ingredients">
+  //                           <Route index element={<ListIngredients />} />
+  //                           <Route
+  //                             path="create"
+  //                             element={<CreateIngredient />}
+  //                           />
+  //                           {/* <Route path="edit/:id" element={<EditMenu />} /> */}
+  //                         </Route>
+  //                       </Route>
+  //                       <Route path="/settings/tresor">
+  //                         <Route index element={<ListCategoryDepense />} />
+  //                         <Route
+  //                           path="create"
+  //                           element={<CreateCategoryDepense />}
+  //                         />
+  //                         <Route path="edit/:id" element={<EditUser />} />
+  //                       </Route>
+  //                     </Route>
+  //                   </>
+
+  //                   <Route path="*" element={<ErrorComponent />} />
+  //                 </Route>
+  //                 <Route
+  //                   element={
+  //                     <Authenticated fallback={<Outlet />}>
+  //                       <NavigateToResource />
+  //                     </Authenticated>
+  //                   }
+  //                 >
+  //                   <Route
+  //                     path="/login"
+  //                     element={
+  //                       <AuthPage
+  //                         type="login"
+  //                         // formProps={{
+  //                         //   defaultValues: {
+  //                         //     // email: 'demo@refine.dev',
+  //                         //     // password: 'demodemo',
+  //                         //   },
+  //                         // }}
+  //                       />
+  //                     }
+  //                   />
+  //                   <Route
+  //                     path="/register"
+  //                     element={<AuthPage type="register" />}
+  //                   />
+  //                   <Route
+  //                     path="/forgot-password"
+  //                     element={<AuthPage type="forgotPassword" />}
+  //                   />
+  //                 </Route>
+  //               </Routes>
+
+  //               <RefineKbar />
+  //               <UnsavedChangesNotifier />
+  //             </Refine>
+  //           ) : (
+  //             <Refine
+  //               authProvider={authProvider}
+  //               dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+  //               notificationProvider={notificationProvider}
+  //               routerProvider={routerBindings}
+  //               resources={[
+  //                 {
+  //                   name: "menus",
+  //                   list: "/menus",
+  //                   create: "/commandes/create",
+  //                   edit: "/commandes/edit/:id",
+  //                   show: "",
+  //                   meta: {
+  //                     label: "Caisse",
+  //                     canDelete: true,
+  //                     icon: <AccountBalance />,
+  //                   },
+  //                 },
+  //                 {
+  //                   name: "commandes",
+  //                   list: "/commandes",
+  //                   create: "/commandes/create",
+  //                   edit: "/commandes/edit/:id",
+  //                   show: "/commandes/show/:id",
+  //                   meta: {
+  //                     canDelete: true,
+  //                     icon: <AddShoppingCart />,
+  //                   },
+  //                 },
+  //               ]}
+  //               options={{
+  //                 syncWithLocation: true,
+  //                 warnWhenUnsavedChanges: true,
+  //               }}
+  //             >
+  //               <Routes>
+  //                 <Route
+  //                   element={
+  //                     <Authenticated
+  //                       fallback={<CatchAllNavigate to="/login" />}
+  //                     >
+  //                       <ThemedLayoutV2
+  //                         Header={() => <Header sticky />}
+  //                         // Sider={() => (
+  //                         //   <>
+  //                         //   <Sider/>
+  //                         //   </>
+  //                         // )}
+  //                       >
+  //                         <Outlet />
+  //                       </ThemedLayoutV2>
+  //                     </Authenticated>
+  //                   }
+  //                 >
+  //                   <Route
+  //                     index
+  //                     element={<NavigateToResource resource="menus" />}
+  //                   />
+
+  //                   <>
+  //                     {/* Menus */}
+  //                     <Route path="/menus">
+  //                       <Route index element={<MenusList />} />
+  //                       <Route path="create" element={<CreateOrder />} />
+  //                       <Route path="edit/:id" element={<EditOrder />} />
+  //                       {/* <Route path="show/:id" element={<BlogPostShow />} />  */}
+  //                     </Route>
+  //                     {/* Orders */}
+  //                     <Route path="/commandes">
+  //                       <Route index element={<ListOrdes />} />
+  //                       <Route path="create" element={<CreateOrder />} />
+  //                       <Route path="edit/:id" element={<EditOrder />} />
+  //                       <Route path="show/:id" element={<ShowOrder />} />
+  //                     </Route>
+  //                   </>
+
+  //                   <Route path="*" element={<ErrorComponent />} />
+  //                 </Route>
+  //                 <Route
+  //                   element={
+  //                     <Authenticated fallback={<Outlet />}>
+  //                       <NavigateToResource />
+  //                     </Authenticated>
+  //                   }
+  //                 >
+  //                   <Route
+  //                     path="/login"
+  //                     element={
+  //                       <AuthPage
+  //                         type="login"
+  //                         // formProps={{
+  //                         //   defaultValues: {
+  //                         //     // email: 'demo@refine.dev',
+  //                         //     // password: 'demodemo',
+  //                         //   },
+  //                         // }}
+  //                       />
+  //                     }
+  //                   />
+  //                   <Route
+  //                     path="/register"
+  //                     element={<AuthPage type="register" />}
+  //                   />
+  //                   <Route
+  //                     path="/forgot-password"
+  //                     element={<AuthPage type="forgotPassword" />}
+  //                   />
+  //                 </Route>
+  //               </Routes>
+
+  //               <RefineKbar />
+  //               <UnsavedChangesNotifier />
+  //             </Refine>
+  //           )}
+  //         </RefineSnackbarProvider>
+  //       </ColorModeContextProvider>
+  //     </RefineKbarProvider>
+  //   </BrowserRouter>
+  // );
+
+  if (user) {
+    return (
+      <BrowserRouter>
+        <RefineKbarProvider>
+          <ColorModeContextProvider>
+            <CssBaseline />
+            <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+            <RefineSnackbarProvider>
+              {user?.role?.name === "Caissier" && (
+                <Refine
+                  authProvider={authProvider}
+                  dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+                  notificationProvider={notificationProvider}
+                  routerProvider={routerBindings}
+                  resources={[
+                    {
+                      name: "menus",
+                      list: "/menus",
+                      create: "/commandes/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        label: "Caisse",
+                        canDelete: true,
+                        icon: <AccountBalance />,
+                      },
+                    },
+                    {
+                      name: "commandes",
+                      list: "/commandes",
+                      create: "/commandes/create",
+                      edit: "/commandes/edit/:id",
+                      show: "/commandes/show/:id",
+                      meta: {
+                        canDelete: true,
+                        icon: <AddShoppingCart />,
+                      },
+                    },
+                  ]}
+                  options={{
+                    syncWithLocation: true,
+                    warnWhenUnsavedChanges: true,
+                  }}
+                >
+                  <Routes>
+                    <>
+                      <Route
+                        element={
+                          <Authenticated
+                            fallback={<CatchAllNavigate to="/login" />}
+                          >
+                            <ThemedLayoutV2
+                              Header={() => <Header sticky />}
+                              Sider={() => <ThemedSiderV2 Title={Title} />}
+                            >
+                              <Outlet />
+                            </ThemedLayoutV2>
+                          </Authenticated>
+                        }
+                      >
+                        <Route
+                          index
+                          element={<NavigateToResource resource="menus" />}
+                        />
+
+                        <>
+                          {/* Menus */}
+                          <Route path="/menus">
+                            <Route index element={<MenusList />} />
+                            <Route path="create" element={<CreateOrder />} />
+                          </Route>
+                          {/* Orders */}
+                          <Route path="/commandes">
+                            <Route index element={<ListOrdes />} />
+                            <Route path="create" element={<CreateOrder />} />
+                            <Route path="edit/:id" element={<EditOrder />} />
+                            <Route path="show/:id" element={<ShowOrder />} />
+                          </Route>
+                        </>
+
+                        <Route path="*" element={<ErrorComponent />} />
+                      </Route>
+                      <Route
+                        element={
+                          <Authenticated fallback={<Outlet />}>
+                            <NavigateToResource />
+                          </Authenticated>
+                        }
+                      >
+                        <Route
+                          path="/login"
+                          element={<AuthPage type="login" />}
+                        />
+                      </Route>
+                    </>
+                  </Routes>
+
+                  <RefineKbar />
+                  <UnsavedChangesNotifier />
+                </Refine>
+              )}
+              {user?.role?.name === "Admin" && (
+                <Refine
+                  authProvider={authProvider}
+                  dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+                  notificationProvider={notificationProvider}
+                  routerProvider={routerBindings}
+                  resources={[
+                    {
+                      name: "menus",
+                      list: "/menus",
+                      create: "/commandes/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        label: "Caisse",
+                        canDelete: true,
+                        icon: <AccountBalance />,
+                      },
+                    },
+                    {
+                      name: "commandes",
+                      list: "/commandes",
+                      create: "/commandes/create",
+                      edit: "/commandes/edit/:id",
+                      show: "/commandes/show/:id",
+                      meta: {
+                        canDelete: true,
+                        icon: <AddShoppingCart />,
+                      },
+                    },
+                    {
+                      name: "tresoriers",
+                      list: "/tresoriers",
+                      create: "/tresoriers/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        label: "Trésorerie",
+                        canDelete: true,
+                        icon: <Payments />,
+                      },
+                    },
+
+                    {
+                      name: "settings",
+                      meta: {
+                        label: "Paramètres",
+                        icon: <Settings />,
+                      },
+                    },
+
+                    {
+                      name: "gestiondemenu",
+                      meta: {
+                        label: "Gestion de Menu",
+                        parent: "settings",
+                        icon: <Fastfood />,
+                      },
+                    },
+                    {
+                      name: "gestionStock",
+                      meta: {
+                        label: "Gestion de Stock",
+                        parent: "settings",
+                        icon: <Widgets />,
+                      },
+                    },
+                    {
+                      name: "categories",
+                      list: "/settings/gestionMenu/categories",
+                      create: "/settings/gestionMenu/categories/create",
+                      edit: "/settings/gestionMenu/categories/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestiondemenu",
+                        icon: <Category />,
+                      },
+                    },
+                    {
+                      name: "menus",
+                      list: "settings/gestionMenu/menus",
+                      create: "/settings/gestionMenu/menus/create",
+                      edit: "/settings/gestionMenu/menus/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestiondemenu",
+                        icon: <MenuBook />,
+                      },
+                    },
+                    {
+                      name: "tables",
+                      list: "/settings/gestionMenu/tables",
+                      create: "/settings/gestionMenu/tables/create",
+                      edit: "/settings/gestionMenu/tables/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestiondemenu",
+                        icon: <TableRestaurant />,
+                      },
+                    },
+                    {
+                      name: "caisses",
+                      list: "/settings/gestionMenu/caisses",
+                      create: "/settings/gestionMenu/caisses/create",
+                      edit: "/settings/gestionMenu/caisses/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestiondemenu",
+                        icon: <AccountBalanceWallet />,
+                      },
+                    },
+                    {
+                      name: "users",
+                      list: "/settings/users",
+                      create: "/settings/users/create",
+                      edit: "/settings/users/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "settings",
+                        icon: <People />,
+                        label: "Utilisateur",
+                      },
+                    },
+                    {
+                      name: "data-restaurants",
+                      list: "/settings/data-restaurants",
+                      create: "/settings/data-restaurants/create",
+                      edit: "/settings/data-restaurants/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "settings",
+                        icon: <TextSnippet />,
+                        label: "Paramètre Générale",
+                      },
+                    },
+                    {
+                      name: "categorie-depenses",
+                      list: "/settings/tresor",
+                      create: "/settings/tresor/create",
+
+                      meta: {
+                        canDelete: true,
+                        parent: "settings",
+                        icon: <AccountBalanceWallet />,
+                      },
+                    },
+                    {
+                      name: "ingredients",
+                      list: "/settings/gestionStock/ingredients",
+                      create: "/settings/gestionStock/ingredients/create",
+                      edit: "/settings/gestionStock/ingredients/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestionStock",
+                        icon: <LocalGroceryStore />,
+                      },
+                    },
+                  ]}
+                  options={{
+                    syncWithLocation: true,
+                    warnWhenUnsavedChanges: true,
+                  }}
+                >
+                  <Routes>
+                    <>
+                      <Route
+                        element={
+                          <Authenticated
+                            fallback={<CatchAllNavigate to="/login" />}
+                          >
+                            <ThemedLayoutV2
+                              Header={() => <Header sticky />}
+                              Sider={() => <ThemedSiderV2 Title={Title} />}
+                            >
+                              <Outlet />
+                            </ThemedLayoutV2>
+                          </Authenticated>
+                        }
+                      >
+                        <Route
+                          index
+                          element={<NavigateToResource resource="menus" />}
+                        />
+
+                        <>
+                          {/* Menus */}
+                          <Route path="/menus">
+                            <Route index element={<MenusList />} />
+                            <Route path="create" element={<CreateOrder />} />
+                          </Route>
+                          {/* Orders */}
+                          <Route path="/commandes">
+                            <Route index element={<ListOrdes />} />
+                            <Route path="create" element={<CreateOrder />} />
+                            <Route path="edit/:id" element={<EditOrder />} />
+                            <Route path="show/:id" element={<ShowOrder />} />
+                          </Route>
+                          {/* Tresories */}
+                          <Route path="/tresoriers">
+                            <Route index element={<ListTresor />} />
+                          </Route>
+                          {/* Settings */}
+                          <Route path="/settings">
+                            <Route path="/settings/gestionMenu">
+                              <Route path="/settings/gestionMenu/menus">
+                                <Route index element={<ListMenus />} />
+                                <Route path="create" element={<CreateMenu />} />
+                                <Route path="edit/:id" element={<EditMenu />} />
+                              </Route>
+                              <Route path="/settings/gestionMenu/categories">
+                                <Route index element={<ListCategories />} />
+
+                                <Route
+                                  path="edit/:id"
+                                  element={<EditCategory />}
+                                />
+                              </Route>
+                              <Route path="/settings/gestionMenu/caisses">
+                                <Route index element={<ListCaisses />} />
+                                <Route
+                                  path="edit/:id"
+                                  element={<EditCaisse />}
+                                />
+                              </Route>
+                              <Route path="/settings/gestionMenu/tables">
+                                <Route index element={<ListTables />} />
+                                <Route
+                                  path="edit/:id"
+                                  element={<EditTable />}
+                                />
+                              </Route>
+                            </Route>
+                            <Route path="/settings/users">
+                              <Route index element={<ListUsers />} />
+                              <Route path="create" element={<CreateUser />} />
+                              <Route path="edit/:id" element={<EditUser />} />
+                            </Route>
+                            <Route path="/settings/data-restaurants">
+                              <Route index element={<ListRestaurantData />} />
+                              <Route
+                                path="create"
+                                element={<CreateRestaurantData />}
+                              />
+                              <Route
+                                path="edit/:id"
+                                element={<EditRestaurantData />}
+                              />
+                            </Route>
+                            <Route path="/settings/gestionStock">
+                              <Route path="/settings/gestionStock/ingredients">
+                                <Route index element={<ListIngredients />} />
+                                <Route
+                                  path="create"
+                                  element={<CreateIngredient />}
+                                />
+                                {/* <Route path="edit/:id" element={<EditMenu />} /> */}
+                              </Route>
+                            </Route>
+                            <Route path="/settings/tresor">
+                              <Route index element={<ListCategoryDepense />} />
+                              <Route
+                                path="create"
+                                element={<CreateCategoryDepense />}
+                              />
+                              <Route path="edit/:id" element={<EditUser />} />
+                            </Route>
+                          </Route>
+                        </>
+
+                        <Route path="*" element={<ErrorComponent />} />
+                      </Route>
+                      <Route
+                        element={
+                          <Authenticated fallback={<Outlet />}>
+                            <NavigateToResource />
+                          </Authenticated>
+                        }
+                      >
+                        <Route
+                          path="/login"
+                          element={<AuthPage type="login" />}
+                        />
+                      </Route>
+                    </>
+                  </Routes>
+
+                  <RefineKbar />
+                  <UnsavedChangesNotifier />
+                </Refine>
+              )}
+            </RefineSnackbarProvider>
+          </ColorModeContextProvider>
+        </RefineKbarProvider>
+      </BrowserRouter>
+    );
+  } else {
+    return (
+      <BrowserRouter>
+        <RefineKbarProvider>
+          <ColorModeContextProvider>
+            <CssBaseline />
+            <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+            <RefineSnackbarProvider>
               <Refine
                 authProvider={authProvider}
                 dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
@@ -138,328 +970,14 @@ function App() {
                     name: "menus",
                     list: "/menus",
                     create: "/commandes/create",
-                    edit: "/commandes/edit/:id",
-                    show: "",
-                    meta: {
-                      label: "Caisse",
-                      canDelete: true,
-                      icon: <AccountBalance />,
-                    },
-                  },
-                  {
-                    name: "commandes",
-                    list: "/commandes",
-                    create: "/commandes/create",
-                    edit: "/commandes/edit/:id",
-                    show: "/commandes/show/:id",
-                    meta: {
-                      canDelete: true,
-                      icon: <AddShoppingCart />,
-                    },
-                  },
-                  {
-                    name: "tresoriers",
-                    list: "/tresoriers",
-                    create: "/tresoriers/create",
                     edit: "",
                     show: "",
                     meta: {
-                      label: "Trésorerie",
-                      canDelete: true,
-                      icon: <Payments />,
-                    },
-                  },
-
-                  {
-                    name: "settings",
-                    meta: {
-                      label: "Paramètres",
-                      icon: <Settings />,
-                    },
-                  },
-
-                  {
-                    name: "gestiondemenu",
-                    meta: {
-                      label: "Gestion de Menu",
-                      parent: "settings",
-                      icon: <Fastfood />,
-                    },
-                  },
-                  {
-                    name: "gestionStock",
-                    meta: {
-                      label: "Gestion de Stock",
-                      parent: "settings",
-                      icon: <Widgets />,
-                    },
-                  },
-                  {
-                    name: "categories",
-                    list: "/settings/gestionMenu/categories",
-                    create: "/settings/gestionMenu/categories/create",
-                    edit: "/settings/gestionMenu/categories/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "gestiondemenu",
-                      icon: <Category />,
-                    },
-                  },
-                  {
-                    name: "menus",
-                    list: "settings/gestionMenu/menus",
-                    create: "/settings/gestionMenu/menus/create",
-                    edit: "/settings/gestionMenu/menus/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "gestiondemenu",
-                      icon: <MenuBook />,
-                    },
-                  },
-                  {
-                    name: "tables",
-                    list: "/settings/gestionMenu/tables",
-                    create: "/settings/gestionMenu/tables/create",
-                    edit: "/settings/gestionMenu/tables/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "gestiondemenu",
-                      icon: <TableRestaurant />,
-                    },
-                  },
-                  {
-                    name: "caisses",
-                    list: "/settings/gestionMenu/caisses",
-                    create: "/settings/gestionMenu/caisses/create",
-                    edit: "/settings/gestionMenu/caisses/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "gestiondemenu",
-                      icon: <AccountBalanceWallet />,
-                    },
-                  },
-                  {
-                    name: "users",
-                    list: "/settings/users",
-                    create: "/settings/users/create",
-                    edit: "/settings/users/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "settings",
-                      icon: <People />,
-                      label: "Utilisateur",
-                    },
-                  },
-                  {
-                    name: "data-restaurants",
-                    list: "/settings/data-restaurants",
-                    create: "/settings/data-restaurants/create",
-                    edit: "/settings/data-restaurants/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "settings",
-                      icon: <TextSnippet />,
-                      label: "Paramètre Générale",
-                    },
-                  },
-                  {
-                    name: "categorie-depenses",
-                    list: "/settings/tresor",
-                    create: "/settings/tresor/create",
-
-                    meta: {
-                      canDelete: true,
-                      parent: "settings",
-                      icon: <AccountBalanceWallet />,
-                    },
-                  },
-                  {
-                    name: "ingredients",
-                    list: "/settings/gestionStock/ingredients",
-                    create: "/settings/gestionStock/ingredients/create",
-                    edit: "/settings/gestionStock/ingredients/edit/:id",
-                    meta: {
-                      canDelete: true,
-                      parent: "gestionStock",
-                      icon: <LocalGroceryStore />,
-                    },
-                  },
-                ]}
-                options={{
-                  syncWithLocation: true,
-                  warnWhenUnsavedChanges: true,
-                }}
-              >
-                <Routes>
-                  <Route
-                    element={
-                      <Authenticated
-                        fallback={<CatchAllNavigate to="/login" />}
-                      >
-                        <ThemedLayoutV2
-                          Header={() => <Header sticky />}
-                          Sider={() => <ThemedSiderV2 Title={Title} />}
-                          // Sider={() => <ThemedSiderV2 />}
-                        >
-                          <Outlet />
-                        </ThemedLayoutV2>
-                      </Authenticated>
-                    }
-                  >
-                    <Route
-                      index
-                      element={<NavigateToResource resource="menus" />}
-                    />
-
-                    <>
-                      {/* Menus */}
-                      <Route path="/menus">
-                        <Route index element={<MenusList />} />
-                        <Route path="create" element={<CreateOrder />} />
-                        <Route path="edit/:id" element={<EditOrder />} />
-                        {/* <Route path="show/:id" element={<BlogPostShow />} />  */}
-                      </Route>
-                      {/* Orders */}
-                      <Route path="/commandes">
-                        <Route index element={<ListOrdes />} />
-                        <Route path="create" element={<CreateOrder />} />
-                        <Route path="edit/:id" element={<EditOrder />} />
-                        <Route path="show/:id" element={<ShowOrder />} />
-                      </Route>
-                      {/* Tresories */}
-                      <Route path="/tresoriers">
-                        <Route index element={<ListTresor />} />
-                        {/* <Route path="create" element={<CreateOrder />} />
-                      <Route path="edit/:id" element={<EditOrder />} />
-                      <Route path="show/:id" element={<ShowOrder />} /> */}
-                      </Route>
-                      {/* Settings */}
-                      <Route path="/settings">
-                        {/* <Route index element={<CategoryList />} /> */}
-                        <Route path="/settings/gestionMenu">
-                          <Route path="/settings/gestionMenu/menus">
-                            <Route index element={<ListMenus />} />
-                            <Route path="create" element={<CreateMenu />} />
-                            <Route path="edit/:id" element={<EditMenu />} />
-                          </Route>
-                          <Route path="/settings/gestionMenu/categories">
-                            <Route index element={<ListCategories />} />
-
-                            <Route path="edit/:id" element={<EditCategory />} />
-                          </Route>
-                          <Route path="/settings/gestionMenu/caisses">
-                            <Route index element={<ListCaisses />} />
-                            <Route path="edit/:id" element={<EditCaisse />} />
-                          </Route>
-                          <Route path="/settings/gestionMenu/tables">
-                            <Route index element={<ListTables />} />
-                            <Route path="edit/:id" element={<EditTable />} />
-                          </Route>
-                        </Route>
-                        <Route path="/settings/users">
-                          <Route index element={<ListUsers />} />
-                          <Route path="create" element={<CreateUser />} />
-                          <Route path="edit/:id" element={<EditUser />} />
-                        </Route>
-                        <Route path="/settings/data-restaurants">
-                          <Route index element={<ListRestaurantData />} />
-                          <Route
-                            path="create"
-                            element={<CreateRestaurantData />}
-                          />
-                          <Route
-                            path="edit/:id"
-                            element={<EditRestaurantData />}
-                          />
-                        </Route>
-                        <Route path="/settings/gestionStock">
-                          <Route path="/settings/gestionStock/ingredients">
-                            <Route index element={<ListIngredients />} />
-                            <Route
-                              path="create"
-                              element={<CreateIngredient />}
-                            />
-                            {/* <Route path="edit/:id" element={<EditMenu />} /> */}
-                          </Route>
-                        </Route>
-                        <Route path="/settings/tresor">
-                          <Route index element={<ListCategoryDepense />} />
-                          <Route
-                            path="create"
-                            element={<CreateCategoryDepense />}
-                          />
-                          <Route path="edit/:id" element={<EditUser />} />
-                        </Route>
-                      </Route>
-                    </>
-
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
-                  <Route
-                    element={
-                      <Authenticated fallback={<Outlet />}>
-                        <NavigateToResource />
-                      </Authenticated>
-                    }
-                  >
-                    <Route
-                      path="/login"
-                      element={
-                        <AuthPage
-                          type="login"
-                          // formProps={{
-                          //   defaultValues: {
-                          //     // email: 'demo@refine.dev',
-                          //     // password: 'demodemo',
-                          //   },
-                          // }}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/register"
-                      element={<AuthPage type="register" />}
-                    />
-                    <Route
-                      path="/forgot-password"
-                      element={<AuthPage type="forgotPassword" />}
-                    />
-                  </Route>
-                </Routes>
-
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-              </Refine>
-            ) : (
-              <Refine
-                authProvider={authProvider}
-                dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
-                notificationProvider={notificationProvider}
-                routerProvider={routerBindings}
-                resources={[
-                  {
-                    name: "menus",
-                    list: "/menus",
-                    create: "/commandes/create",
-                    edit: "/commandes/edit/:id",
-                    show: "",
-                    meta: {
                       label: "Caisse",
                       canDelete: true,
                       icon: <AccountBalance />,
                     },
                   },
-                  {
-                    name: "commandes",
-                    list: "/commandes",
-                    create: "/commandes/create",
-                    edit: "/commandes/edit/:id",
-                    show: "/commandes/show/:id",
-                    meta: {
-                      canDelete: true,
-                      icon: <AddShoppingCart />,
-                    },
-                  },
                 ]}
                 options={{
                   syncWithLocation: true,
@@ -467,89 +985,52 @@ function App() {
                 }}
               >
                 <Routes>
-                  <Route
-                    element={
-                      <Authenticated
-                        fallback={<CatchAllNavigate to="/login" />}
-                      >
-                        <ThemedLayoutV2
-                          Header={() => <Header sticky />}
-                          // Sider={() => (
-                          //   <>
-                          //   <Sider/>
-                          //   </>
-                          // )}
-                        >
-                          <Outlet />
-                        </ThemedLayoutV2>
-                      </Authenticated>
-                    }
-                  >
+                  <>
                     <Route
-                      index
-                      element={<NavigateToResource resource="menus" />}
-                    />
-
-                    <>
-                      {/* Menus */}
-                      <Route path="/menus">
-                        <Route index element={<MenusList />} />
-                        <Route path="create" element={<CreateOrder />} />
-                        <Route path="edit/:id" element={<EditOrder />} />
-                        {/* <Route path="show/:id" element={<BlogPostShow />} />  */}
-                      </Route>
-                      {/* Orders */}
-                      <Route path="/commandes">
-                        <Route index element={<ListOrdes />} />
-                        <Route path="create" element={<CreateOrder />} />
-                        <Route path="edit/:id" element={<EditOrder />} />
-                        <Route path="show/:id" element={<ShowOrder />} />
-                      </Route>
-                    </>
-
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
-                  <Route
-                    element={
-                      <Authenticated fallback={<Outlet />}>
-                        <NavigateToResource />
-                      </Authenticated>
-                    }
-                  >
-                    <Route
-                      path="/login"
                       element={
-                        <AuthPage
-                          type="login"
-                          // formProps={{
-                          //   defaultValues: {
-                          //     // email: 'demo@refine.dev',
-                          //     // password: 'demodemo',
-                          //   },
-                          // }}
-                        />
+                        <Authenticated
+                          fallback={<CatchAllNavigate to="/login" />}
+                        >
+                          <ThemedLayoutV2
+                            Header={() => <Header sticky />}
+                            Sider={() => <ThemedSiderV2 Title={Title} />}
+                          >
+                            <Outlet />
+                          </ThemedLayoutV2>
+                        </Authenticated>
                       }
-                    />
+                    >
+                      <Route
+                        index
+                        element={<NavigateToResource resource="menus" />}
+                      />
+
+                      <Route path="*" element={<ErrorComponent />} />
+                    </Route>
                     <Route
-                      path="/register"
-                      element={<AuthPage type="register" />}
-                    />
-                    <Route
-                      path="/forgot-password"
-                      element={<AuthPage type="forgotPassword" />}
-                    />
-                  </Route>
+                      element={
+                        <Authenticated fallback={<Outlet />}>
+                          <NavigateToResource />
+                        </Authenticated>
+                      }
+                    >
+                      <Route
+                        path="/login"
+                        element={<AuthPage type="login" />}
+                      />
+                    </Route>
+                  </>
                 </Routes>
 
                 <RefineKbar />
                 <UnsavedChangesNotifier />
               </Refine>
-            )}
-          </RefineSnackbarProvider>
-        </ColorModeContextProvider>
-      </RefineKbarProvider>
-    </BrowserRouter>
-  );
+            </RefineSnackbarProvider>
+          </ColorModeContextProvider>
+        </RefineKbarProvider>
+      </BrowserRouter>
+    );
+  }
 }
 
 export default App;

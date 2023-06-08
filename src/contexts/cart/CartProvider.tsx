@@ -1,5 +1,5 @@
-import React, { createContext, useReducer } from 'react';
-import { IMenu } from '../../interfaces';
+import React, { createContext, useReducer } from "react";
+import { IMenu } from "../../interfaces";
 
 type CartItem = {
   id: number;
@@ -12,10 +12,10 @@ type CartState = {
 };
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: CartItem }
-  | { type: 'REMOVE_ITEM'; payload: number }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
-  | { type: 'CLEAR_CART' };
+  | { type: "ADD_ITEM"; payload: CartItem }
+  | { type: "REMOVE_ITEM"; payload: number }
+  | { type: "UPDATE_QUANTITY"; payload: { id: number; quantity: number } }
+  | { type: "CLEAR_CART" };
 
 type CartContextType = {
   cartState: CartState;
@@ -30,13 +30,13 @@ const CartContext = createContext<CartContextType>({
   cartState: initialCartState,
   //   dispatch: () => {},
   dispatch: () => {
-    throw new Error('Dispatch method not implemented');
+    throw new Error("Dispatch method not implemented");
   },
 });
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
-    case 'ADD_ITEM': {
+    case "ADD_ITEM": {
       const existingItem = state.cartItems.find(
         (item) => item.id === action.payload.id
       );
@@ -59,12 +59,12 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         };
       }
     }
-    case 'REMOVE_ITEM':
+    case "REMOVE_ITEM":
       return {
         ...state,
         cartItems: state.cartItems.filter((item) => item.id !== action.payload),
       };
-    case 'UPDATE_QUANTITY':
+    case "UPDATE_QUANTITY":
       return {
         ...state,
         cartItems: state.cartItems.map((item) =>
@@ -73,7 +73,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
             : item
         ),
       };
-    case 'CLEAR_CART':
+    case "CLEAR_CART":
       return {
         ...state,
         cartItems: [],

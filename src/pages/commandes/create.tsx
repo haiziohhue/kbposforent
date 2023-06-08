@@ -37,10 +37,8 @@ import axios from "axios";
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const { data: user } = useGetIdentity<IUser>();
-  const { mutate } = useUpdate();
   const navigate = useNavigate();
   const {
-    refineCore: { onFinish, formLoading },
     saveButtonProps,
     register,
     handleSubmit,
@@ -69,47 +67,40 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const userId = user && user?.id;
   //
 
-  // const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
-  //   caisses?.data.find((caisse: ICaisse) => caisse.id === caisseId)
-  // );
-
-  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | null>(null);
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
+    undefined
+  );
   useEffect(() => {
     const caisseId = user?.caisse?.id;
     if (caisseId) {
       const foundCaisse = caisses?.data?.find(
-        (caisse: ICaisse) => caisse.id === caisseId
+        (caisse: ICaisse) => caisse?.id === caisseId
       );
-      setSelectedCaisse(foundCaisse || null);
+
+      setSelectedCaisse(foundCaisse || undefined);
       localStorage.setItem("selectedCaisseId", String(caisseId));
     } else {
-      setSelectedCaisse(null);
+      setSelectedCaisse(undefined);
       localStorage.removeItem("selectedCaisseId");
     }
-  }, [caisses, user?.caisse?.id]);
-  console.log(selectedCaisse);
-  // ...
+  }, [caisses?.data, user?.caisse]);
 
-  useEffect(() => {
-    const storedCaisseId = localStorage.getItem("selectedCaisseId");
-    const foundCaisse = caisses?.data?.find(
-      (caisse: ICaisse) => caisse.id === Number(storedCaisseId)
-    );
-    setSelectedCaisse(foundCaisse || null);
-  }, [caisses]);
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    caisseId: ICaisse
-  ) => {
-    setSelectedCaisse(caisseId);
-  };
   useEffect(() => {
     setValue(
       "users_permissions_user",
       users?.data?.find((user: IUser) => user?.id === userId)
     );
     setValue("etat", "En cours");
+    setValue("caisse", selectedCaisse);
   }, [selectedCaisse, setValue, userId, users?.data]);
+  // ...
+
+  const handleListItemClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    caisseId: ICaisse
+  ) => {
+    setSelectedCaisse(caisseId);
+  };
 
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
@@ -192,7 +183,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                   flexWrap: "wrap",
                 }}
               >
-                {caisses?.data.map((caisse: ICaisse) => (
+                {caisses?.data?.map((caisse: ICaisse) => (
                   <Button
                     key={caisse.id}
                     onClick={(
@@ -207,13 +198,12 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                       borderRadius: "30px",
                     }}
                     disabled={isLoading}
-                    defaultValue={caisse.id}
                   >
                     <ListItemText primary={caisse.nom} />
                     <input
                       type="hidden"
                       {...register("caisse")}
-                      value={caisse?.id}
+                      // value={caisse}
                     />
                   </Button>
                 ))}

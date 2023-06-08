@@ -20,7 +20,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-  console.log(record);
+
   //
   const apiUrl = useApiUrl();
   const { data } = useCustom<IGeneraleDta[]>({
@@ -28,7 +28,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
     method: "get",
   });
   const restaurantData = data?.data;
-  console.log(restaurantData);
+
   return (
     <Dialog
       open={visible}
@@ -38,26 +38,26 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
     >
       <Box ref={componentRef} sx={{ width: "100%", color: "#000", p: 2 }}>
         {(restaurantData?.data as any)
-                  ?.map((k: any) => ({ id:k.id, ...k.attributes }))
-                  ?.map((item: any) =>  (
-          <>
-            <DialogTitle
-              sx={{ textAlign: "center", fontWeight: 600, fontSize: 16 }}
-            >
-            {item?.nom}
-            </DialogTitle>
-            <Typography
-              sx={{ textAlign: "center", fontWeight: 400, fontSize: 14 }}
-            >
-               {item?.adresse}
-            </Typography>
-            <Typography
-              sx={{ textAlign: "center", fontWeight: 400, fontSize: 14 }}
-            >
-            {item?.phone1} / {item?.phone2}
-            </Typography>
-          </>
-        ))}
+          ?.map((k: any) => ({ id: k.id, ...k.attributes }))
+          ?.map((item: any) => (
+            <>
+              <DialogTitle
+                sx={{ textAlign: "center", fontWeight: 600, fontSize: 16 }}
+              >
+                {item?.nom}
+              </DialogTitle>
+              <Typography
+                sx={{ textAlign: "center", fontWeight: 400, fontSize: 14 }}
+              >
+                {item?.adresse}
+              </Typography>
+              <Typography
+                sx={{ textAlign: "center", fontWeight: 400, fontSize: 14 }}
+              >
+                {item?.phone1} / {item?.phone2}
+              </Typography>
+            </>
+          ))}
         <table
           style={{
             border: "solid",
