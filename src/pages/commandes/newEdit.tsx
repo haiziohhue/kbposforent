@@ -72,7 +72,12 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
   const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
     undefined
   );
-
+  const [selectedTable, setSelectedTable] = useState<ITable | undefined>(
+    undefined
+  );
+  const [type, setType] = useState<"Emporté" | "Sur place" | undefined>(
+    undefined
+  );
   useEffect(() => {
     const caisseId = user?.caisse?.id;
     if (caisseId) {
@@ -95,7 +100,9 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
     );
     setValue("etat", "En cours");
     setValue("caisse", selectedCaisse);
-  }, [selectedCaisse, setValue, userId, users?.data]);
+    // setValue("table", selectedTable);
+    // setValue("type", type);
+  }, [selectedCaisse, selectedTable, setValue, type, userId, users?.data]);
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     caisseId: ICaisse
@@ -117,22 +124,54 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
           nom: data.attributes.caisse.data.attributes.nom,
           balance: data.attributes.caisse.data.attributes.balance,
         });
-        setValue("type", data.attributes.type);
-        setValue("table", data.attributes.table.data?.nom);
+        setSelectedTable({
+          id: data.attributes.table.data?.id,
+          nom: data.attributes.table.data.attributes?.nom,
+          etat: data.attributes.table.data.attributes?.etat,
+        });
+        setType(data?.attributes?.type);
+        // setValue("type", data?.attributes?.type);
+        // setValue("table", data.attributes.table.data?.nom);
         setValue("total", data.attributes.total);
         setValue("menus", data?.attributes?.menus);
       });
   }, [selectedOrder, setValue]);
   console.log(record);
-  console.log(
-    (record?.menus as any)
-      ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-      .map((item: any) => item.menu)
-  );
+  console.log(selectedTable);
+  // const cartOrder = (record?.menus as any)
+  //   ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
+  //   .map((item: any) => item.menu);
 
+  const cartOrder = (record?.menus as any)
+    ?.map((k: any) => ({ ...k, menu: k.menu.data }))
+    .map((item: any) => ({
+      id: item?.menu?.id,
+      menus: item?.menu?.attributes,
+      quantity: item?.quantite,
+    }));
+  console.log("cartOrder", cartOrder);
+
+  // console.log(
+  //   (record?.menus as any)
+  //     ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
+  //     .map((item: any) => item.quantite)
+  // );
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
+  console.log("cartItems", cartItems);
+  // useEffect(() => {
+  //   if (cartItems) {
+  //     dispatch({ type: "SET_CART_ITEMS", payload: cartOrder });
+  //   }
+  // }, [cartItems, cartOrder, dispatch]);
+
+  useEffect(() => {
+    if (!cartState.cartItems || cartState.cartItems.length === 0) {
+      console.log("Dispatching SET_CART_ITEMS action with payload:", cartOrder);
+      dispatch({ type: "SET_CART_ITEMS", payload: cartOrder });
+    }
+  }, [cartState.cartItems, cartOrder, dispatch]);
 
   const handleRemoveItem = (itemId: number) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
@@ -154,14 +193,22 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
   };
 
   // Calculate the total for all items in the cart
+  // const calculateTotal = () => {
+  //   let total = 0;
+  //   for (const item of cartItems) {
+  //     total += calculateSubtotal(item);
+  //   }
+  //   return total;
+  // };
   const calculateTotal = () => {
     let total = 0;
-    for (const item of cartItems) {
-      total += calculateSubtotal(item);
+    if (Array.isArray(cartItems)) {
+      for (const item of cartItems) {
+        total += calculateSubtotal(item);
+      }
     }
     return total;
   };
-  console.log(cartItems);
   const onFinishHandler = async (data: IOrder) => {
     const payload = {
       ...data,
@@ -169,13 +216,16 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
         menu: [item.id],
         quantite: item.quantity,
       })),
-      total: calculateTotal(),
+      // total: calculateTotal(),
     };
 
     try {
-      const response = await axios.post(`${API_URL}/api/commandes`, {
-        data: payload,
-      });
+      const response = await axios.put(
+        `${API_URL}/api/commandes/${selectedOrder}`,
+        {
+          data: payload,
+        }
+      );
       console.log("Request succeeded:", response.data);
       handleClearCart();
       navigate(`/commandes`);
@@ -280,7 +330,6 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                   rules={{
                     required: "This field is required",
                   }}
-                  defaultValue={null as any}
                   render={({ field }) => (
                     <Autocomplete
                       disablePortal
@@ -333,167 +382,28 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                 my: 3,
               }}
             >
-              {/* {cartItems.length === 0 ? (
+              {cartItems?.length === 0 ? (
                 <>
-                  {(record?.menus as any)
-                    ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-                    .map((item: any) => (
-                      <>
-                        <Card
-                          key={item.id}
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            position: "relative",
-                            height: "100%",
-                            width: "100%",
-                            padding: 1,
-                          }}
-                        >
-                          <CardHeader
-                            sx={{ padding: 0, mt: 1 }}
-                            avatar={
-                              <IconButton
-                                onClick={() => handleRemoveItem(item.id)}
-                                sx={{
-                                  width: "30px",
-                                  height: "30px",
-                                }}
-                              >
-                                <CloseOutlined />
-                              </IconButton>
-                            }
-                          />
-                          <Stack direction="row" sx={{ gap: 1 }}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <CardMedia
-                                component="img"
-                                sx={{
-                                  width: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                  height: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                  borderRadius: "50%",
-                                }}
-                                alt={item.menu.titre}
-                                //   image={image?.url}
-                                image={`${API_URL}${item.menu.image?.data?.attributes?.url}`}
-                              />
-                            </Box>
-                            <Divider
-                              orientation="vertical"
-                              variant="middle"
-                              flexItem
-                            />
-                            <Box>
-                              <CardContent
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  gap: 1,
-                                  flex: 1,
-                                  padding: 1,
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    fontWeight: 800,
-                                    fontSize: "16px",
-                                    overflow: "hidden",
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "ellipsis",
-                                  }}
-                                >
-                                  {item.menu.titre} {""}
-                                  {""}
-                                  <span
-                                    style={{
-                                      fontWeight: 600,
-                                      fontSize: "14px",
-                                      marginLeft: 10,
-                                    }}
-                                  >
-                                    x{item?.quantity}
-                                  </span>
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    fontWeight: 600,
-                                    fontSize: "16px",
-                                    overflow: "hidden",
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "ellipsis",
-                                  }}
-                                >
-                                  {calculateSubtotal(item)}
-                                </Typography>
-                              </CardContent>
-                              <CardActions
-                                sx={{
-                                  display: "flex",
-                                }}
-                              >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: "8px",
-                                  }}
-                                >
-                                  <Button
-                                    variant="contained"
-                                    size="small"
-                                    onClick={() =>
-                                      handleQuantityChange(
-                                        item.id,
-                                        item.quantity + 1
-                                      )
-                                    }
-                                  >
-                                    <Add />
-                                  </Button>
-                                  <Typography
-                                    sx={{
-                                      fontWeight: 600,
-                                      fontSize: "18px",
-                                      overflow: "hidden",
-                                      whiteSpace: "nowrap",
-                                      textOverflow: "ellipsis",
-                                    }}
-                                  >
-                                    {item?.quantity}
-                                  </Typography>
-                                  {item.quantity > 1 && (
-                                    <Button
-                                      variant="contained"
-                                      onClick={() =>
-                                        handleQuantityChange(
-                                          item.id,
-                                          item.quantity === 1
-                                            ? 1
-                                            : item.quantity - 1
-                                        )
-                                      }
-                                    >
-                                      <Remove />
-                                    </Button>
-                                  )}
-                                </Box>
-                              </CardActions>
-                            </Box>
-                          </Stack>
-                        </Card>
-                      </>
-                    ))}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <img
+                      src="images/empty_cart_1.svg"
+                      alt="empty shopping cart"
+                      style={{
+                        padding: 6,
+                        width: 150,
+                      }}
+                    />
+                  </Box>
                 </>
               ) : (
                 <>
-                  {cartItems.map((item) => (
+                  {cartItems?.map((item) => (
                     <>
                       <Card
                         key={item.id}
@@ -536,8 +446,11 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                 borderRadius: "50%",
                               }}
                               alt={item.menus.titre}
-                              //   image={image?.url}
-                              image={`${API_URL}${item.menus.image?.url}`}
+                              image={
+                                item.menus.image?.data?.attributes?.url
+                                  ? `${API_URL}${item.menus.image.data.attributes.url}`
+                                  : `${API_URL}${item.menus.image?.url}`
+                              }
                             />
                           </Box>
                           <Divider
@@ -564,7 +477,8 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                   textOverflow: "ellipsis",
                                 }}
                               >
-                                {item.menus.titre} {""}
+                                {item.menus.titre}
+                                {""}
                                 {""}
                                 <span
                                   style={{
@@ -573,7 +487,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                     marginLeft: 10,
                                   }}
                                 >
-                                  x{item?.quantity}
+                                  x {item?.quantity}
                                 </span>
                               </Typography>
                               <Typography
@@ -647,163 +561,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                     </>
                   ))}
                 </>
-              )} */}
-
-              {(record?.menus as any)
-                ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-                .map((item: any) => (
-                  <>
-                    <Card
-                      key={item.id}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        position: "relative",
-                        height: "100%",
-                        width: "100%",
-                        padding: 1,
-                      }}
-                    >
-                      <CardHeader
-                        sx={{ padding: 0, mt: 1 }}
-                        avatar={
-                          <IconButton
-                            onClick={() => handleRemoveItem(item.id)}
-                            sx={{
-                              width: "30px",
-                              height: "30px",
-                            }}
-                          >
-                            <CloseOutlined />
-                          </IconButton>
-                        }
-                      />
-                      <Stack direction="row" sx={{ gap: 1 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <CardMedia
-                            component="img"
-                            sx={{
-                              width: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                              height: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                              borderRadius: "50%",
-                            }}
-                            alt={item.menu.titre}
-                            //   image={image?.url}
-                            image={`${API_URL}${item.menu.image?.data?.attributes?.url}`}
-                          />
-                        </Box>
-                        <Divider
-                          orientation="vertical"
-                          variant="middle"
-                          flexItem
-                        />
-                        <Box>
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 1,
-                              flex: 1,
-                              padding: 1,
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                fontWeight: 800,
-                                fontSize: "16px",
-                                overflow: "hidden",
-                                whiteSpace: "nowrap",
-                                textOverflow: "ellipsis",
-                              }}
-                            >
-                              {item.menu.titre} {""}
-                              {""}
-                              <span
-                                style={{
-                                  fontWeight: 600,
-                                  fontSize: "14px",
-                                  marginLeft: 10,
-                                }}
-                              >
-                                x {item?.quantite}
-                              </span>
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontWeight: 600,
-                                fontSize: "16px",
-                                overflow: "hidden",
-                                whiteSpace: "nowrap",
-                                textOverflow: "ellipsis",
-                              }}
-                            >
-                              {item.menu.prix}
-                            </Typography>
-                          </CardContent>
-                          <CardActions
-                            sx={{
-                              display: "flex",
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                gap: "8px",
-                              }}
-                            >
-                              <Button
-                                variant="contained"
-                                size="small"
-                                onClick={() =>
-                                  handleQuantityChange(
-                                    item.id,
-                                    item.quantity + 1
-                                  )
-                                }
-                              >
-                                <Add />
-                              </Button>
-                              <Typography
-                                sx={{
-                                  fontWeight: 600,
-                                  fontSize: "18px",
-                                  overflow: "hidden",
-                                  whiteSpace: "nowrap",
-                                  textOverflow: "ellipsis",
-                                }}
-                              >
-                                {item?.quantity}
-                              </Typography>
-                              {item.quantity > 1 && (
-                                <Button
-                                  variant="contained"
-                                  onClick={() =>
-                                    handleQuantityChange(
-                                      item.id,
-                                      item.quantity === 1
-                                        ? 1
-                                        : item.quantity - 1
-                                    )
-                                  }
-                                >
-                                  <Remove />
-                                </Button>
-                              )}
-                            </Box>
-                          </CardActions>
-                        </Box>
-                      </Stack>
-                    </Card>
-                  </>
-                ))}
+              )}
             </Stack>
           </Box>
           <Divider />
@@ -824,9 +582,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                 textOverflow: "ellipsis",
               }}
             >
-              {record?.attributes?.total
-                ? record?.attributes?.total
-                : calculateTotal()}
+              {calculateTotal()}
             </Typography>
           </Stack>
         </Box>

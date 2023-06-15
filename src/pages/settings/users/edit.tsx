@@ -109,14 +109,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
     });
 
   //
-  const [showPassword, setshowPassword] = useState<boolean>(false);
-  const handleClickShowPassword = () => setshowPassword((show) => !show);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-  //
 
   const { data } = useCustom<IRole[]>({
     url: `${apiUrl}/users-permissions/roles`,
@@ -146,7 +138,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                         display: "none",
                       }}
                       onChange={onChangeHandler}
-                    
                     />
                     <input id="file" {...register("photo")} type="hidden" />
                     <Avatar
@@ -163,7 +154,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                           lg: "200px",
                         },
                       }}
-
                       src={imageURL}
                       alt="User Picture"
                     />
@@ -476,7 +466,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                       rules={{
                         required: "This field is required",
                       }}
-                       defaultValue={null as any}
+                      defaultValue={null as any}
                       render={({ field }) => (
                         <Autocomplete
                           size="small"
@@ -502,51 +492,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                     {errors.role && (
                       <FormHelperText error>
                         {errors.role.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                  {/* Password */}
-                  <FormControl variant="outlined" fullWidth>
-                    <FormLabel
-                      required
-                      sx={{
-                        marginBottom: "8px",
-                        fontFamily: "Inter",
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        color: "text.primary",
-                      }}
-                    >
-                      Mot de Passe
-                    </FormLabel>
-
-                    <OutlinedInput
-                      id="outlined"
-                      type={showPassword ? "text" : "password"}
-                      {...register("password", {
-                        required: "This field is required",
-                      })}
-                      size="small"
-                      error={!!errors.password?.message}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            color="primary"
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                          >
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      sx={{ backgroundColor: "white" }}
-                      fullWidth
-                    />
-                    {errors.password && (
-                      <FormHelperText error>
-                        {errors.password.message}
                       </FormHelperText>
                     )}
                   </FormControl>

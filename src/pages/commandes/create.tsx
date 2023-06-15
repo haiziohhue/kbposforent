@@ -105,7 +105,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
-
+  console.log(cartItems);
   const handleRemoveItem = (itemId: number) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
   };
@@ -365,7 +365,6 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                                 borderRadius: "50%",
                               }}
                               alt={item.menus.titre}
-                              //   image={image?.url}
                               image={`${API_URL}${item.menus.image?.url}`}
                             />
                           </Box>
