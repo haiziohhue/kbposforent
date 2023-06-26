@@ -25,14 +25,14 @@ import { API_URL } from "../../constants";
 import {
   Button,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   CardMedia,
   Divider,
 } from "@mui/material";
-import { Add, Edit, Remove } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import { PrintReceipt } from "../../components/order/PrintReceipt";
+import { useNavigate } from "react-router-dom";
 
 interface ShowOrderProps {
   id: number;
@@ -42,6 +42,7 @@ export const ShowOrder: React.FC<
 > = ({ modal: { visible, close }, id }) => {
   //
   const { mutate } = useUpdate();
+  const navigate = useNavigate();
   const [record, setRecord] = useState<IOrder | null>(null);
 
   useEffect(() => {
@@ -53,9 +54,6 @@ export const ShowOrder: React.FC<
         const data = await response.json();
         console.log(data?.data.attributes);
         setRecord(data?.data.attributes);
-
-        //setMenus(data?.data?.attributes?.menus?.data)
-        // setMenus(data?.data)
       } catch (error) {
         console.error(error);
       }
@@ -284,6 +282,9 @@ export const ShowOrder: React.FC<
                         borderColor: "#ff9800",
                         width: "100%",
                       }}
+                      onClick={() => {
+                        navigate("/menus?selectedOrder=" + id);
+                      }}
                     >
                       Modifier
                     </Button>
@@ -346,6 +347,9 @@ export const ShowOrder: React.FC<
                     color: "#ff9800",
                     borderColor: "#ff9800",
                     width: "100%",
+                  }}
+                  onClick={() => {
+                    navigate("/menus?selectedOrder=" + id);
                   }}
                 >
                   Modifier

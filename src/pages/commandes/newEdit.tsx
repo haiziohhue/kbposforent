@@ -23,7 +23,7 @@ import {
   useGetIdentity,
   useList,
 } from "@refinedev/core";
-import { Create, Edit, useAutocomplete } from "@refinedev/mui";
+import { Create, useAutocomplete } from "@refinedev/mui";
 import React, { useContext, useEffect, useState } from "react";
 import { ICaisse, ICartMenu, IOrder, ITable, IUser } from "../../interfaces";
 import { useForm } from "@refinedev/react-hook-form";
@@ -75,9 +75,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
   const [selectedTable, setSelectedTable] = useState<ITable | undefined>(
     undefined
   );
-  const [type, setType] = useState<"Emporté" | "Sur place" | undefined>(
-    undefined
-  );
+  const [type, setType] = useState<"Emporté" | "Sur place">("Emporté");
   useEffect(() => {
     const caisseId = user?.caisse?.id;
     if (caisseId) {
@@ -100,8 +98,8 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
     );
     setValue("etat", "En cours");
     setValue("caisse", selectedCaisse);
-    // setValue("table", selectedTable);
-    // setValue("type", type);
+    setValue("type", type);
+    setValue("table", selectedTable);
   }, [selectedCaisse, selectedTable, setValue, type, userId, users?.data]);
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -125,23 +123,18 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
           balance: data.attributes.caisse.data.attributes.balance,
         });
         setSelectedTable({
-          id: data.attributes.table.data?.id,
-          nom: data.attributes.table.data.attributes?.nom,
-          etat: data.attributes.table.data.attributes?.etat,
+          id: data.attributes.table.data.id,
+          nom: data.attributes.table.data.attributes.nom,
+          etat: data.attributes.table.data.attributes.etat,
         });
-        setType(data?.attributes?.type);
-        // setValue("type", data?.attributes?.type);
-        // setValue("table", data.attributes.table.data?.nom);
+        setType(data.attributes?.type);
         setValue("total", data.attributes.total);
         setValue("menus", data?.attributes?.menus);
       });
   }, [selectedOrder, setValue]);
   console.log(record);
   console.log(selectedTable);
-  // const cartOrder = (record?.menus as any)
-  //   ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-  //   .map((item: any) => item.menu);
-
+  console.log(type);
   const cartOrder = (record?.menus as any)
     ?.map((k: any) => ({ ...k, menu: k.menu.data }))
     .map((item: any) => ({
@@ -151,24 +144,13 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
     }));
   console.log("cartOrder", cartOrder);
 
-  // console.log(
-  //   (record?.menus as any)
-  //     ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-  //     .map((item: any) => item.quantite)
-  // );
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
   console.log("cartItems", cartItems);
-  // useEffect(() => {
-  //   if (cartItems) {
-  //     dispatch({ type: "SET_CART_ITEMS", payload: cartOrder });
-  //   }
-  // }, [cartItems, cartOrder, dispatch]);
 
   useEffect(() => {
     if (!cartState.cartItems || cartState.cartItems.length === 0) {
-      console.log("Dispatching SET_CART_ITEMS action with payload:", cartOrder);
       dispatch({ type: "SET_CART_ITEMS", payload: cartOrder });
     }
   }, [cartState.cartItems, cartOrder, dispatch]);
@@ -193,13 +175,6 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
   };
 
   // Calculate the total for all items in the cart
-  // const calculateTotal = () => {
-  //   let total = 0;
-  //   for (const item of cartItems) {
-  //     total += calculateSubtotal(item);
-  //   }
-  //   return total;
-  // };
   const calculateTotal = () => {
     let total = 0;
     if (Array.isArray(cartItems)) {
@@ -216,7 +191,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
         menu: [item.id],
         quantite: item.quantity,
       })),
-      // total: calculateTotal(),
+      total: calculateTotal(),
     };
 
     try {
@@ -234,7 +209,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
     }
   };
   return (
-    <Edit
+    <Create
       saveButtonProps={saveButtonProps}
       title={<div style={{ display: "none" }} />}
       goBack={<div style={{ display: "none" }} />}
@@ -244,7 +219,6 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
           display: "none",
         },
       }}
-      // wrapperProps={{ sx: { overflowY: 'scroll', height: '100vh' } }}
     >
       <form onSubmit={handleSubmit(onFinishHandler)}>
         <Box sx={{ gap: 2 }}>
@@ -296,7 +270,6 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                 rules={{
                   required: "This field is required",
                 }}
-                defaultValue={null as any}
                 render={({ field }) => (
                   <Autocomplete
                     size="medium"
@@ -304,6 +277,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                     onChange={(_, value) => {
                       field.onChange(value);
                     }}
+                    value={type || ""}
                     options={["Sur place", "Emporté"]}
                     renderInput={(params) => (
                       <TextField
@@ -312,6 +286,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                         label="Type"
                         error={!!errors.type}
                         required
+                        value={type || ""}
                       />
                     )}
                   />
@@ -603,6 +578,6 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
           </Button>
         </Box>
       </form>
-    </Edit>
+    </Create>
   );
 };

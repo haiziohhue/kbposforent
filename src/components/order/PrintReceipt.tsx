@@ -34,7 +34,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
       open={visible}
       onClose={close}
       PaperProps={{ sx: { minWidth: 700 } }}
-      sx={{ zIndex: "1302" }}
+      sx={{ zIndex: "1350" }}
     >
       <Box ref={componentRef} sx={{ width: "100%", color: "#000", p: 2 }}>
         {(restaurantData?.data as any)

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
@@ -7,7 +7,6 @@ import {
   useNavigation,
   useUpdate,
   getDefaultFilter,
-  useDelete,
   useCreate,
 } from "@refinedev/core";
 import {
