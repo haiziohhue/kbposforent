@@ -22,13 +22,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  AddCircleOutline,
-  Delete,
-  Edit,
-  RemoveCircleOutline,
-} from "@mui/icons-material";
-import { CreateButton, EditButton, List, SaveButton } from "@refinedev/mui";
+import { Delete, Edit } from "@mui/icons-material";
+import { EditButton, List, SaveButton } from "@refinedev/mui";
 import { CreateCategory } from "./create";
 
 export const ListCategories: React.FC<IResourceComponentsProps> = () => {
@@ -56,7 +51,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
         id: "nom",
         accessorKey: "nom",
         header: "Title",
-        cell: function render({ row, getValue }) {
+        cell: function render({ getValue }) {
           return (
             <Stack direction="row" alignItems="center" spacing={3}>
               <Typography>{getValue() as string}</Typography>
@@ -103,7 +98,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                     onClick={() => {
                       mutateDelete({
                         resource: "categories",
-                        id: row.original.id,
+                        id: row?.original.id,
                         mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });

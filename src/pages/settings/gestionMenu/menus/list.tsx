@@ -4,10 +4,10 @@ import {
   useApiUrl,
   useTable,
   getDefaultFilter,
-} from '@refinedev/core';
-import React from 'react';
-import { IMenu } from '../../../../interfaces';
-import { CreateButton, useDataGrid } from '@refinedev/mui';
+} from "@refinedev/core";
+import React from "react";
+import { IMenu } from "../../../../interfaces";
+import { CreateButton, useDataGrid } from "@refinedev/mui";
 import {
   Grid,
   IconButton,
@@ -16,25 +16,23 @@ import {
   Paper,
   Stack,
   Typography,
-} from '@mui/material';
-import { Search } from '@mui/icons-material';
-import { MenuItem } from './item';
-import { useModalForm } from '@refinedev/react-hook-form';
-import { CreateMenu } from './create';
-import { CategoryFilter } from './CategoryFilter';
-import { EditMenu } from './edit';
+} from "@mui/material";
+import { Search } from "@mui/icons-material";
+import { MenuItem } from "./item";
+import { useModalForm } from "@refinedev/react-hook-form";
+import { CreateMenu } from "./create";
+import { CategoryFilter } from "./CategoryFilter";
+import { EditMenu } from "./edit";
 
 export const ListMenus: React.FC<IResourceComponentsProps> = () => {
-  const apiUrl = useApiUrl();
-  console.log(apiUrl);
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
     useTable<IMenu>({
       resource: `menus`,
       initialPageSize: 12,
-      meta: { populate: ['image'] },
+      meta: { populate: ["image"] },
     });
   const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
-    refineCoreProps: { action: 'create', meta: { populate: ['image'] } },
+    refineCoreProps: { action: "create", meta: { populate: ["image"] } },
   });
 
   const {
@@ -42,7 +40,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
   } = createDrawerFormProps;
 
   const editDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
-    refineCoreProps: { action: 'edit', meta: { populate: "*"} },
+    refineCoreProps: { action: "edit", meta: { populate: "*" } },
   });
 
   const {
@@ -76,8 +74,8 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
               <Paper
                 component="form"
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   width: 400,
                 }}
               >
@@ -85,23 +83,23 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
                   sx={{ ml: 1, flex: 1 }}
                   placeholder="Recherche"
                   inputProps={{
-                    'aria-label': 'product search',
+                    "aria-label": "product search",
                   }}
-                  value={getDefaultFilter('titre', filters, 'contains')}
+                  value={getDefaultFilter("titre", filters, "contains")}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setFilters([
                       {
-                        field: 'titre',
-                        operator: 'contains',
+                        field: "titre",
+                        operator: "contains",
                         value:
-                          e.target.value !== '' ? e.target.value : undefined,
+                          e.target.value !== "" ? e.target.value : undefined,
                       },
                     ]);
                   }}
                 />
                 <IconButton
                   type="submit"
-                  sx={{ p: '10px' }}
+                  sx={{ p: "10px" }}
                   aria-label="search"
                 >
                   <Search />
@@ -110,7 +108,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
               <CreateButton
                 onClick={() => showCreateModal()}
                 variant="contained"
-                sx={{ marginBottom: '5px' }}
+                sx={{ marginBottom: "5px" }}
               >
                 Ajouter Menu
               </CreateButton>
@@ -125,7 +123,7 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
                     lg={4}
                     xl={3}
                     key={menu.id}
-                    sx={{ padding: '8px' }}
+                    sx={{ padding: "8px" }}
                   >
                     <MenuItem menu={menu} show={showEditModal} />
                   </Grid>
@@ -142,9 +140,9 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
               color="primary"
               shape="rounded"
               sx={{
-                display: 'flex',
-                justifyContent: 'end',
-                paddingY: '20px',
+                display: "flex",
+                justifyContent: "end",
+                paddingY: "20px",
               }}
               onChange={(event: React.ChangeEvent<unknown>, page: number) => {
                 event.preventDefault();
@@ -158,8 +156,8 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
             md={4}
             sx={{
               display: {
-                xs: 'none',
-                md: 'block',
+                xs: "none",
+                md: "block",
               },
             }}
           >

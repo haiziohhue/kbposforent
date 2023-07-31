@@ -31,7 +31,8 @@
     "react-hook-form": "^7.30.0",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.8.1",
-    "react-to-print": "^2.14.12"
+    "react-to-print": "^2.14.12",
+    "serve": "^14.2.0"
   },
   "devDependencies": {
     "@types/node": "^18.16.2",
@@ -48,7 +49,7 @@
   },
   "scripts": {
     "dev": "refine dev",
-    "build": "tsc && refine build",
+    "build": "refine build",
     "preview": "refine start",
     "refine": "refine"
   },

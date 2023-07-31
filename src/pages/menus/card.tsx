@@ -65,6 +65,7 @@ export const MenuCard: React.FC<MenuCard> = ({
       sx={{
         display: "flex",
         flexDirection: "column",
+        cursor: "pointer",
         position: "relative",
         height: "100%",
         backgroundColor: isSelected

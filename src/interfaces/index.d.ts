@@ -1,6 +1,8 @@
+type Option = "Générale" | "Menu composé";
 export interface ICategory {
   id: number;
   nom: string;
+  type: Option;
 }
 
 export interface IMenu {
@@ -135,6 +137,8 @@ export interface IIngredients {
   cout?: number;
   source?: string;
   note?: string;
+  type: Option;
+  categorie: ICategory;
 }
 
 export interface IGeneraleDta {
@@ -143,4 +147,10 @@ export interface IGeneraleDta {
   adresse?: string;
   phone1?: string;
   phone2?: string;
+}
+
+export interface IMenuType {
+  type: "Pizza" | "Sucré";
+  label: "string";
+  ingredients: [];
 }

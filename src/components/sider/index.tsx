@@ -37,7 +37,7 @@ import {
 } from "@refinedev/core";
 import { RefineThemedLayoutV2SiderProps } from "@refinedev/ui-types";
 import { useSiderVisible } from "@refinedev/mui";
-import { ThemedTitleV2 as DefaultTitle } from "../title";
+import { Title as DefaultTitle } from "../title";
 export const Sider: React.FC<RefineThemedLayoutV2SiderProps> = ({
   Title: TitleFromProps,
   render,
