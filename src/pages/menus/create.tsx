@@ -1,6 +1,6 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import React, { useState } from "react";
-import { ICategory, IMenu } from "../../../../interfaces";
+import { ICategory, IMenu } from "../../interfaces";
 import { HttpError } from "@refinedev/core";
 import {
   Autocomplete,
@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
-import { API_URL } from "../../../../constants";
+import { API_URL } from "../../constants";
 import axios from "axios";
 
 import { CloseOutlined } from "@mui/icons-material";

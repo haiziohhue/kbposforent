@@ -63,15 +63,9 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
   // const imageInput = watch("photo");
   const [date, setDate] = React.useState<Date | null>(null);
 
-  useEffect(() => {
-    if (date) {
-      setValue("date_naissance", date);
-    }
-  }, [date, setValue]);
-  console.log(date);
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [imageURL, setImageURL] = useState("");
-
+  console.log(imageURL);
   const onChangeHandler = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -114,9 +108,13 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
     url: `${apiUrl}/users-permissions/roles`,
     method: "get",
   });
-  const roles = data?.data ?? [];
+  const roles = data?.data?.roles ?? [];
   console.log(roles);
-
+  console.log(
+    roles
+      .filter((role: IRole) => role?.id === 3 || role?.id === 4)
+      .map((r: IRole) => ({ id: r?.id, name: r?.name }))
+  );
   const renderFormByStep = (step: number) => {
     switch (step) {
       case 0:
@@ -132,6 +130,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                 <Stack gap={1} justifyContent="center" alignItems="center">
                   <label htmlFor="avatar-input">
                     <Input
+                      name="photo"
                       id="avatar-input"
                       type="file"
                       sx={{
@@ -466,18 +465,39 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                       rules={{
                         required: "This field is required",
                       }}
-                      defaultValue={null as any}
                       render={({ field }) => (
                         <Autocomplete
                           size="small"
                           {...field}
+                          options={roles
+                            .filter(
+                              (role: IRole) => role?.id === 3 || role?.id === 4
+                            )
+                            .map((r: IRole) => ({ ...r }))}
                           onChange={(_, value) => {
+                            console.log(value);
                             field.onChange(value?.id);
                           }}
-                          options={[
-                            { label: "Admin", id: 4 },
-                            { label: "Caissier", id: 3 },
-                          ]}
+                          value={roles.filter(
+                            (role: IRole) => role?.id === 3 || role?.id === 4
+                          )}
+                          // options={[
+                          //   { label: "Admin", id: 4 },
+                          //   { label: "Caissier", id: 3 },
+                          // ]}
+
+                          getOptionLabel={(option) => {
+                            console.log(option);
+                            return option?.name ? option?.name : "";
+                          }}
+                          isOptionEqualToValue={(option, value) =>
+                            option?.id === value?.id
+                          }
+                          // isOptionEqualToValue={(option, value) =>
+                          //   value === undefined ||
+                          //   option?.id?.toString() ===
+                          //     (value?.id ?? value)?.toString()
+                          // }
                           renderInput={(params) => (
                             <TextField
                               {...params}

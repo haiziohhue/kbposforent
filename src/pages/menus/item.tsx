@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { IMenu } from '../../../../interfaces';
-import { BaseKey, useDelete } from '@refinedev/core';
+import React, { useState } from "react";
+import { IMenu } from "../../interfaces";
+import { BaseKey, useDelete } from "@refinedev/core";
 import {
   Box,
   Button,
@@ -13,9 +13,9 @@ import {
   Popover,
   Tooltip,
   Typography,
-} from '@mui/material';
-import { Delete, Edit, MoreVert } from '@mui/icons-material';
-import { API_URL } from '../../../../constants';
+} from "@mui/material";
+import { Delete, Edit, MoreVert } from "@mui/icons-material";
+import { API_URL } from "../../constants";
 type MenuItem = {
   //   updateStock?: (changedValue: number, clickedProduct: IMenu) => void;
   menu: IMenu;
@@ -36,14 +36,14 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
   };
 
   const open = Boolean(anchorEl);
-  const popoverId = open ? 'simple-popover' : undefined;
+  const popoverId = open ? "simple-popover" : undefined;
   return (
     <Card
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        height: "100%",
       }}
     >
       <CardHeader
@@ -52,7 +52,7 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
             <IconButton
               aria-describedby={popoverId}
               onClick={handleClick}
-              sx={{ marginRight: '10px', marginTop: '4px' }}
+              sx={{ marginRight: "10px", marginTop: "4px" }}
               aria-label="settings"
             >
               <MoreVert />
@@ -63,8 +63,8 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: "bottom",
+                horizontal: "left",
               }}
             >
               <Button
@@ -75,8 +75,8 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
                 size="small"
                 startIcon={<Edit />}
                 sx={{
-                  padding: '5px 10px',
-                  color: '#4caf50',
+                  padding: "5px 10px",
+                  color: "#4caf50",
                 }}
               >
                 Modifier menu
@@ -84,9 +84,9 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
               <Button
                 onClick={() => {
                   mutateDelete({
-                    resource: 'menus',
+                    resource: "menus",
                     id: id,
-                    mutationMode: 'undoable',
+                    mutationMode: "undoable",
                     undoableTimeout: 10000,
                   });
                   console.log(id);
@@ -94,7 +94,7 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
                 size="small"
                 startIcon={<Delete />}
                 sx={{
-                  padding: '5px 10px',
+                  padding: "5px 10px",
                 }}
               >
                 Supprimer menu
@@ -106,8 +106,8 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
       />
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <CardMedia
@@ -115,7 +115,7 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
           sx={{
             width: { xs: 60, sm: 84, lg: 124, xl: 144 },
             height: { xs: 60, sm: 84, lg: 124, xl: 144 },
-            borderRadius: '50%',
+            borderRadius: "50%",
           }}
           alt={titre}
           //   image={image?.url}
@@ -124,9 +124,9 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
       </Box>
       <CardContent
         sx={{
-          paddingX: '36px',
-          display: 'flex',
-          flexDirection: 'column',
+          paddingX: "36px",
+          display: "flex",
+          flexDirection: "column",
           flex: 1,
         }}
       >
@@ -135,10 +135,10 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
           <Typography
             sx={{
               fontWeight: 800,
-              fontSize: '18px',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
+              fontSize: "18px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
             }}
           >
             {titre}
@@ -149,13 +149,13 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
             variant="body2"
             sx={{
               mt: 2,
-              overflowWrap: 'break-word',
-              color: 'text.secondary',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitLineClamp: '3',
-              WebkitBoxOrient: 'vertical',
+              overflowWrap: "break-word",
+              color: "text.secondary",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "3",
+              WebkitBoxOrient: "vertical",
               flex: 1,
             }}
           >
@@ -167,11 +167,11 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
           <Typography
             sx={{
               fontWeight: 500,
-              fontSize: '24px',
-              overflowWrap: 'break-word',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
+              fontSize: "24px",
+              overflowWrap: "break-word",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
             }}
           >{`${prix} DA`}</Typography>
         </Tooltip>

@@ -3,7 +3,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { CrudFilters, getDefaultFilter, useList } from "@refinedev/core";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
-import { ICategory } from "../../../../interfaces";
+import { ICategory } from "../../interfaces";
 
 type ProductItemProps = {
   setFilters: (filters: CrudFilters) => void;

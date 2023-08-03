@@ -1,17 +1,14 @@
 import {
+  HttpError,
   IResourceComponentsProps,
+  useApiUrl,
   useTable,
   getDefaultFilter,
-  HttpError,
 } from "@refinedev/core";
-import React, { useContext, useState } from "react";
-
+import React from "react";
+import { IMenu } from "../../interfaces";
+import { CreateButton, useDataGrid } from "@refinedev/mui";
 import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  CardMedia,
   Grid,
   IconButton,
   InputBase,
@@ -20,71 +17,60 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Add, Search } from "@mui/icons-material";
-
-import { CategoryFilter } from "../settings/gestionMenu/menus/CategoryFilter";
-import { ICartMenu, IMenu } from "../../interfaces";
-import { MenuCard } from "./card";
-import { CreateOrder } from "../commandes";
-import { useSearchParams } from "react-router-dom";
-import { NewEdit } from "../commandes/newEdit";
-import { ColorModeContext } from "../../contexts/color-mode";
+import { Search } from "@mui/icons-material";
+import { MenuItem } from "./item";
 import { useModalForm } from "@refinedev/react-hook-form";
-import { CreateMenuCompose } from "./compose";
+import { CreateMenu } from "./create";
+import { CategoryFilter } from "./CategoryFilter";
+import { EditMenu } from "./edit";
 
-export const MenusList: React.FC<IResourceComponentsProps> = () => {
-  const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
-  const [cartItems, setCartItems] = useState<ICartMenu[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const selectedOrder = searchParams.get("selectedOrder");
-  const { mode } = useContext(ColorModeContext);
-  //
-  const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
-    refineCoreProps: { action: "create", meta: { populate: ["image"] } },
-  });
-  const {
-    modal: { show: showCreateModal },
-  } = createDrawerFormProps;
-  //
+export const ListMenus: React.FC<IResourceComponentsProps> = () => {
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
     useTable<IMenu>({
       resource: `menus`,
       initialPageSize: 12,
       meta: { populate: ["image"] },
     });
+  const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
+    refineCoreProps: { action: "create", meta: { populate: ["image"] } },
+  });
 
+  const {
+    modal: { show: showCreateModal },
+  } = createDrawerFormProps;
+
+  const editDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
+    refineCoreProps: { action: "edit", meta: { populate: "*" } },
+  });
+
+  const {
+    modal: { show: showEditModal },
+  } = editDrawerFormProps;
   const menus: IMenu[] = tableQueryResult.data?.data || [];
-
-  // const addToCart = (menu: IMenu) => {
-  //   const newItem: ICartMenu = {
-  //     id: menu.id,
-  //     menus: menu,
-  //     quantity: 1,
-  //   };
-  //   setCartItems((prevCartItems) => [...prevCartItems, newItem]);
-  // };
-
+  console.log(menus);
   return (
     <>
-      <CreateMenuCompose {...createDrawerFormProps} />
-      <Grid container columns={16} spacing={2}>
-        <Grid item xs={16} md={12}>
-          <Paper
-            sx={{
-              paddingX: { xs: 3, md: 2 },
-              paddingY: { xs: 2, md: 3 },
-              my: 0.5,
-            }}
-          >
+      <CreateMenu {...createDrawerFormProps} />
+      <EditMenu {...editDrawerFormProps} />
+      <Paper
+        sx={{
+          paddingX: { xs: 3, md: 2 },
+          paddingY: { xs: 2, md: 3 },
+          my: 0.5,
+        }}
+      >
+        <Grid container columns={16}>
+          <Grid item xs={16} md={12}>
             <Stack
               display="flex"
-              justifyContent="center"
+              justifyContent="space-between"
               alignItems="center"
               flexWrap="wrap"
               padding={1}
               direction="row"
               gap={2}
             >
+              <Typography variant="h5">Menus</Typography>
               <Paper
                 component="form"
                 sx={{
@@ -119,89 +105,29 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                   <Search />
                 </IconButton>
               </Paper>
-            </Stack>
-            <Stack padding="8px">
-              <CategoryFilter setFilters={setFilters} filters={filters} />
+              <CreateButton
+                onClick={() => showCreateModal()}
+                variant="contained"
+                sx={{ marginBottom: "5px" }}
+              >
+                Ajouter Menu
+              </CreateButton>
             </Stack>
             <Grid container>
-              <Card
-                onClick={() => showCreateModal()}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  position: "relative",
-                  borderWidth: 2,
-                  paddingX: "36px",
-                  cursor: "pointer",
-                  height: "100%",
-                  marginX: 1.5,
-                  marginY: 1,
-                  color: "rgb(239, 83, 80)",
-                  // backgroundColor:
-                  //   mode === "light"
-                  //     ? "rgba(211, 47, 47, 0.08)"
-                  //     : "rgba(239, 83, 80, 0.16)",
-                }}
-              >
-                <CardHeader sx={{ padding: 0, mt: 2 }} />
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CardMedia
-                    sx={{
-                      width: { xs: 60, sm: 84, lg: 108, xl: 144 },
-                      height: { xs: 60, sm: 84, lg: 108, xl: 144 },
-                    }}
-                  />
-                </Box>
-                <CardContent
-                  sx={{
-                    paddingX: "36px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: "18px",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    Composez
-                  </Typography>
-                  <Add sx={{ width: "60px", height: "60px" }} />
-                </CardContent>
-              </Card>
               {menus.length > 0 ? (
-                menus
-                  .filter((menu: IMenu) => menu.active === true)
-                  .map((menu: IMenu) => (
-                    <Grid
-                      item
-                      xs={6}
-                      md={6}
-                      lg={4}
-                      xl={3}
-                      key={menu.id}
-                      sx={{ padding: "8px" }}
-                    >
-                      <MenuCard
-                        menu={menu}
-                        selectedCards={selctedMenu}
-                        onCardSelect={setSelectedMenu}
-                        // onAddToCart={() => addToCart(menu)}
-                      />
-                    </Grid>
-                  ))
+                menus.map((menu: IMenu) => (
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    lg={4}
+                    xl={3}
+                    key={menu.id}
+                    sx={{ padding: "8px" }}
+                  >
+                    <MenuItem menu={menu} show={showEditModal} />
+                  </Grid>
+                ))
               ) : (
                 <Grid container justifyContent="center" padding={3}>
                   <Typography variant="body2">Pas de Menus</Typography>
@@ -223,31 +149,27 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                 setCurrent(page);
               }}
             />
-          </Paper>
-        </Grid>
-        <Grid
-          item
-          sm={0}
-          md={4}
-          sx={{
-            display: {
-              xs: "none",
-              md: "block",
-            },
-          }}
-        >
-          {/* <Paper
+          </Grid>
+          <Grid
+            item
+            sm={0}
+            md={4}
             sx={{
-              paddingX: { xs: 3, md: 2 },
-              paddingY: { xs: 2, md: 3 },
-              my: 0.5,
+              display: {
+                xs: "none",
+                md: "block",
+              },
             }}
-          > */}
-
-          {selectedOrder ? <NewEdit /> : <CreateOrder />}
-          {/* </Paper> */}
+          >
+            <Stack padding="8px">
+              <Typography variant="subtitle1">
+                Utilisez des tags pour filtrer votre recherche
+              </Typography>
+              <CategoryFilter setFilters={setFilters} filters={filters} />
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
+      </Paper>
     </>
   );
 };

@@ -9,12 +9,7 @@ import {
   ThemedSiderV2,
 } from "@refinedev/mui";
 
-import {
-  CircularProgress,
-  CssBaseline,
-  GlobalStyles,
-  Typography,
-} from "@mui/material";
+import { CircularProgress, CssBaseline, GlobalStyles } from "@mui/material";
 import routerBindings, {
   CatchAllNavigate,
   NavigateToResource,
@@ -35,7 +30,6 @@ import {
   Settings,
   TableRestaurant,
   Fastfood,
-  RestaurantMenu,
   Widgets,
   LocalGroceryStore,
   Category,
@@ -43,11 +37,7 @@ import {
   People,
   TextSnippet,
 } from "@mui/icons-material";
-import {
-  CreateMenu,
-  EditMenu,
-  ListMenus,
-} from "./pages/settings/gestionMenu/menus";
+import { CreateMenu, EditMenu, ListMenus } from "./pages/menus";
 import {
   CreateOrder,
   EditOrder,
@@ -60,7 +50,7 @@ import {
 } from "./pages/settings/gestionMenu/categories";
 import { EditCaisse, ListCaisses } from "./pages/settings/gestionMenu/caisses";
 import { EditTable, ListTables } from "./pages/settings/gestionMenu/tables";
-import { MenusList } from "./pages/menus";
+import { MenusList } from "./pages/caisse";
 import { ListTresor } from "./pages/tresoriers";
 import { CreateUser, EditUser, ListUsers } from "./pages/settings/users";
 import { AuthPage } from "./pages/auth/AuthPage";
@@ -72,7 +62,7 @@ import {
   CreateIngredient,
   ListIngredients,
 } from "./pages/settings/gestionStock/ingredients";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
 import axios from "axios";
 import {
@@ -81,7 +71,10 @@ import {
   ListRestaurantData,
 } from "./pages/settings/generales";
 import { Title } from "./components/title";
-import { AppContext } from "./contexts/user/AppProvider";
+
+import { SettingsList } from "./pages/parametres/SettingsList";
+import { StockList } from "./pages/stocks/suiviStock/list";
+import { ProductsList } from "./pages/stocks/produit/list";
 
 function App() {
   //
@@ -234,8 +227,8 @@ function App() {
                   routerProvider={routerBindings}
                   resources={[
                     {
-                      name: "menus",
-                      list: "/menus",
+                      name: "",
+                      list: "/caisse",
                       create: "/commandes/create",
                       edit: "",
                       show: "",
@@ -268,7 +261,55 @@ function App() {
                         icon: <Payments />,
                       },
                     },
+                    {
+                      name: "menus",
+                      list: "/menus",
+                      create: "/menus/create",
+                      edit: "/menus/edit/:id",
+                      meta: {
+                        label: "Gestion de Menu",
+                        canDelete: true,
+                        icon: <MenuBook />,
+                      },
+                    },
+                    {
+                      name: "gestionDeStock",
+                      meta: {
+                        label: "Gestion de Stock",
+                        icon: <Widgets />,
+                      },
+                    },
+                    {
+                      name: "Stocks",
+                      list: "/stocks/suiviStock",
+                      create: "/stocks/users/create",
+                      edit: "/stocks/users/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestionDeStock",
 
+                        label: "Suivi de Stock",
+                      },
+                    },
+                    {
+                      name: "Ingredients",
+                      list: "/stocks/produit",
+                      create: "/stocks/users/create",
+                      edit: "/stocks/users/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestionDeStock",
+                        label: "List Ingredients",
+                      },
+                    },
+                    {
+                      name: "parametres",
+                      list: "/parametres",
+                      meta: {
+                        label: "Paramètres",
+                        icon: <Settings />,
+                      },
+                    },
                     {
                       name: "settings",
                       meta: {
@@ -304,17 +345,7 @@ function App() {
                         icon: <Category />,
                       },
                     },
-                    {
-                      name: "menus",
-                      list: "settings/gestionMenu/menus",
-                      create: "/settings/gestionMenu/menus/create",
-                      edit: "/settings/gestionMenu/menus/edit/:id",
-                      meta: {
-                        canDelete: true,
-                        parent: "gestiondemenu",
-                        icon: <MenuBook />,
-                      },
-                    },
+
                     {
                       name: "tables",
                       list: "/settings/gestionMenu/tables",
@@ -412,7 +443,7 @@ function App() {
 
                         <>
                           {/* Menus */}
-                          <Route path="/menus">
+                          <Route path="/caisse">
                             <Route index element={<MenusList />} />
                             <Route path="create" element={<CreateOrder />} />
                           </Route>
@@ -427,14 +458,29 @@ function App() {
                           <Route path="/tresoriers">
                             <Route index element={<ListTresor />} />
                           </Route>
+                          {/* Gestion de Menu */}
+                          <Route path="/menus">
+                            <Route index element={<ListMenus />} />
+                            <Route path="create" element={<CreateMenu />} />
+                            <Route path="edit/:id" element={<EditMenu />} />
+                          </Route>
+                          {/* Gestion de Stock */}
+                          <Route path="/stocks">
+                            <Route path="/stocks/produit">
+                              <Route index element={<ProductsList />} />
+                            </Route>
+                            <Route path="/stocks/suiviStock">
+                              <Route index element={<StockList />} />
+                            </Route>
+                          </Route>
+                          {/* Settings */}
+                          <Route path="/parametres">
+                            <Route index element={<SettingsList />} />
+                          </Route>
+
                           {/* Settings */}
                           <Route path="/settings">
                             <Route path="/settings/gestionMenu">
-                              <Route path="/settings/gestionMenu/menus">
-                                <Route index element={<ListMenus />} />
-                                <Route path="create" element={<CreateMenu />} />
-                                <Route path="edit/:id" element={<EditMenu />} />
-                              </Route>
                               <Route path="/settings/gestionMenu/categories">
                                 <Route index element={<ListCategories />} />
 

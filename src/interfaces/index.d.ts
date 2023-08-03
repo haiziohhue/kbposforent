@@ -88,8 +88,8 @@ export interface IUser {
   date_naissance?: Date;
   adresse?: string;
   caisse?: ICaisse;
-  role?: { label?: string; id?: number };
-  //  role: IRole;
+  // role?: { label?: string; id?: number };
+  role: IRole;
 }
 export interface IUserMe {
   id: number;
