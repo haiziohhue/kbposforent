@@ -19,7 +19,7 @@ import {
 import { Edit, SaveButton } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
 import { CloseOutlined } from "@mui/icons-material";
-import { IIngredients } from "../../../../interfaces";
+import { IIngredients } from "../../../interfaces";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";

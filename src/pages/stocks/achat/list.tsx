@@ -12,46 +12,29 @@ import Grid from "@mui/material/Grid";
 import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
 
 import { Delete, Edit } from "@mui/icons-material";
-import { IIngredients } from "../../../../interfaces";
+import { IAchat, IIngredients } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
-import { CreateIngredient } from "./create";
-import { EditIngredient } from "./edit";
+import { CreateAchat } from "./create";
 
-export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
+export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
-  const { dataGridProps } = useDataGrid<IIngredients, HttpError>({
+  const { dataGridProps } = useDataGrid<IAchat, HttpError>({
     initialPageSize: 10,
     meta: { populate: "*" },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<IIngredients>>(
+  const columns = React.useMemo<GridColumns<IAchat>>(
     () => [
       {
-        field: "nom",
-        headerName: "Nom",
+        field: "id",
+        headerName: "N°Achat",
         headerAlign: "center",
         align: "center",
         flex: 1,
         minWidth: 90,
       },
 
-      {
-        field: "quantite",
-        headerName: "Quantite",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        minWidth: 90,
-      },
-      {
-        field: "cout",
-        headerName: "Cout",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        minWidth: 90,
-      },
       {
         field: "source",
         headerName: "Source",
@@ -60,20 +43,29 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
+
       {
         field: "createdAt",
-        headerName: "Date d'Expiration",
+        headerName: "Date de Creation",
         flex: 1,
         minWidth: 170,
         renderCell: function render({ row }) {
           return (
             <DateField
-              value={row.date_expiration}
+              value={row.date}
               format="LLL"
               sx={{ fontSize: "14px" }}
             />
           );
         },
+      },
+      {
+        field: "note",
+        headerName: "Note",
+        headerAlign: "center",
+        align: "center",
+        flex: 1,
+        minWidth: 90,
       },
       {
         field: "actions",
@@ -140,8 +132,8 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
   //
   return (
     <>
-      <CreateIngredient {...createDrawerFormProps} />
-      <EditIngredient {...editDrawerFormProps} />
+      <CreateAchat {...createDrawerFormProps} />
+      {/* <EditIngredient {...editDrawerFormProps} /> */}
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>
@@ -160,7 +152,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
                 variant="contained"
                 sx={{ marginBottom: "5px" }}
               >
-                Ajouter Ingredient
+                Ajouter
               </CreateButton>
             }
             createButtonProps={
@@ -176,9 +168,6 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
               columns={columns}
               filterModel={undefined}
               autoHeight
-              onRowClick={({ id }) => {
-                show("users", id);
-              }}
               rowsPerPageOptions={[10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,

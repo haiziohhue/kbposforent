@@ -23,22 +23,22 @@ import {
 import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
 import { CloseOutlined } from "@mui/icons-material";
-import { ICategory, IIngredients } from "../../../../interfaces";
+import { ICategory, IIngredients } from "../../../interfaces";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { API_URL } from "../../../../constants";
+import { API_URL } from "../../../constants";
 
 type Option = "Générale" | "Menu composé";
 type Ingredient = {
   nom: string;
   type: Option;
   quantite?: number;
-  date_expiration: Date;
-  cout: number;
-  source: string;
+  date_expiration?: Date;
+  cout?: number;
+  source?: string;
   note: string;
   categorie?: number | null;
 };
@@ -221,7 +221,7 @@ export const CreateIngredient: React.FC<
                 <form onSubmit={handleSubmit(onFinish)}>
                   <Stack gap="10px" marginTop="10px">
                     <FormControl>
-                      <FormLabel required>Nom</FormLabel>
+                      <FormLabel required>Nom d'Ingredient</FormLabel>
                       <OutlinedInput
                         id="Nom"
                         value={ingredient.nom}
@@ -242,7 +242,7 @@ export const CreateIngredient: React.FC<
                       )}
                     </FormControl>
 
-                    <Stack
+                    {/* <Stack
                       direction="row"
                       justifyContent="space-between"
                       spacing={2}
@@ -294,13 +294,13 @@ export const CreateIngredient: React.FC<
                           </FormHelperText>
                         )}
                       </FormControl>
-                    </Stack>
+                    </Stack> */}
                     <Stack
                       direction="row"
                       justifyContent="space-between"
                       spacing={2}
                     >
-                      <FormControl fullWidth>
+                      {/* <FormControl fullWidth>
                         <FormLabel required>Source</FormLabel>
                         <OutlinedInput
                           type="text"
@@ -321,19 +321,12 @@ export const CreateIngredient: React.FC<
                             {errors.source.message}
                           </FormHelperText>
                         )}
-                      </FormControl>
+                      </FormControl> */}
                       {/* date_expiration */}
-                      <FormControl fullWidth>
+                      {/* <FormControl fullWidth>
                         <FormLabel>Date d'Expiration</FormLabel>
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          {/* <DatePicker
-                            value={watch('date_naissance') }
-                            format="DD-MM-YYYY"
-                             onChange={(newValue) => setDate(newValue)}
-                        
-                       
-                          /> */}
                           <Controller
                             name="date_expiration"
                             control={control}
@@ -364,8 +357,28 @@ export const CreateIngredient: React.FC<
                             {errors.date_expiration.message}
                           </FormHelperText>
                         )}
-                      </FormControl>
+                      </FormControl> */}
                     </Stack>
+                    {/* Unitées de mesure */}
+                    <FormControl>
+                      <FormLabel>Unité de mesure</FormLabel>
+                      <OutlinedInput
+                        value={ingredient.nom}
+                        id="Nom"
+                        {...register("unitedemesure")}
+                        onChange={(e) =>
+                          dispatch({
+                            type: "SET_NAME",
+                            payload: e.target.value,
+                          })
+                        }
+                      />
+                      {errors.nom && (
+                        <FormHelperText error>
+                          {errors.nom.message}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
                     {/* Note */}
                     <FormControl>
                       <FormLabel>Note</FormLabel>

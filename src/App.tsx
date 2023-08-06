@@ -58,10 +58,7 @@ import {
   CreateCategoryDepense,
   ListCategoryDepense,
 } from "./pages/settings/tresor";
-import {
-  CreateIngredient,
-  ListIngredients,
-} from "./pages/settings/gestionStock/ingredients";
+import { CreateIngredient, ListIngredients } from "./pages/stocks/produit";
 import { useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
 import axios from "axios";
@@ -74,7 +71,8 @@ import { Title } from "./components/title";
 
 import { SettingsList } from "./pages/parametres/SettingsList";
 import { StockList } from "./pages/stocks/suiviStock/list";
-import { ProductsList } from "./pages/stocks/produit/list";
+
+import { ListAchat } from "./pages/stocks/achat/list";
 
 function App() {
   //
@@ -280,6 +278,30 @@ function App() {
                       },
                     },
                     {
+                      name: "ingredients",
+                      list: "/stocks/produit",
+                      create: "/stocks/produit/create",
+                      edit: "/stocks/produit/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestionDeStock",
+                        label: "List Ingredients",
+                        icon: false,
+                      },
+                    },
+                    {
+                      name: "achats",
+                      list: "/stocks/achat",
+                      create: "/stocks/achat/create",
+                      edit: "/stocks/achat/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestionDeStock",
+                        label: "Achat",
+                        icon: false,
+                      },
+                    },
+                    {
                       name: "Stocks",
                       list: "/stocks/suiviStock",
                       create: "/stocks/users/create",
@@ -287,21 +309,11 @@ function App() {
                       meta: {
                         canDelete: true,
                         parent: "gestionDeStock",
-
                         label: "Suivi de Stock",
+                        icon: false,
                       },
                     },
-                    {
-                      name: "Ingredients",
-                      list: "/stocks/produit",
-                      create: "/stocks/users/create",
-                      edit: "/stocks/users/edit/:id",
-                      meta: {
-                        canDelete: true,
-                        parent: "gestionDeStock",
-                        label: "List Ingredients",
-                      },
-                    },
+
                     {
                       name: "parametres",
                       list: "/parametres",
@@ -467,7 +479,18 @@ function App() {
                           {/* Gestion de Stock */}
                           <Route path="/stocks">
                             <Route path="/stocks/produit">
-                              <Route index element={<ProductsList />} />
+                              <Route index element={<ListIngredients />} />
+                              <Route
+                                path="create"
+                                element={<CreateIngredient />}
+                              />
+                            </Route>
+                            <Route path="/stocks/achat">
+                              <Route index element={<ListAchat />} />
+                              <Route
+                                path="create"
+                                element={<CreateIngredient />}
+                              />
                             </Route>
                             <Route path="/stocks/suiviStock">
                               <Route index element={<StockList />} />

@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 type Option = "Générale" | "Menu composé";
 export interface ICategory {
   id: number;
@@ -137,8 +139,9 @@ export interface IIngredients {
   cout?: number;
   source?: string;
   note?: string;
-  type: Option;
-  categorie: ICategory;
+  type?: Option;
+  categorie?: ICategory;
+  unitedemesure?: string;
 }
 
 export interface IGeneraleDta {
@@ -153,4 +156,14 @@ export interface IMenuType {
   type: "Pizza" | "Sucré";
   label: "string";
   ingredients: [];
+}
+
+export interface IAchat {
+  id: number;
+  source: string;
+  // date: Date;
+  date: Dayjs | null;
+  etat: "Validé" | "Annulé";
+  total: number;
+  note: string;
 }
