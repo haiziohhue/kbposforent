@@ -21,7 +21,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
   const { dataGridProps } = useDataGrid<IAchat, HttpError>({
     initialPageSize: 10,
-    meta: { populate: "*" },
+    meta: { populate: "deep" },
   });
   console.log(dataGridProps.rows);
   const columns = React.useMemo<GridColumns<IAchat>>(
@@ -52,7 +52,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
         renderCell: function render({ row }) {
           return (
             <DateField
-              value={row.date}
+              value={row?.createdAt}
               format="LLL"
               sx={{ fontSize: "14px" }}
             />
@@ -90,7 +90,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
             icon={<Delete color="error" />}
             onClick={() => {
               mutateDelete({
-                resource: "ingredients",
+                resource: "achats",
                 id: row.id,
                 mutationMode: "undoable",
                 undoableTimeout: 10000,
@@ -106,11 +106,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   const { show } = useNavigation();
 
   //
-  const createDrawerFormProps = useModalForm<
-    IIngredients,
-    HttpError,
-    IIngredients
-  >({
+  const createDrawerFormProps = useModalForm<IAchat, HttpError, IAchat>({
     refineCoreProps: { action: "create" },
   });
 
@@ -118,11 +114,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showCreateModal },
   } = createDrawerFormProps;
 
-  const editDrawerFormProps = useModalForm<
-    IIngredients,
-    HttpError,
-    IIngredients
-  >({
+  const editDrawerFormProps = useModalForm<IAchat, HttpError, IAchat>({
     refineCoreProps: { action: "edit", meta: { populate: "*" } },
   });
 

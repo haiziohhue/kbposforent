@@ -134,14 +134,8 @@ export interface LoginFormTypes {
 export interface IIngredients {
   id: number;
   nom?: string;
-  quantite?: number;
-  date_expiration?: Date;
-  cout?: number;
-  source?: string;
   note?: string;
-  type?: Option;
-  categorie?: ICategory;
-  unitedemesure?: string;
+  unite?: string;
 }
 
 export interface IGeneraleDta {
@@ -161,9 +155,21 @@ export interface IMenuType {
 export interface IAchat {
   id: number;
   source: string;
-  // date: Date;
-  date: Dayjs | null;
+  createdAt: Dayjs | null;
   etat: "Validé" | "Annulé";
   total: number;
   note: string;
+}
+
+export interface IChef {
+  id: number;
+  chef: string;
+  categories?: ICategory;
+}
+export interface IBC {
+  id: number;
+  createdAt: Dayjs | null;
+  etat: "Validé" | "Annulé";
+  note: string;
+  chef: IChef;
 }

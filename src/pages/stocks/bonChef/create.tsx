@@ -23,43 +23,47 @@ import {
   Typography,
 } from "@mui/material";
 import { HttpError } from "@refinedev/core";
-import { Create, SaveButton } from "@refinedev/mui";
+import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
 import dayjs from "dayjs";
-import { IAchat } from "interfaces";
+import { IBC, IChef } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Controller } from "react-hook-form";
 //
 const initialState = {
   articles: [],
   produits: [],
-  br: {
-    dateTime: dayjs(),
-    source: "",
+  bc: {
+    // chef: "",
+    chef: {
+      chef: "",
+      id: null,
+    },
     note: "",
   },
 };
 //
 
-const reducer = (state: any, action: any) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "SET_ARTICLES":
       return { ...state, articles: action.payload };
     case "SET_PRODUITS":
       return { ...state, produits: action.payload };
-    case "SET_BR":
-      return { ...state, br: action.payload };
+    case "SET_BC":
+      return { ...state, bc: action.payload };
     default:
       return state;
   }
 };
 //
-export const CreateAchat: React.FC<
-  UseModalFormReturnType<IAchat, HttpError, IAchat>
+export const CreateBC: React.FC<
+  UseModalFormReturnType<IBC, HttpError, IBC>
 > = ({
   saveButtonProps,
   control,
@@ -72,41 +76,26 @@ export const CreateAchat: React.FC<
 }) => {
   //
   const navigate = useNavigate();
-  const [{ articles, br, produits }, dispatch] = useReducer(
+  const [{ articles, bc, produits }, dispatch] = useReducer(
     reducer,
     initialState
   );
   const handleChange = (event) => {
     dispatch({
-      type: "SET_BR",
-      payload: { ...br, [event.target.name]: event.target.value },
+      type: "SET_BC",
+      payload: { ...bc, [event.target.name]: event.target.value },
     });
   };
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
       quantite: 1,
-      prix: 0,
-      date_expiration: dayjs(),
-      total: 0,
       state: true,
     };
-    newArticle.total = calculateSubtotal(newArticle);
+
     dispatch({ type: "SET_ARTICLES", payload: [...articles, newArticle] });
   };
-  // Calculate the subtotal for each article
-  const calculateSubtotal = (article) => {
-    return article.prix * article.quantite;
-  };
 
-  // Calculate the total for all items in the articles
-  const calculateTotal = () => {
-    let total = 0;
-    for (const article of articles) {
-      total += calculateSubtotal(article);
-    }
-    return total;
-  };
   //delete row by index
   const deleteRow = (index: unknown) => {
     dispatch({
@@ -114,6 +103,13 @@ export const CreateAchat: React.FC<
       payload: articles.filter((_, i) => i !== index),
     });
   };
+  //
+
+  const { autocompleteProps } = useAutocomplete<IChef>({
+    resource: "chefs",
+    meta: { populate: "*" },
+  });
+
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
@@ -135,36 +131,18 @@ export const CreateAchat: React.FC<
   //
   console.log(produits);
   //   console.log(articles);
-  console.log(
-    produits
-      .filter((k) => !articles.map((e) => e.article.id).includes(k.id))
-      .map((option) => {
-        return {
-          label: option.ingredient?.data?.attributes?.nom,
-          id: option.id,
-          value: option,
-        };
-      })
-  );
+  console.log(autocompleteProps.options);
   //
-  console.log(
-    articles?.map((article) => ({
-      stock: article.article.id,
-      quantite: article.quantite,
-      cout: article.prix,
-      total: article.total,
-      date_expiration: article.date_expiration.format("DD-MM-YYYY"),
-    }))
-  );
+
   //
   const columns: GridColDef[] = [
     {
       field: "article",
       headerName: "Article",
-      width: 250,
+      width: 300,
       resizable: true,
       type: "string",
-      minWidth: 200,
+      minWidth: 300,
       headerAlign: "left",
       align: "left",
       renderCell: (params: GridCellParams) => {
@@ -229,7 +207,7 @@ export const CreateAchat: React.FC<
     {
       field: "quantite",
       headerName: "Quantité",
-      width: 150,
+      width: 200,
       resizable: true,
       type: "number",
 
@@ -256,103 +234,11 @@ export const CreateAchat: React.FC<
         return <Typography variant="body1">{params.row.quantite}</Typography>;
       },
     },
-    {
-      field: "prix",
-      headerName: "Prix",
-      width: 150,
-      resizable: true,
-      type: "number",
 
-      headerAlign: "left",
-      align: "left",
-      renderCell: (params) => {
-        if (params.row.state)
-          return (
-            <TextField
-              value={params.row.prix}
-              fullWidth
-              onChange={(e) => {
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i
-                      ? { ...row, prix: +e.target.value || 0 }
-                      : row
-                  ),
-                });
-              }}
-            />
-          );
-        return <Typography variant="body1">{params.row.prix}</Typography>;
-      },
-    },
-    {
-      field: "date_expiration",
-      headerName: "Date Expiration",
-      width: 180,
-      resizable: true,
-      type: "date",
-      headerAlign: "left",
-      align: "left",
-      renderCell: (params) => {
-        if (params.row.state) {
-          return (
-            <TextField
-              type="date"
-              value={dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
-              fullWidth
-              onChange={(e) => {
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i
-                      ? {
-                          ...row,
-                          date_expiration: dayjs(e.target.value).toISOString(),
-                        }
-                      : row
-                  ),
-                });
-              }}
-            />
-          );
-        }
-        return (
-          <Typography variant="body1">
-            {dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
-          </Typography>
-        );
-      },
-    },
-    // {
-    //   field: "total",
-    //   headerName: "Total",
-    //   width: 120,
-    //   headerAlign: "center",
-    //   align: "center",
-    //   valueGetter: (params) => {
-    //     const row = params.row;
-    //     return row.prix * row.quantite;
-    //   },
-    //   renderCell: (params) => (
-    //     <Typography variant="body1">{params.value}</Typography>
-    //   ),
-    // },
-    {
-      field: "total",
-      headerName: "Total",
-      width: 120,
-      headerAlign: "center",
-      align: "center",
-      valueGetter: (params) => calculateSubtotal(params.row),
-      renderCell: (params) => (
-        <Typography variant="body1">{calculateSubtotal(params.row)}</Typography>
-      ),
-    },
     {
       field: "state",
       headerName: "State",
-      width: 80,
+      width: 100,
       resizable: true,
       type: "boolean",
       headerAlign: "left",
@@ -420,22 +306,18 @@ export const CreateAchat: React.FC<
   //
   const onFinishHandler = async () => {
     const payload = {
-      source: br.source,
+      chef: bc.chef.id,
       ingredients: articles
         ?.filter((k) => !k.state)
         ?.map((article) => ({
           stock: article.article.id,
           quantite: article.quantite,
-          cout: article.prix,
-          //   total: article.total,
-          date_expiration: article.date_expiration,
         })),
-      total: calculateTotal(),
       etat: "Validé",
     };
     console.log(payload);
     try {
-      const response = await axios.post(`${API_URL}/api/achats`, {
+      const response = await axios.post(`${API_URL}/api/bon-chefs`, {
         data: payload,
       });
       console.log("Request succeeded:", response.data);
@@ -453,14 +335,14 @@ export const CreateAchat: React.FC<
       PaperProps={{
         sx: {
           width: "100%",
-          height: "800px",
-          maxWidth: "1024px",
+          height: "700px",
+          maxWidth: "900px",
         },
       }}
     >
       <Create
         saveButtonProps={saveButtonProps}
-        title={<Typography fontSize={24}>Nouveau Achat</Typography>}
+        title={<Typography fontSize={24}>Nouveau Bon Chef</Typography>}
         breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (
@@ -492,40 +374,98 @@ export const CreateAchat: React.FC<
           >
             <form onSubmit={handleSubmit(onFinishHandler)}>
               <Stack gap="10px" flexDirection="row">
-                <FormControl fullWidth>
-                  <FormLabel required>Source</FormLabel>
-                  <OutlinedInput
-                    id="Nom"
-                    value={br.source}
-                    {...register("source", {
-                      required: "This field is required",
-                    })}
-                    onChange={handleChange}
-                  />
-                  {errors.source && (
-                    <FormHelperText error>
-                      {errors.source.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
                 {/* <FormControl fullWidth>
-                  <FormLabel>Note</FormLabel>
-                  <OutlinedInput
-                    id="Nom"
-                    value={br.note}
-                    {...register("note")}
-                    onChange={handleChange}
+                  <FormLabel required>Chef</FormLabel>
+                  <Controller
+                    control={control}
+                    name="chef"
+                    rules={{
+                      required: "This field is required",
+                    }}
+                    render={({ field }) => (
+                      <Autocomplete
+                        disablePortal
+                        {...field}
+                        {...autocompleteProps}
+                        value={bc.chef}
+                        onChange={(_, value) => {
+                          field.onChange(value?.id);
+                        }}
+                        getOptionLabel={(item) => {
+                          console.log(item);
+                          return item?.chef ? item?.chef : "";
+                        }}
+                        isOptionEqualToValue={(option, value) =>
+                          value === undefined ||
+                          option?.id?.toString() ===
+                            (value?.id ?? value)?.toString()
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            error={!!errors.chef?.message}
+                            required
+                          />
+                        )}
+                      />
+                    )}
                   />
-                  {errors.note && (
-                    <FormHelperText error>{errors.note.message}</FormHelperText>
+                  {errors.chef && (
+                    <FormHelperText error>{errors.chef.message}</FormHelperText>
                   )}
                 </FormControl> */}
+                <FormControl fullWidth>
+                  <Autocomplete
+                    id="tags-filled"
+                    // value={bc.chef ?? ""}
+                    options={
+                      autocompleteProps.options?.map(
+                        (option: { chef: string; id: number }) => {
+                          return {
+                            label: option?.chef,
+                            id: option?.id,
+                            value: option,
+                          };
+                        }
+                      ) || []
+                    }
+                    onChange={(event, newValue) => {
+                      if (newValue === null) return;
+                      dispatch({
+                        type: "SET_BC",
+                        payload: { ...bc, chef: newValue },
+                      });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Entrepot"
+                        placeholder="Entrepot"
+                      />
+                    )}
+                  />
+                </FormControl>
+                {/* <FormControl fullWidth>
+                    <FormLabel>Note</FormLabel>
+                    <OutlinedInput
+                      id="Nom"
+                      value={br.note}
+                      {...register("note")}
+                      onChange={handleChange}
+                    />
+                    {errors.note && (
+                      <FormHelperText error>{errors.note.message}</FormHelperText>
+                    )}
+                  </FormControl> */}
               </Stack>
               <Box sx={{ mt: 4 }}>
                 <Box
                   sx={{
-                    height: 150 + 53 * articles.length,
-                    maxHeight: 350,
+                    // height: 150 + 53 * articles.length,
+                    height: 250,
+                    maxHeight: 250,
                     width: "100%",
                     overflow: `auto `,
                   }}
@@ -563,7 +503,6 @@ export const CreateAchat: React.FC<
                 >
                   Ajouter un article
                 </Button>
-                <Typography>Total: {calculateTotal()}</Typography>
               </Box>
             </form>
           </Box>
@@ -571,10 +510,10 @@ export const CreateAchat: React.FC<
         <DialogActions>
           <SaveButton {...saveButtonProps} />
           <Button
+            {...saveButtonProps}
             variant="contained"
             onClick={() => {
               onFinishHandler();
-              navigate(`/stocks/achat`);
             }}
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >

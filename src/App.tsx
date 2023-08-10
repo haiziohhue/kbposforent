@@ -66,13 +66,14 @@ import {
   CreateRestaurantData,
   EditRestaurantData,
   ListRestaurantData,
-} from "./pages/settings/generales";
+} from "./pages/parametres/generales";
 import { Title } from "./components/title";
 
 import { SettingsList } from "./pages/parametres/SettingsList";
 import { StockList } from "./pages/stocks/suiviStock/list";
 
 import { ListAchat } from "./pages/stocks/achat/list";
+import { ListBC } from "./pages/stocks/bonChef/list";
 
 function App() {
   //
@@ -285,7 +286,7 @@ function App() {
                       meta: {
                         canDelete: true,
                         parent: "gestionDeStock",
-                        label: "List Ingredients",
+                        label: "Ingredients",
                         icon: false,
                       },
                     },
@@ -298,6 +299,18 @@ function App() {
                         canDelete: true,
                         parent: "gestionDeStock",
                         label: "Achat",
+                        icon: false,
+                      },
+                    },
+                    {
+                      name: "bon-chefs",
+                      list: "/stocks/bonChef",
+                      create: "/stocks/bonChef/create",
+                      edit: "/stocks/bonChef/edit/:id",
+                      meta: {
+                        canDelete: true,
+                        parent: "gestionDeStock",
+                        label: "Bon Chef",
                         icon: false,
                       },
                     },
@@ -392,18 +405,10 @@ function App() {
                         label: "Utilisateur",
                       },
                     },
-                    {
-                      name: "data-restaurants",
-                      list: "/settings/data-restaurants",
-                      create: "/settings/data-restaurants/create",
-                      edit: "/settings/data-restaurants/edit/:id",
-                      meta: {
-                        canDelete: true,
-                        parent: "settings",
-                        icon: <TextSnippet />,
-                        label: "Paramètre Générale",
-                      },
-                    },
+                    // {
+                    //   name: "data-restaurants",
+                    //   list: "/parametres/data-restaurants",
+                    // },
                     {
                       name: "categorie-depenses",
                       list: "/settings/tresor",
@@ -480,17 +485,12 @@ function App() {
                           <Route path="/stocks">
                             <Route path="/stocks/produit">
                               <Route index element={<ListIngredients />} />
-                              <Route
-                                path="create"
-                                element={<CreateIngredient />}
-                              />
                             </Route>
                             <Route path="/stocks/achat">
                               <Route index element={<ListAchat />} />
-                              <Route
-                                path="create"
-                                element={<CreateIngredient />}
-                              />
+                            </Route>
+                            <Route path="/stocks/bonChef">
+                              <Route index element={<ListBC />} />
                             </Route>
                             <Route path="/stocks/suiviStock">
                               <Route index element={<StockList />} />
@@ -499,6 +499,17 @@ function App() {
                           {/* Settings */}
                           <Route path="/parametres">
                             <Route index element={<SettingsList />} />
+                            <Route path="/parametres/generales">
+                              <Route index element={<ListRestaurantData />} />
+                              <Route
+                                path="create"
+                                element={<CreateRestaurantData />}
+                              />
+                              <Route
+                                path="edit/:id"
+                                element={<EditRestaurantData />}
+                              />
+                            </Route>
                           </Route>
 
                           {/* Settings */}

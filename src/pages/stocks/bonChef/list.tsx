@@ -12,39 +12,62 @@ import Grid from "@mui/material/Grid";
 import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
 
 import { Delete, Edit } from "@mui/icons-material";
-import { IIngredients } from "../../../interfaces";
+import { IBC, IIngredients } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
-import { CreateIngredient } from "./create";
-import { EditIngredient } from "./edit";
+import { CreateBC } from "./create";
 
-export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
+export const ListBC: React.FC<IResourceComponentsProps> = () => {
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
-  const { dataGridProps } = useDataGrid<IIngredients, HttpError>({
+  const { dataGridProps } = useDataGrid<IBC, HttpError>({
     initialPageSize: 10,
-    meta: { populate: "*" },
+    meta: { populate: "deep" },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<IIngredients>>(
+  const columns = React.useMemo<GridColumns<IBC>>(
     () => [
       {
-        field: "nom",
-        headerName: "Nom",
+        field: "id",
+        headerName: "N° Bon",
         headerAlign: "center",
         align: "center",
         flex: 1,
         minWidth: 90,
       },
 
-      // {
-      //   field: "cout",
-      //   headerName: "Cout",
-      //   headerAlign: "center",
-      //   align: "center",
-      //   flex: 1,
-      //   minWidth: 90,
-      // },
+      {
+        field: "chef",
+        headerName: "Chef",
+        headerAlign: "center",
+        align: "center",
+        valueGetter: ({ row }) => row?.chef?.chef,
+        flex: 1,
+        minWidth: 90,
+      },
 
+      {
+        field: "createdAt",
+        headerName: "Date de Creation",
+        flex: 1,
+        minWidth: 170,
+        renderCell: function render({ row }) {
+          return (
+            <DateField
+              value={row.createdAt}
+              format="LLL"
+              sx={{ fontSize: "14px" }}
+            />
+          );
+        },
+      },
+      {
+        field: "note",
+        headerName: "Note",
+        headerAlign: "center",
+        align: "center",
+        flex: 1,
+        minWidth: 90,
+      },
       {
         field: "actions",
         type: "actions",
@@ -68,7 +91,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
             icon={<Delete color="error" />}
             onClick={() => {
               mutateDelete({
-                resource: "ingredients",
+                resource: "bon-chefs",
                 id: row.id,
                 mutationMode: "undoable",
                 undoableTimeout: 10000,
@@ -84,11 +107,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
   const { show } = useNavigation();
 
   //
-  const createDrawerFormProps = useModalForm<
-    IIngredients,
-    HttpError,
-    IIngredients
-  >({
+  const createDrawerFormProps = useModalForm<IBC, HttpError, IBC>({
     refineCoreProps: { action: "create" },
   });
 
@@ -96,11 +115,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showCreateModal },
   } = createDrawerFormProps;
 
-  const editDrawerFormProps = useModalForm<
-    IIngredients,
-    HttpError,
-    IIngredients
-  >({
+  const editDrawerFormProps = useModalForm<IBC, HttpError, IBC>({
     refineCoreProps: { action: "edit", meta: { populate: "*" } },
   });
 
@@ -110,8 +125,8 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
   //
   return (
     <>
-      <CreateIngredient {...createDrawerFormProps} />
-      <EditIngredient {...editDrawerFormProps} />
+      <CreateBC {...createDrawerFormProps} />
+      {/* <EditIngredient {...editDrawerFormProps} /> */}
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>
@@ -130,7 +145,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
                 variant="contained"
                 sx={{ marginBottom: "5px" }}
               >
-                Ajouter Ingredient
+                Ajouter
               </CreateButton>
             }
             createButtonProps={
