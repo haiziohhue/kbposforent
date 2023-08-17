@@ -32,7 +32,8 @@
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.8.1",
     "react-to-print": "^2.14.12",
-    "serve": "^14.2.0"
+    "serve": "^14.2.0",
+    "sweetalert2": "^11.7.23"
   },
   "devDependencies": {
     "@types/node": "^18.16.2",

@@ -44,12 +44,9 @@ import {
   ListOrdes,
   ShowOrder,
 } from "./pages/commandes";
-import {
-  EditCategory,
-  ListCategories,
-} from "./pages/settings/gestionMenu/categories";
-import { EditCaisse, ListCaisses } from "./pages/settings/gestionMenu/caisses";
-import { EditTable, ListTables } from "./pages/settings/gestionMenu/tables";
+import { ListCategories } from "./pages/settings/gestionMenu/categories";
+import { ListCaisses } from "./pages/settings/gestionMenu/caisses";
+import { ListTables } from "./pages/settings/gestionMenu/tables";
 import { MenusList } from "./pages/caisse";
 import { ListTresor } from "./pages/tresoriers";
 import { CreateUser, EditUser, ListUsers } from "./pages/settings/users";
@@ -57,7 +54,7 @@ import { AuthPage } from "./pages/auth/AuthPage";
 import {
   CreateCategoryDepense,
   ListCategoryDepense,
-} from "./pages/settings/tresor";
+} from "./pages/parametres/categorieDepense";
 import { CreateIngredient, ListIngredients } from "./pages/stocks/produit";
 import { useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
@@ -74,6 +71,7 @@ import { StockList } from "./pages/stocks/suiviStock/list";
 
 import { ListAchat } from "./pages/stocks/achat/list";
 import { ListBC } from "./pages/stocks/bonChef/list";
+import { ListChefs } from "./pages/parametres/chefs";
 
 function App() {
   //
@@ -260,6 +258,7 @@ function App() {
                         icon: <Payments />,
                       },
                     },
+
                     {
                       name: "menus",
                       list: "/menus",
@@ -333,6 +332,78 @@ function App() {
                       meta: {
                         label: "Paramètres",
                         icon: <Settings />,
+                      },
+                    },
+                    {
+                      name: "data-restaurants",
+                      list: "/parametres/generales",
+                      create: "/parametres/generales/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
+                      },
+                    },
+                    {
+                      name: "categories",
+                      list: "/parametres/categories",
+                      create: "/parametres/categories/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
+                      },
+                    },
+                    {
+                      name: "tables",
+                      list: "/parametres/tables",
+                      create: "/parametres/tables/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
+                      },
+                    },
+                    {
+                      name: "caisses",
+                      list: "/parametres/caisses",
+                      create: "/parametres/caisses/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
+                      },
+                    },
+                    {
+                      name: "chefs",
+                      list: "/parametres/chefs",
+                      create: "/parametres/chefs/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
+                      },
+                    },
+                    {
+                      name: "categorie-depenses",
+                      list: "/parametres/categorieDepense",
+                      create: "/parametres/categorieDepense/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
                       },
                     },
                     {
@@ -475,6 +546,7 @@ function App() {
                           <Route path="/tresoriers">
                             <Route index element={<ListTresor />} />
                           </Route>
+
                           {/* Gestion de Menu */}
                           <Route path="/menus">
                             <Route index element={<ListMenus />} />
@@ -499,17 +571,24 @@ function App() {
                           {/* Settings */}
                           <Route path="/parametres">
                             <Route index element={<SettingsList />} />
-                            <Route path="/parametres/generales">
-                              <Route index element={<ListRestaurantData />} />
-                              <Route
-                                path="create"
-                                element={<CreateRestaurantData />}
-                              />
-                              <Route
-                                path="edit/:id"
-                                element={<EditRestaurantData />}
-                              />
-                            </Route>
+                          </Route>
+                          <Route path="/parametres/generales">
+                            <Route index element={<ListRestaurantData />} />
+                          </Route>
+                          <Route path="/parametres/categories">
+                            <Route index element={<ListCategories />} />
+                          </Route>
+                          <Route path="/parametres/tables">
+                            <Route index element={<ListTables />} />
+                          </Route>
+                          <Route path="/parametres/caisses">
+                            <Route index element={<ListCaisses />} />
+                          </Route>
+                          <Route path="/parametres/chefs">
+                            <Route index element={<ListChefs />} />
+                          </Route>
+                          <Route path="/parametres/categorieDepense">
+                            <Route index element={<ListCategoryDepense />} />
                           </Route>
 
                           {/* Settings */}
@@ -517,25 +596,12 @@ function App() {
                             <Route path="/settings/gestionMenu">
                               <Route path="/settings/gestionMenu/categories">
                                 <Route index element={<ListCategories />} />
-
-                                <Route
-                                  path="edit/:id"
-                                  element={<EditCategory />}
-                                />
                               </Route>
                               <Route path="/settings/gestionMenu/caisses">
                                 <Route index element={<ListCaisses />} />
-                                <Route
-                                  path="edit/:id"
-                                  element={<EditCaisse />}
-                                />
                               </Route>
                               <Route path="/settings/gestionMenu/tables">
                                 <Route index element={<ListTables />} />
-                                <Route
-                                  path="edit/:id"
-                                  element={<EditTable />}
-                                />
                               </Route>
                             </Route>
                             <Route path="/settings/users">
@@ -545,32 +611,14 @@ function App() {
                             </Route>
                             <Route path="/settings/data-restaurants">
                               <Route index element={<ListRestaurantData />} />
-                              <Route
-                                path="create"
-                                element={<CreateRestaurantData />}
-                              />
-                              <Route
-                                path="edit/:id"
-                                element={<EditRestaurantData />}
-                              />
                             </Route>
                             <Route path="/settings/gestionStock">
                               <Route path="/settings/gestionStock/ingredients">
                                 <Route index element={<ListIngredients />} />
-                                <Route
-                                  path="create"
-                                  element={<CreateIngredient />}
-                                />
-                                {/* <Route path="edit/:id" element={<EditMenu />} /> */}
                               </Route>
                             </Route>
                             <Route path="/settings/tresor">
                               <Route index element={<ListCategoryDepense />} />
-                              <Route
-                                path="create"
-                                element={<CreateCategoryDepense />}
-                              />
-                              <Route path="edit/:id" element={<EditUser />} />
                             </Route>
                           </Route>
                         </>

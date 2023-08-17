@@ -1,15 +1,33 @@
 import { Settings, SettingsOutlined } from "@mui/icons-material";
-import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
 import { ColorModeContext } from "../../contexts/color-mode";
 import LaunchOutlinedIcon from "@mui/icons-material/LaunchOutlined";
 import React, { useContext, useState } from "react";
+import { ListCategories } from "./categories";
+import { ListTables } from "./tables";
+import { ListCaisses } from "./caisses";
+import { ListTresor } from "../../pages/tresoriers";
 import { useNavigate } from "react-router-dom";
-import { SettingsManagement } from "./SettingsManagement";
 
 export const SettingsList = () => {
   const { mode } = useContext(ColorModeContext);
   const navigate = useNavigate();
-  const [selectedParam, setselectedParam] = useState<string | null>(null);
+  const [selectedParam, setSelectedParam] = useState<string | null>(null);
+
+  const handleParamClick = (param: string) => {
+    setSelectedParam(param);
+
+    // Navigate based on the selected parameter
+    if (param === "categorie") {
+      navigate("/parametres/categories");
+    } else if (param === "table") {
+      navigate("/parametres/tables");
+    } else if (param === "caisse") {
+      navigate("/parametres/caisses");
+    } else if (param === "categorie_depense") {
+      navigate("/parametres/caregorieDepense");
+    }
+  };
   const SectionHeader = (titre: string, icon: any) => (
     <Box
       sx={{
@@ -72,9 +90,17 @@ export const SettingsList = () => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <LaunchOutlinedIcon color="primary" fontSize="small" sx={{ mr: 1 }} />
-        {data.links.map((r, i) => (
+        {/* <Button
+          variant="text"
+          color="primary"
+          onClick={() => handleParamClick(data.selectedParam)}
+        >
+          {data.titre}
+        </Button> */}
+
+        {data.links?.map((r, i) => (
           <Typography
-            sx={{ cursor: "pointer", fontSize: 14 }}
+            sx={{ cursor: "pointer" }}
             color="primary"
             onClick={r.action}
           >
@@ -84,6 +110,7 @@ export const SettingsList = () => {
       </Box>
     </Box>
   );
+
   return (
     <Paper
       sx={{
@@ -102,73 +129,7 @@ export const SettingsList = () => {
         Paramètres
       </Typography>
       <Stack>
-        {/* <Stack>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              p: 1,
-              width: "100%",
-              backgroundColor:
-                mode === "light"
-                  ? "rgba(211, 47, 47, 0.08)"
-                  : "rgba(239, 83, 80, 0.16)",
-            }}
-          >
-            <Settings sx={{ color: "primary.main", fontSize: 20 }} />
-            <Typography
-              sx={{
-                textTransform: "uppercase",
-                color: "primary.main",
-                fontSize: 14,
-                fontWeight: "bold",
-                mt: 0.5,
-              }}
-            >
-              Générale
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1.5,
-              width: "100%",
-              my: 2,
-              mx: 2,
-            }}
-          >
-            <Divider
-              orientation="vertical"
-              flexItem
-              variant="middle"
-              sx={{
-                height: "100px",
-                borderWidth: "1.5px",
-                borderColor:
-                  mode === "light"
-                    ? "rgba(211, 47, 47, 0.08)"
-                    : "rgba(239, 83, 80, 0.16)",
-              }}
-            />
-            <Typography
-              sx={{
-                textTransform: "capitalize",
-                fontSize: 14,
-                fontWeight: "bold",
-                my: 1.5,
-              }}
-            >
-              Données De Restaurant
-            </Typography>
-          </Box>
-        </Stack> */}
-        {selectedParam !== null && (
-          <SettingsManagement
-            element={selectedParam}
-            handleClose={() => setselectedParam(null)}
-          />
-        )}
+        {/* {renderSelectedComponent()} */}
         {SectionHeader(
           "générale",
           <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
@@ -179,7 +140,7 @@ export const SettingsList = () => {
             {
               titre: "Ajouter / Voir",
               action: () => {
-                setselectedParam("donne_restaurant");
+                navigate("/parametres/generales");
               },
             },
           ],
@@ -197,23 +158,24 @@ export const SettingsList = () => {
           )}
           {ParamItem({
             // titre: " Classification des ingrédients",
-            titre: "Categories",
+            titre: "categories",
             links: [
               {
                 titre: "Voir / Ajouter des categories ",
                 action: () => {
-                  setselectedParam("categories");
+                  navigate("/parametres/categories");
                 },
               },
             ],
           })}
           {ParamItem({
             titre: "Gestion Des Tables",
+            // selectedParam: "table",
             links: [
               {
                 titre: "Voir / Ajouter des Tables",
                 action: () => {
-                  // navigate("/parameters/generale/mise-en-page");
+                  navigate("/parametres/tables");
                 },
               },
             ],
@@ -224,12 +186,28 @@ export const SettingsList = () => {
               {
                 titre: "Voir / Ajouter des Caisses",
                 action: () => {
-                  // navigate("/parameters/generale/mise-en-page");
+                  navigate("/parametres/caisses");
                 },
               },
             ],
           })}
         </Box>
+        {SectionHeader(
+          "Menu Composée",
+          <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
+        )}
+        {ParamItem({
+          titre: " Categories-Ingredients",
+          links: [
+            {
+              titre:
+                "Voir / Ajouter des Categories-Ingredients pour Menu Composée",
+              action: () => {
+                navigate("/parametres/chefs");
+              },
+            },
+          ],
+        })}
         {SectionHeader(
           "stock",
           <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
@@ -240,7 +218,7 @@ export const SettingsList = () => {
             {
               titre: "Voir / Ajouter des Chefs",
               action: () => {
-                // navigate("/parameters/generale/mise-en-page");
+                navigate("/parametres/chefs");
               },
             },
           ],
@@ -255,7 +233,7 @@ export const SettingsList = () => {
             {
               titre: "Voir / Ajouter des Catégories Depenses",
               action: () => {
-                // navigate("/parameters/generale/mise-en-page");
+                navigate("/parametres/categorieDepense");
               },
             },
           ],

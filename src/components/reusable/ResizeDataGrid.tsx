@@ -30,10 +30,11 @@ function ResizeDataGrid({ columns, rows, resizeRef, ...props }: IProps) {
   );
 
   const renderResizableHeader = React.useCallback(
-    (params: any) => {
+    (params) => {
       const column = columns.find((col) => col.field === params.field);
       if (column) {
-        const headers = document.querySelector(
+        // eslint-disable-next-line prefer-const
+        let headers = document.querySelector(
           `.MuiDataGrid-columnHeader[data-field="${column.field}"] .MuiDataGrid-iconSeparator`
         );
         const headerElement: HTMLElement | null = document.querySelector(

@@ -22,7 +22,6 @@ import {
   IResourceComponentsProps,
   useGetIdentity,
   useList,
-  useUpdate,
 } from "@refinedev/core";
 import { Create, useAutocomplete } from "@refinedev/mui";
 import React, { useContext, useEffect, useState } from "react";
