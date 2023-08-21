@@ -95,7 +95,6 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
                         mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
-                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />
@@ -129,8 +128,6 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
   const handleEditButtonClick = (editId: string) => {
     setId(editId);
   };
-  const caisses = tableQueryResult?.data;
-  console.log(caisses);
 
   // Edit Functionality
   const renderEditRow = useCallback((row: Row<ICaisse>) => {

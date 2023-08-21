@@ -131,13 +131,6 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
         <Grid item xs={12} lg={12}>
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-            headerProps={
-              {
-                // action: (
-                //   <ExportButton onClick={triggerExport} loading={isLoading} />
-                // ),
-              }
-            }
             headerButtons={
               <CreateButton
                 onClick={() => showCreateModal()}

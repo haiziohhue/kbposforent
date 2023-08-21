@@ -3,11 +3,10 @@ import {
   IResourceComponentsProps,
   HttpError,
   useNavigation,
-  useUpdate,
   useExport,
   useDelete,
 } from "@refinedev/core";
-import { useDataGrid, List, ExportButton, CreateButton } from "@refinedev/mui";
+import { useDataGrid, List, CreateButton } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 
@@ -19,7 +18,6 @@ import { Avatar } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 
 export const ListUsers: React.FC<IResourceComponentsProps> = () => {
-  const { mutate } = useUpdate();
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
   const { dataGridProps, filters } = useDataGrid<IUser, HttpError>({
@@ -146,11 +144,13 @@ export const ListUsers: React.FC<IResourceComponentsProps> = () => {
       <Grid item xs={12} lg={12}>
         <List
           wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-          headerProps={{
-            // action: (
-            //   <ExportButton onClick={triggerExport} loading={isLoading} />
-            // ),
-          }}
+          headerProps={
+            {
+              // action: (
+              //   <ExportButton onClick={triggerExport} loading={isLoading} />
+              // ),
+            }
+          }
           headerButtons={
             <CreateButton variant="contained" sx={{ marginBottom: "5px" }}>
               Ajouter Utilisateur

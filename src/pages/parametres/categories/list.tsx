@@ -59,14 +59,7 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
           );
         },
       },
-      // {
-      //   id: 'isActive',
-      //   header: t('categories.fields.isActive'),
-      //   accessorKey: 'isActive',
-      //   cell: function render({ getValue }) {
-      //     return <BooleanField value={getValue()} />;
-      //   },
-      // },
+
       {
         id: "actions",
         header: "Actions",
@@ -89,7 +82,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                   <IconButton
                     onClick={() => {
                       setId(getValue() as string);
-                      console.log(setId(getValue() as string));
                     }}
                   >
                     <Edit fontSize="small" />
@@ -136,8 +128,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
   const handleEditButtonClick = (editId: string) => {
     setId(editId);
   };
-  const categories = tableQueryResult?.data;
-  console.log(categories);
 
   // Edit Functionality
   const renderEditRow = useCallback((row: Row<ICategory>) => {

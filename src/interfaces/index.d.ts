@@ -138,6 +138,12 @@ export interface IIngredients {
   unite?: string;
 }
 
+export interface ICatIngredients {
+  id: number;
+  nom?: string;
+  categories?: ICategory[];
+  ingredients?: IIngredients[];
+}
 export interface IGeneraleDta {
   id: number;
   nom?: string;
@@ -164,7 +170,7 @@ export interface IAchat {
 export interface IChef {
   id: number;
   chef: string;
-  categories?: ICategory;
+  categories?: ICategory[];
 }
 export interface IBC {
   id: number;
@@ -172,4 +178,10 @@ export interface IBC {
   etat: "Validé" | "Annulé";
   note: string;
   chef: IChef;
+}
+
+export interface IStock {
+  id: number;
+  ingredient: IIngredients;
+  quantité: number;
 }

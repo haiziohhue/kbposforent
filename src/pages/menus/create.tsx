@@ -194,12 +194,10 @@ export const CreateMenu: React.FC<
                   )}
                 </FormControl>
                 <FormControl>
-                  <FormLabel required>Description</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <OutlinedInput
                     id="description"
-                    {...register("description", {
-                      required: "This field is required",
-                    })}
+                    {...register("description")}
                     multiline
                     minRows={5}
                     maxRows={5}
@@ -231,6 +229,7 @@ export const CreateMenu: React.FC<
                   )}
                 </FormControl>
                 <FormControl>
+                  <FormLabel required>Categorie</FormLabel>
                   <Controller
                     control={control}
                     name="categorie"
@@ -256,7 +255,6 @@ export const CreateMenu: React.FC<
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            label="Category"
                             variant="outlined"
                             error={!!errors.categorie?.message}
                             required

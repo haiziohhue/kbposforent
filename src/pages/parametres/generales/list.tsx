@@ -4,6 +4,7 @@ import {
   HttpError,
   useNavigation,
   useDelete,
+  useBack,
 } from "@refinedev/core";
 import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
 
@@ -18,8 +19,9 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import { IGeneraleDta } from "../../../interfaces";
 import { CreateRestaurantData } from "./create";
 import { EditRestaurantData } from "./edit";
+import { Button } from "@mui/material";
 
-export const  ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
+export const ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
   const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
   const { dataGridProps } = useDataGrid<IGeneraleDta, HttpError>({
@@ -62,7 +64,7 @@ export const  ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-     
+
       {
         field: "actions",
         type: "actions",
@@ -125,6 +127,7 @@ export const  ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
   const {
     modal: { show: showEditModal },
   } = editDrawerFormProps;
+
   //
   return (
     <>
@@ -135,13 +138,6 @@ export const  ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
         <Grid item xs={12} lg={12}>
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-            headerProps={
-              {
-                // action: (
-                //   <ExportButton onClick={triggerExport} loading={isLoading} />
-                // ),
-              }
-            }
             headerButtons={
               <CreateButton
                 onClick={() => showCreateModal()}

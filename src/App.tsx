@@ -24,18 +24,11 @@ import { ColorModeContextProvider } from "./contexts/color-mode";
 
 import {
   MenuBook,
-  AccountBalanceWallet,
   AccountBalance,
   AddShoppingCart,
   Settings,
-  TableRestaurant,
-  Fastfood,
   Widgets,
-  LocalGroceryStore,
-  Category,
   Payments,
-  People,
-  TextSnippet,
 } from "@mui/icons-material";
 import { CreateMenu, EditMenu, ListMenus } from "./pages/menus";
 import {
@@ -44,34 +37,27 @@ import {
   ListOrdes,
   ShowOrder,
 } from "./pages/commandes";
-import { ListCategories } from "./pages/settings/gestionMenu/categories";
-import { ListCaisses } from "./pages/settings/gestionMenu/caisses";
-import { ListTables } from "./pages/settings/gestionMenu/tables";
+
 import { MenusList } from "./pages/caisse";
 import { ListTresor } from "./pages/tresoriers";
-import { CreateUser, EditUser, ListUsers } from "./pages/settings/users";
+import { CreateUser, EditUser, ListUsers } from "./pages/parametres/users";
 import { AuthPage } from "./pages/auth/AuthPage";
-import {
-  CreateCategoryDepense,
-  ListCategoryDepense,
-} from "./pages/parametres/categorieDepense";
-import { CreateIngredient, ListIngredients } from "./pages/stocks/produit";
+import { ListCategoryDepense } from "./pages/parametres/categorieDepense";
+import { ListIngredients } from "./pages/stocks/produit";
 import { useEffect, useState } from "react";
 import { IUserMe } from "./interfaces";
 import axios from "axios";
-import {
-  CreateRestaurantData,
-  EditRestaurantData,
-  ListRestaurantData,
-} from "./pages/parametres/generales";
+import { ListRestaurantData } from "./pages/parametres/generales";
 import { Title } from "./components/title";
-
 import { SettingsList } from "./pages/parametres/SettingsList";
 import { StockList } from "./pages/stocks/suiviStock/list";
-
 import { ListAchat } from "./pages/stocks/achat/list";
 import { ListBC } from "./pages/stocks/bonChef/list";
 import { ListChefs } from "./pages/parametres/chefs";
+import { ListCategories } from "./pages/parametres/categories";
+import { ListTables } from "./pages/parametres/tables";
+import { ListCaisses } from "./pages/parametres/caisses";
+import { ListCatIngredients } from "./pages/parametres/categorieIngredient";
 
 function App() {
   //
@@ -386,8 +372,7 @@ function App() {
                       name: "chefs",
                       list: "/parametres/chefs",
                       create: "/parametres/chefs/create",
-                      edit: "",
-                      show: "",
+
                       meta: {
                         hide: true,
                         parent: "parametres",
@@ -407,99 +392,26 @@ function App() {
                       },
                     },
                     {
-                      name: "settings",
+                      name: "categorie-ingredients",
+                      list: "/parametres/categorieIngredient",
+                      create: "/parametres/categorieIngredient/create",
+                      edit: "",
+                      show: "",
                       meta: {
-                        label: "Paramètres",
-                        icon: <Settings />,
-                      },
-                    },
-
-                    {
-                      name: "gestiondemenu",
-                      meta: {
-                        label: "Gestion de Menu",
-                        parent: "settings",
-                        icon: <Fastfood />,
-                      },
-                    },
-                    {
-                      name: "gestionStock",
-                      meta: {
-                        label: "Gestion de Stock",
-                        parent: "settings",
-                        icon: <Widgets />,
-                      },
-                    },
-                    {
-                      name: "categories",
-                      list: "/settings/gestionMenu/categories",
-                      create: "/settings/gestionMenu/categories/create",
-                      edit: "/settings/gestionMenu/categories/edit/:id",
-                      meta: {
+                        hide: true,
+                        parent: "parametres",
                         canDelete: true,
-                        parent: "gestiondemenu",
-                        icon: <Category />,
-                      },
-                    },
-
-                    {
-                      name: "tables",
-                      list: "/settings/gestionMenu/tables",
-                      create: "/settings/gestionMenu/tables/create",
-                      edit: "/settings/gestionMenu/tables/edit/:id",
-                      meta: {
-                        canDelete: true,
-                        parent: "gestiondemenu",
-                        icon: <TableRestaurant />,
-                      },
-                    },
-                    {
-                      name: "caisses",
-                      list: "/settings/gestionMenu/caisses",
-                      create: "/settings/gestionMenu/caisses/create",
-                      edit: "/settings/gestionMenu/caisses/edit/:id",
-                      meta: {
-                        canDelete: true,
-                        parent: "gestiondemenu",
-                        icon: <AccountBalanceWallet />,
                       },
                     },
                     {
                       name: "users",
-                      list: "/settings/users",
-                      create: "/settings/users/create",
-                      edit: "/settings/users/edit/:id",
+                      list: "/parametres/users",
+                      create: "/parametres/users/create",
+                      edit: "/parametres/users/edit/:id",
                       meta: {
                         canDelete: true,
-                        parent: "settings",
-                        icon: <People />,
-                        label: "Utilisateur",
-                      },
-                    },
-                    // {
-                    //   name: "data-restaurants",
-                    //   list: "/parametres/data-restaurants",
-                    // },
-                    {
-                      name: "categorie-depenses",
-                      list: "/settings/tresor",
-                      create: "/settings/tresor/create",
-
-                      meta: {
-                        canDelete: true,
-                        parent: "settings",
-                        icon: <AccountBalanceWallet />,
-                      },
-                    },
-                    {
-                      name: "ingredients",
-                      list: "/settings/gestionStock/ingredients",
-                      create: "/settings/gestionStock/ingredients/create",
-                      edit: "/settings/gestionStock/ingredients/edit/:id",
-                      meta: {
-                        canDelete: true,
-                        parent: "gestionStock",
-                        icon: <LocalGroceryStore />,
+                        parent: "parametres",
+                        hide: true,
                       },
                     },
                   ]}
@@ -590,9 +502,17 @@ function App() {
                           <Route path="/parametres/categorieDepense">
                             <Route index element={<ListCategoryDepense />} />
                           </Route>
+                          <Route path="/parametres/categorieIngredient">
+                            <Route index element={<ListCatIngredients />} />
+                          </Route>
+                          <Route path="/parametres/users">
+                            <Route index element={<ListUsers />} />
+                            <Route path="create" element={<CreateUser />} />
+                            <Route path="edit/:id" element={<EditUser />} />
+                          </Route>
 
                           {/* Settings */}
-                          <Route path="/settings">
+                          {/* <Route path="/settings">
                             <Route path="/settings/gestionMenu">
                               <Route path="/settings/gestionMenu/categories">
                                 <Route index element={<ListCategories />} />
@@ -620,7 +540,7 @@ function App() {
                             <Route path="/settings/tresor">
                               <Route index element={<ListCategoryDepense />} />
                             </Route>
-                          </Route>
+                          </Route> */}
                         </>
 
                         <Route path="*" element={<ErrorComponent />} />

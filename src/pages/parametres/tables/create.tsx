@@ -30,8 +30,7 @@ export const CreateTable: React.FC<
       PaperProps={{ sx: { minWidth: 500 } }}
     >
       <DialogTitle>
-        {" "}
-        {<Typography fontSize={24}>Ajouter une Table</Typography>}
+        {<Typography fontSize={24}>Ajouter Table</Typography>}
       </DialogTitle>
       <DialogContent>
         <Box

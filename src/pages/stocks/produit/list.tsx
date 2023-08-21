@@ -2,15 +2,11 @@ import React from "react";
 import {
   IResourceComponentsProps,
   HttpError,
-  useNavigation,
   useDelete,
 } from "@refinedev/core";
-import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
-
+import { useDataGrid, List, CreateButton } from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
-
 import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
-
 import { Delete, Edit } from "@mui/icons-material";
 import { IIngredients } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
@@ -18,13 +14,12 @@ import { CreateIngredient } from "./create";
 import { EditIngredient } from "./edit";
 
 export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
-  const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
   const { dataGridProps } = useDataGrid<IIngredients, HttpError>({
     initialPageSize: 10,
     meta: { populate: "*" },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColumns<IIngredients>>(
     () => [
       {
@@ -35,15 +30,6 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-
-      // {
-      //   field: "cout",
-      //   headerName: "Cout",
-      //   headerAlign: "center",
-      //   align: "center",
-      //   flex: 1,
-      //   minWidth: 90,
-      // },
 
       {
         field: "actions",
@@ -80,8 +66,6 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
     ],
     []
   );
-
-  const { show } = useNavigation();
 
   //
   const createDrawerFormProps = useModalForm<

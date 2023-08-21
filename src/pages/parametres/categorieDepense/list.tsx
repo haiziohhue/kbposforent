@@ -2,12 +2,12 @@ import {
   HttpError,
   IResourceComponentsProps,
   useDelete,
-} from '@refinedev/core';
-import React, { useCallback } from 'react';
+} from "@refinedev/core";
+import React, { useCallback } from "react";
 
-import { useForm, useModalForm } from '@refinedev/react-hook-form';
-import { ColumnDef, flexRender, Row } from '@tanstack/react-table';
-import { useTable } from '@refinedev/react-table';
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
+import { ColumnDef, flexRender, Row } from "@tanstack/react-table";
+import { useTable } from "@refinedev/react-table";
 import {
   Button,
   IconButton,
@@ -21,11 +21,11 @@ import {
   TableRow,
   TextField,
   Typography,
-} from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import { EditButton, List, SaveButton } from '@refinedev/mui';
-import { CreateCategoryDepense } from './create';
-import { ICatDepense } from '../../../interfaces';
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import { EditButton, List, SaveButton } from "@refinedev/mui";
+import { CreateCategoryDepense } from "./create";
+import { ICatDepense } from "../../../interfaces";
 
 export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
@@ -36,12 +36,16 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
   } = useForm<ICatDepense>({
     refineCoreProps: {
       redirect: false,
-      action: 'edit',
+      action: "edit",
     },
   });
   // Modal
-  const createModalFormProps = useModalForm<ICatDepense, HttpError, ICatDepense>({
-    refineCoreProps: { action: 'create' },
+  const createModalFormProps = useModalForm<
+    ICatDepense,
+    HttpError,
+    ICatDepense
+  >({
+    refineCoreProps: { action: "create" },
   });
   const {
     modal: { show: showCreateModal },
@@ -49,9 +53,9 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<ICatDepense>[]>(
     () => [
       {
-        id: 'nom',
-        accessorKey: 'nom',
-        header: 'Title',
+        id: "nom",
+        accessorKey: "nom",
+        header: "Title",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row" alignItems="center" spacing={3}>
@@ -62,9 +66,9 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
       },
 
       {
-        id: 'actions',
-        header: 'Actions',
-        accessorKey: 'id',
+        id: "actions",
+        header: "Actions",
+        accessorKey: "id",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row">
@@ -91,12 +95,11 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
                   <IconButton
                     onClick={() => {
                       mutateDelete({
-                        resource: 'categorie-depenses',
+                        resource: "categorie-depenses",
                         id: row.original.id,
-                        mutationMode: 'undoable',
+                        mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
-                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />
@@ -130,8 +133,6 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
   const handleEditButtonClick = (editId: string) => {
     setId(editId);
   };
-  const caisses = tableQueryResult?.data;
-  console.log(caisses);
 
   // Edit Functionality
   const renderEditRow = useCallback((row: Row<ICatDepense>) => {
@@ -141,7 +142,7 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
       <TableRow key={`edit-${id}-inputs`}>
         <TableCell
           sx={{
-            flex: '1',
+            flex: "1",
           }}
         >
           <Stack
@@ -156,12 +157,12 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
               type="text"
               size="small"
               defaultValue={nom}
-              {...register('nom', {
-                required: 'This field is required',
+              {...register("nom", {
+                required: "This field is required",
               })}
               InputProps={{
                 inputProps: {
-                  style: { textTransform: 'capitalize' },
+                  style: { textTransform: "capitalize" },
                   maxLength: 50,
                   onChange: (event) => {
                     const target = event.target as HTMLInputElement;
@@ -177,7 +178,7 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
 
         <TableCell
           sx={{
-            maxWidth: '150px',
+            maxWidth: "150px",
           }}
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
@@ -244,7 +245,7 @@ export const ListCategoryDepense: React.FC<IResourceComponentsProps> = () => {
               10,
               25,
               {
-                label: 'All',
+                label: "All",
                 value: tableQueryResult.data?.total ?? 100,
               },
             ]}

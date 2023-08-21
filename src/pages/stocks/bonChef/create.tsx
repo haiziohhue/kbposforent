@@ -14,10 +14,7 @@ import {
   DialogActions,
   DialogContent,
   FormControl,
-  FormHelperText,
-  FormLabel,
   IconButton,
-  OutlinedInput,
   Stack,
   TextField,
   Typography,
@@ -26,14 +23,13 @@ import { HttpError } from "@refinedev/core";
 import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
-import dayjs from "dayjs";
 import { IBC, IChef } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Controller } from "react-hook-form";
+
 //
 const initialState = {
   articles: [],
@@ -66,16 +62,12 @@ export const CreateBC: React.FC<
   UseModalFormReturnType<IBC, HttpError, IBC>
 > = ({
   saveButtonProps,
-  control,
+
   modal: { visible, close },
-  register,
-  setValue,
-  refineCore: { onFinish },
   handleSubmit,
-  formState: { errors },
 }) => {
   //
-  const navigate = useNavigate();
+
   const [{ articles, bc, produits }, dispatch] = useReducer(
     reducer,
     initialState

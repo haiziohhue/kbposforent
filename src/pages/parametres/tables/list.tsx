@@ -22,13 +22,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  AddCircleOutline,
-  Delete,
-  Edit,
-  RemoveCircleOutline,
-} from "@mui/icons-material";
-import { CreateButton, EditButton, List, SaveButton } from "@refinedev/mui";
+import { Delete, Edit } from "@mui/icons-material";
+import { EditButton, List, SaveButton } from "@refinedev/mui";
 import { CreateTable } from "./create";
 
 export const ListTables: React.FC<IResourceComponentsProps> = () => {
@@ -87,7 +82,6 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
                   <IconButton
                     onClick={() => {
                       setId(getValue() as string);
-                      console.log(setId(getValue() as string));
                     }}
                   >
                     <Edit fontSize="small" />
@@ -100,7 +94,6 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
                         mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
-                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />

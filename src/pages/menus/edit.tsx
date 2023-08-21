@@ -6,11 +6,9 @@ import {
   Autocomplete,
   Avatar,
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -27,10 +25,9 @@ import {
 } from "@mui/material";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
-import { API_URL, TOKEN_KEY } from "../../constants";
+import { API_URL } from "../../constants";
 import axios from "axios";
-import { LoadingButton } from "@mui/lab";
-import { CloseOutlined, FileUpload } from "@mui/icons-material";
+import { CloseOutlined } from "@mui/icons-material";
 
 export const EditMenu: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
@@ -204,12 +201,10 @@ export const EditMenu: React.FC<
                   )}
                 </FormControl>
                 <FormControl>
-                  <FormLabel required>Description</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <OutlinedInput
                     id="description"
-                    {...register("description", {
-                      required: "This field is required",
-                    })}
+                    {...register("description")}
                     multiline
                     minRows={5}
                     maxRows={5}
@@ -241,6 +236,7 @@ export const EditMenu: React.FC<
                   )}
                 </FormControl>
                 <FormControl>
+                  <FormLabel required>Categorie</FormLabel>
                   <Controller
                     control={control}
                     name="categorie"
@@ -266,7 +262,6 @@ export const EditMenu: React.FC<
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            label="Category"
                             variant="outlined"
                             error={!!errors.categorie?.message}
                             required

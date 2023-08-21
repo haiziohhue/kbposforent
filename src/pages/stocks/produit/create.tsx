@@ -3,9 +3,7 @@ import React, { useEffect, useReducer, useState } from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
-  Autocomplete,
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,22 +11,13 @@ import {
   FormHelperText,
   FormLabel,
   IconButton,
-  InputAdornment,
   OutlinedInput,
   Stack,
-  Tab,
-  TextField,
   Typography,
 } from "@mui/material";
-import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
-import { Controller } from "react-hook-form";
+import { Create, SaveButton } from "@refinedev/mui";
 import { CloseOutlined } from "@mui/icons-material";
 import { ICategory, IIngredients } from "../../../interfaces";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { API_URL } from "../../../constants";
 
 type Ingredient = {
@@ -82,45 +71,14 @@ export const CreateIngredient: React.FC<
   UseModalFormReturnType<IIngredients, HttpError, IIngredients>
 > = ({
   saveButtonProps,
-  control,
   modal: { visible, close },
   register,
-  setValue,
   refineCore: { onFinish },
   handleSubmit,
   formState: { errors },
 }) => {
-  //
-  // const { autocompleteProps } = useAutocomplete<ICategory>({
-  //   resource: "categories",
-  //   meta: { filter: "[type][$eq]=Menu composé" },
-  // });
-  //
-
-  //
-
   const [{ ingredient }, dispatch] = useReducer(reducer, initialState);
 
-  const [record, setRecord] = useState<ICategory[]>([]);
-
-  useEffect(() => {
-    const fetchRecord = async () => {
-      try {
-        const response = await fetch(
-          `${API_URL}/api/categories?filters[type][$eq]=Menu composé`
-        );
-        const data = await response.json();
-        console.log(data);
-        setRecord(data?.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchRecord();
-  }, []);
-  //
-  console.log(record);
   return (
     <Dialog
       open={visible}

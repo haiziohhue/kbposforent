@@ -203,7 +203,7 @@ export const SettingsList = () => {
               titre:
                 "Voir / Ajouter des Categories-Ingredients pour Menu Composée",
               action: () => {
-                navigate("/parametres/chefs");
+                navigate("/parametres/categorieIngredient");
               },
             },
           ],
@@ -234,6 +234,21 @@ export const SettingsList = () => {
               titre: "Voir / Ajouter des Catégories Depenses",
               action: () => {
                 navigate("/parametres/categorieDepense");
+              },
+            },
+          ],
+        })}
+        {SectionHeader(
+          "Utilisateur",
+          <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
+        )}
+        {ParamItem({
+          titre: "Utilisateur",
+          links: [
+            {
+              titre: "Voir / Ajouter des utilisateurs",
+              action: () => {
+                navigate("/parametres/users");
               },
             },
           ],
