@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
@@ -26,75 +26,124 @@ import {
 } from "@mui/material";
 import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
-
+import { CartContext } from "../../contexts/cart/CartProvider";
 import axios from "axios";
 
 import { CloseOutlined } from "@mui/icons-material";
 import { ICategory, IMenu } from "interfaces";
+import { API_URL } from "../../constants";
 
-type Option = "Dessert" | "Pizza";
-type Menu = {
-  option: Option;
-  name: string;
-  description: string;
-};
-
-type State = {
-  menu: Menu;
-};
-
-const initialState: State = {
-  menu: {
-    option: "Dessert",
-    name: "",
-    description: "",
-  },
-};
-
-type Action =
-  | { type: "SET_OPTION"; payload: Option }
-  | { type: "SET_NAME"; payload: string }
-  | { type: "SET_DESCRIPTION"; payload: string };
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "SET_OPTION":
-      return {
-        ...state,
-        menu: { ...state.menu, option: action.payload },
-      };
-    case "SET_NAME":
-      return {
-        ...state,
-        menu: { ...state.menu, name: action.payload },
-      };
-    case "SET_DESCRIPTION":
-      return {
-        ...state,
-        menu: { ...state.menu, description: action.payload },
-      };
-    default:
-      return state;
-  }
-};
 export const CreateMenuCompose: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
 > = ({
   saveButtonProps,
-  control,
-  setValue,
+
   modal: { visible, close },
-  register,
-  refineCore: { onFinish },
-  handleSubmit,
-  setError,
-  formState: { errors },
 }) => {
-  const { autocompleteProps } = useAutocomplete<ICategory>({
-    resource: "categories",
-  });
-  const [{ menu }, dispatch] = useReducer(reducer, initialState);
-  const options: Option[] = ["Dessert", "Pizza"];
+  const { dispatch } = useContext(CartContext);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedIngredients, setSelectedIngredients] = useState<any[]>([]);
+  const [responseData, setResponseData] = useState<any[]>([]);
+  useEffect(() => {
+    axios
+      .get(
+        `${API_URL}/api/categories?populate=categorie_ingredients,categorie_ingredients.ingredients,categorie_ingredients.ingredients.ingredient`
+      )
+      .then((response) => {
+        setResponseData(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data from API", error);
+      });
+  }, []);
+
+  console.log(responseData);
+
+  //
+  const getIngredientsForCategory = (
+    categoriesData: any[],
+    selectedCategory: string | null
+  ) => {
+    if (!selectedCategory) {
+      return [];
+    }
+
+    const selectedCategoryData = categoriesData?.find(
+      (category) => category?.attributes?.nom === selectedCategory
+    );
+    console.log(selectedCategoryData);
+
+    if (!selectedCategoryData) {
+      return [];
+    }
+
+    const ingredientsData =
+      selectedCategoryData?.attributes?.categorie_ingredients?.data;
+    console.log(ingredientsData);
+    const ingredients = ingredientsData?.map((ingredient) => ({
+      nom: ingredient?.attributes?.nom,
+      ingredients: ingredient?.attributes?.ingredients?.map((item) => ({
+        nom: item?.ingredient?.data?.attributes?.nom,
+        prix: item?.prix,
+      })),
+    }));
+
+    return ingredients;
+  };
+  //
+  const categories = Array.from(
+    new Set(
+      responseData
+        .map(
+          (category: { attributes: { nom: string } }) =>
+            category?.attributes?.nom
+        )
+        .filter(Boolean)
+    )
+  );
+
+  //
+  const ingredients = getIngredientsForCategory(responseData, selectedCategory);
+  console.log(categories);
+  console.log(ingredients);
+  console.log(
+    ingredients.map((item) => item?.ingredients.map((ing) => ing?.nom))
+  );
+  //
+
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+
+    const flattenedIngredients = selectedIngredients.flat();
+
+    for (const ingredient of flattenedIngredients) {
+      if (ingredient && ingredient.prix !== undefined) {
+        totalPrice += parseFloat(ingredient.prix) || 0;
+      }
+    }
+
+    return totalPrice; // Format the total price with two decimal places
+  };
+  const totalPrice = calculateTotalPrice();
+  console.log(selectedIngredients);
+  //
+  const handleAddToCart = () => {
+    const newItem: any = {
+      id: Math.random(),
+      menus: {
+        prix: totalPrice,
+        ingredients: ingredients.flatMap((item) =>
+          item?.ingredients.map((ing) => ({ nom: ing?.nom }))
+        ),
+        titre: `${selectedCategory} Personalisé`,
+      },
+      name: `${selectedCategory} Personalisé`,
+      quantity: 1,
+      prix: totalPrice,
+    };
+    dispatch({ type: "ADD_ITEM", payload: newItem });
+    console.log(newItem);
+  };
   return (
     <Dialog
       open={visible}
@@ -133,82 +182,64 @@ export const CreateMenuCompose: React.FC<
             autoComplete="off"
             sx={{ display: "flex", flexDirection: "column" }}
           >
-            <form onSubmit={handleSubmit(onFinish)}>
-              <Stack gap="10px" marginTop="10px">
-                <Autocomplete
-                  id="menuOption"
-                  options={options}
-                  value={menu.option}
-                  onChange={(event, value) =>
-                    dispatch({ type: "SET_OPTION", payload: value as Option })
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Choose an Option"
-                      variant="outlined"
-                    />
-                  )}
-                />
-                {menu.option === "Dessert" && (
-                  <>
-                    <TextField
-                      label="Dessert Name"
-                      variant="outlined"
-                      value={menu.name}
-                      onChange={(e) =>
-                        dispatch({ type: "SET_NAME", payload: e.target.value })
-                      }
-                    />
-                    <TextField
-                      label="Dessert Description"
-                      variant="outlined"
-                      value={menu.description}
-                      onChange={(e) =>
-                        dispatch({
-                          type: "SET_DESCRIPTION",
-                          payload: e.target.value,
-                        })
-                      }
-                    />
-                  </>
+            <div>
+              <Autocomplete
+                id="menuCategory"
+                options={categories}
+                onChange={(event, value) => setSelectedCategory(value as any)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Choose a Category"
+                    variant="outlined"
+                  />
                 )}
-                {menu.option === "Pizza" && (
-                  <>
-                    <TextField
-                      label="Pizza Name"
-                      variant="outlined"
-                      value={menu.name}
-                      onChange={(e) =>
-                        dispatch({ type: "SET_NAME", payload: e.target.value })
-                      }
-                    />
-                    <TextField
-                      label="Pizza Description"
-                      variant="outlined"
-                      value={menu.description}
-                      onChange={(e) =>
-                        dispatch({
-                          type: "SET_DESCRIPTION",
-                          payload: e.target.value,
-                        })
-                      }
-                    />
-                  </>
-                )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => console.log(menu)}
-                >
-                  Create Menu
-                </Button>
-              </Stack>
-            </form>
+              />
+
+              {selectedCategory && (
+                <>
+                  {ingredients?.map((categorieIngredient, index) => (
+                    <div key={index}>
+                      <h3>{categorieIngredient?.nom}</h3>
+                      <Autocomplete
+                        id={`ingredientAutocomplete-${index}`}
+                        options={categorieIngredient?.ingredients || []}
+                        getOptionLabel={(option) =>
+                          `${option.nom} - ${option.prix} DA`
+                        }
+                        value={selectedIngredients[index] || []}
+                        onChange={(_, value) => {
+                          const updatedIngredients = [...selectedIngredients];
+                          updatedIngredients[index] = value;
+                          setSelectedIngredients(updatedIngredients);
+                        }}
+                        multiple
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Choose an Ingredient"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+              <div>
+                <h3>Total Price: {calculateTotalPrice()} DA</h3>
+              </div>
+            </div>
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
+          <Button
+            variant="contained"
+            onClick={handleAddToCart}
+            // endIcon={<AddShoppingCartIcon />}
+          >
+            Ajouter
+          </Button>
           {/* <Button onClick={close}>Annuler</Button> */}
         </DialogActions>
       </Create>

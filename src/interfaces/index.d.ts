@@ -19,6 +19,7 @@ export interface IMenu {
   categorie?: ICategory;
   stock?: number;
   quantite?: number;
+  ingredients?: IIngredients[];
 }
 
 export interface ICartMenu {
@@ -136,13 +137,14 @@ export interface IIngredients {
   nom?: string;
   note?: string;
   unite?: string;
+  ingredients?: { nom: string; prix: number };
 }
 
 export interface ICatIngredients {
   id: number;
   nom?: string;
   categories?: ICategory[];
-  ingredients?: IIngredients[];
+  // ingredients?: IIngredients[];
 }
 export interface IGeneraleDta {
   id: number;

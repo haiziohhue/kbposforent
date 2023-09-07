@@ -121,7 +121,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   };
   // Calculate the subtotal for each item
   const calculateSubtotal = (item: ICartMenu) => {
-    return item.menus.prix * item.quantity;
+    return item.menus?.prix * item?.quantity;
   };
 
   // Calculate the total for all items in the cart
@@ -321,7 +321,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                 </Box>
               ) : (
                 <>
-                  {cartItems.map((item) => (
+                  {cartItems?.map((item) => (
                     <>
                       <Card
                         key={item.id}
@@ -359,12 +359,12 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                             <CardMedia
                               component="img"
                               sx={{
-                                width: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                height: { xs: 60, sm: 60, lg: 80, xl: 144 },
+                                width: { xs: 60, sm: 60, lg: 60, xl: 100 },
+                                height: { xs: 60, sm: 60, lg: 60, xl: 100 },
                                 borderRadius: "50%",
                               }}
-                              alt={item.menus.titre}
-                              image={`${API_URL}${item.menus.image?.url}`}
+                              alt={item.menus?.titre}
+                              image={`${API_URL}${item.menus?.image?.url}`}
                             />
                           </Box>
                           <Divider
@@ -385,14 +385,13 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                               <Typography
                                 sx={{
                                   fontWeight: 800,
-                                  fontSize: "16px",
+                                  fontSize: "14px",
                                   overflow: "hidden",
                                   whiteSpace: "nowrap",
                                   textOverflow: "ellipsis",
                                 }}
                               >
-                                {item.menus.titre} {""}
-                                {""}
+                                {item.menus?.titre}
                                 <span
                                   style={{
                                     fontWeight: 600,
@@ -402,6 +401,11 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                                 >
                                   x{item?.quantity}
                                 </span>
+                              </Typography>
+                              <Typography>
+                                {item.menus?.ingredients?.flatMap(
+                                  (item) => item?.nom
+                                )}
                               </Typography>
                               <Typography
                                 sx={{
