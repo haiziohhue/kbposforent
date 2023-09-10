@@ -5,6 +5,7 @@ type CartItem = {
   id: number;
   menus: IMenu;
   quantity: number;
+  component: string;
 };
 
 type CartState = {

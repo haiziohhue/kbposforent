@@ -132,15 +132,38 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     }
     return total;
   };
-
+  console.log(cartItems);
   const onFinishHandler = async (data: IOrder) => {
+    const componentType = cartItems.map((item) => item?.component);
+
     const payload = {
       ...data,
-      // menus: cartItems.map((item) => (item.menus.id)),
-      menus: cartItems.map((item) => ({
-        menu: [item.id],
-        quantite: item.quantity,
-      })),
+      // menus: cartItems.map((item) => ({
+      //   menu: [item.id],
+      //   quantite: item.quantity,
+      // })),
+
+      menu: cartItems.map((item) => {
+        const componentType = item?.component;
+        if (componentType === "menus.Commande-menu") {
+          return {
+            __component: "menus.commande-menu",
+            menu: item.id,
+            quantite: item.quantity,
+          };
+        } else if (componentType === "menus.menu-compose") {
+          return {
+            __component: "menus.menu-compose",
+            categorie: item.menus?.menus?.categorie,
+            ingredient: {
+              ingredient: item.menus?.menus?.ingredient?.ingredient.id,
+              quantite: item.quantity,
+            },
+            prix: item.menus?.menus?.prix,
+          };
+        }
+      }),
+
       total: calculateTotal(),
     };
 

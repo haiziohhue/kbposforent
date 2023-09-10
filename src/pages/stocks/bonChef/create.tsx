@@ -14,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   FormControl,
+  FormLabel,
   IconButton,
   Stack,
   TextField,
@@ -28,7 +29,6 @@ import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 //
 const initialState = {
@@ -60,12 +60,7 @@ const reducer = (state, action) => {
 //
 export const CreateBC: React.FC<
   UseModalFormReturnType<IBC, HttpError, IBC>
-> = ({
-  saveButtonProps,
-
-  modal: { visible, close },
-  handleSubmit,
-}) => {
+> = ({ saveButtonProps, modal: { visible, close } }) => {
   //
 
   const [{ articles, bc, produits }, dispatch] = useReducer(
@@ -364,9 +359,8 @@ export const CreateBC: React.FC<
             autoComplete="off"
             sx={{ display: "flex", flexDirection: "column" }}
           >
-            <form onSubmit={handleSubmit(onFinishHandler)}>
-              <Stack gap="10px" flexDirection="row">
-                {/* <FormControl fullWidth>
+            <Stack gap="10px" flexDirection="row">
+              {/* <FormControl fullWidth>
                   <FormLabel required>Chef</FormLabel>
                   <Controller
                     control={control}
@@ -407,39 +401,36 @@ export const CreateBC: React.FC<
                     <FormHelperText error>{errors.chef.message}</FormHelperText>
                   )}
                 </FormControl> */}
-                <FormControl fullWidth>
-                  <Autocomplete
-                    id="tags-filled"
-                    // value={bc.chef ?? ""}
-                    options={
-                      autocompleteProps.options?.map(
-                        (option: { chef: string; id: number }) => {
-                          return {
-                            label: option?.chef,
-                            id: option?.id,
-                            value: option,
-                          };
-                        }
-                      ) || []
-                    }
-                    onChange={(event, newValue) => {
-                      if (newValue === null) return;
-                      dispatch({
-                        type: "SET_BC",
-                        payload: { ...bc, chef: newValue },
-                      });
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="outlined"
-                        label="Entrepot"
-                        placeholder="Entrepot"
-                      />
-                    )}
-                  />
-                </FormControl>
-                {/* <FormControl fullWidth>
+
+              <FormControl fullWidth required>
+                <FormLabel>Chef</FormLabel>
+                <Autocomplete
+                  id="tags-filled"
+                  // value={bc.chef ?? ""}
+                  options={
+                    autocompleteProps.options?.map(
+                      (option: { chef: string; id: number }) => {
+                        return {
+                          label: option?.chef,
+                          id: option?.id,
+                          value: option,
+                        };
+                      }
+                    ) || []
+                  }
+                  onChange={(event, newValue) => {
+                    if (newValue === null) return;
+                    dispatch({
+                      type: "SET_BC",
+                      payload: { ...bc, chef: newValue },
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="outlined" />
+                  )}
+                />
+              </FormControl>
+              {/* <FormControl fullWidth>
                     <FormLabel>Note</FormLabel>
                     <OutlinedInput
                       id="Nom"
@@ -451,52 +442,51 @@ export const CreateBC: React.FC<
                       <FormHelperText error>{errors.note.message}</FormHelperText>
                     )}
                   </FormControl> */}
-              </Stack>
-              <Box sx={{ mt: 4 }}>
-                <Box
+            </Stack>
+            <Box sx={{ mt: 4 }}>
+              <Box
+                sx={{
+                  // height: 150 + 53 * articles.length,
+                  height: 250,
+                  maxHeight: 250,
+                  width: "100%",
+                  overflow: `auto `,
+                }}
+              >
+                <ResizeDataGrid
                   sx={{
-                    // height: 150 + 53 * articles.length,
-                    height: 250,
-                    maxHeight: 250,
-                    width: "100%",
-                    overflow: `auto `,
+                    fontSize: 14,
                   }}
-                >
-                  <ResizeDataGrid
-                    sx={{
-                      fontSize: 14,
-                    }}
-                    onCellKeyDown={(p, e) => {
-                      e.stopPropagation();
-                    }}
-                    hideFooter
-                    columns={columns}
-                    onRowDoubleClick={(params) => {
-                      const products = articles.map((row, i) =>
-                        params.row.id === i ? { ...row, state: true } : row
-                      );
+                  onCellKeyDown={(p, e) => {
+                    e.stopPropagation();
+                  }}
+                  hideFooter
+                  columns={columns}
+                  onRowDoubleClick={(params) => {
+                    const products = articles.map((row, i) =>
+                      params.row.id === i ? { ...row, state: true } : row
+                    );
 
-                      dispatch({ type: "SET_ARTICLES", payload: products });
-                    }}
-                    rows={articles.map((e, i) => ({
-                      id: i,
-                      ...e,
-                    }))}
-                  />
-                </Box>
-                <Button
-                  sx={{
-                    my: 4,
-                    alignSelf: "start",
+                    dispatch({ type: "SET_ARTICLES", payload: products });
                   }}
-                  variant="outlined"
-                  onClick={addArticle}
-                  startIcon={<Add />}
-                >
-                  Ajouter un article
-                </Button>
+                  rows={articles.map((e, i) => ({
+                    id: i,
+                    ...e,
+                  }))}
+                />
               </Box>
-            </form>
+              <Button
+                sx={{
+                  my: 4,
+                  alignSelf: "start",
+                }}
+                variant="outlined"
+                onClick={addArticle}
+                startIcon={<Add />}
+              >
+                Ajouter un article
+              </Button>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

@@ -108,7 +108,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-
+  console.log(dataGridProps.rows);
   const columns = React.useMemo<GridColumns<IOrder>>(
     () => [
       {
@@ -243,7 +243,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   label=""
                   showInMenu
                   onClick={() => {
-                    navigate("/menus?selectedOrder=" + params.row.id);
+                    navigate("/caisse?selectedOrder=" + params.row.id);
                   }}
                 />
 
@@ -275,7 +275,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   label=""
                   showInMenu
                   onClick={() => {
-                    navigate("/menus?selectedOrder=" + params.row.id);
+                    navigate("/caisse?selectedOrder=" + params.row.id);
                   }}
                 />
               </>

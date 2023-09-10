@@ -56,6 +56,7 @@ export const MenuCard: React.FC<MenuCard> = ({
       id: menu.id,
       menus: menu,
       quantity: 1,
+      component: "menus.Commande-menu",
     };
     dispatch({ type: "ADD_ITEM", payload: newItem });
   };

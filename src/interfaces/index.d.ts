@@ -20,6 +20,17 @@ export interface IMenu {
   stock?: number;
   quantite?: number;
   ingredients?: IIngredients[];
+  menus?: {
+    component: string;
+    menu?: number[];
+    categorie?: string;
+    ingredient?: {
+      ingredient: IIngredients;
+      quantite: number;
+    };
+    prix?: number;
+    quantite?: number;
+  };
 }
 
 export interface ICartMenu {
@@ -27,6 +38,7 @@ export interface ICartMenu {
   menus: IMenu;
   quantity: number;
   total?: number;
+  component: string;
 }
 
 export interface ICaisse {
@@ -135,7 +147,7 @@ export interface LoginFormTypes {
 export interface IIngredients {
   id: number;
   nom?: string;
-  note?: string;
+  description?: string;
   unite?: string;
   ingredients?: { nom: string; prix: number };
 }

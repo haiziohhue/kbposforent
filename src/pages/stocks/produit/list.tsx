@@ -30,7 +30,22 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-
+      {
+        field: "unite",
+        headerName: "Unité de Mesure",
+        headerAlign: "center",
+        align: "center",
+        flex: 1,
+        minWidth: 90,
+      },
+      {
+        field: "description",
+        headerName: "Note",
+        headerAlign: "center",
+        align: "center",
+        flex: 1,
+        minWidth: 90,
+      },
       {
         field: "actions",
         type: "actions",

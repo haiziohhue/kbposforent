@@ -56,14 +56,6 @@ export const ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-      {
-        field: "phone2",
-        headerName: "N°Tel",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        minWidth: 90,
-      },
 
       {
         field: "actions",

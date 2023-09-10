@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer } from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
@@ -13,77 +13,26 @@ import {
   IconButton,
   OutlinedInput,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Create, SaveButton } from "@refinedev/mui";
 import { CloseOutlined } from "@mui/icons-material";
-import { ICategory, IIngredients } from "../../../interfaces";
-import { API_URL } from "../../../constants";
+import { IIngredients } from "../../../interfaces";
 
-type Ingredient = {
-  nom: string;
-  unite: string;
-  note: string;
-};
-type State = {
-  ingredient: Ingredient;
-};
-
-const initialState: State = {
-  ingredient: {
-    nom: "",
-    unite: "",
-    note: "",
-  },
-};
-type Action =
-  | { type: "SET_COUT"; payload: number }
-  | { type: "SET_NOTE"; payload: string }
-  | { type: "SET_UNITE"; payload: string }
-  | { type: "SET_NAME"; payload: string }
-  | { type: "RESET" };
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "SET_NAME":
-      return {
-        ...state,
-        ingredient: { ...state.ingredient, nom: action.payload },
-      };
-    case "SET_UNITE":
-      return {
-        ...state,
-        ingredient: { ...state.ingredient, unite: action.payload },
-      };
-
-    case "SET_NOTE":
-      return {
-        ...state,
-        ingredient: { ...state.ingredient, note: action.payload },
-      };
-    case "RESET":
-      return initialState;
-    default:
-      return state;
-  }
-};
 export const CreateIngredient: React.FC<
   UseModalFormReturnType<IIngredients, HttpError, IIngredients>
 > = ({
   saveButtonProps,
   modal: { visible, close },
   register,
-  refineCore: { onFinish },
-  handleSubmit,
   formState: { errors },
 }) => {
-  const [{ ingredient }, dispatch] = useReducer(reducer, initialState);
-
   return (
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { width: "100%", height: "800px" } }}
+      PaperProps={{ sx: { width: "100%", height: "700px" } }}
     >
       <Create
         saveButtonProps={saveButtonProps}
@@ -117,83 +66,99 @@ export const CreateIngredient: React.FC<
             autoComplete="off"
             sx={{ display: "flex", flexDirection: "column" }}
           >
-            <form onSubmit={handleSubmit(onFinish)}>
-              <Stack gap="10px" marginTop="10px">
-                <FormControl>
-                  <FormLabel required>Nom d'Ingredient</FormLabel>
-                  <OutlinedInput
-                    id="Nom"
-                    value={ingredient.nom}
-                    {...register("nom", {
-                      required: "This field is required",
-                    })}
-                    onChange={(e) =>
-                      dispatch({
-                        type: "SET_NAME",
-                        payload: e.target.value,
-                      })
-                    }
-                  />
-                  {errors.nom && (
-                    <FormHelperText error>{errors.nom.message}</FormHelperText>
-                  )}
-                </FormControl>
+            <Stack gap="10px" marginTop="10px">
+              <FormControl>
+                <FormLabel required>Nom d'Ingredient</FormLabel>
+                <TextField
+                  id="nom"
+                  {...register("nom", {
+                    required: "This field is required",
+                  })}
+                  error={!!errors.nom}
+                  helperText={errors.nom?.message}
+                  margin="normal"
+                  fullWidth
+                  name="nom"
+                  InputProps={{
+                    inputProps: {
+                      style: { textTransform: "capitalize" },
+                      maxLength: 50,
+                      onChange: (event) => {
+                        const target = event.target as HTMLInputElement;
+                        target.value =
+                          target.value.charAt(0).toUpperCase() +
+                          target.value.slice(1);
+                      },
+                    },
+                  }}
+                />
+                {errors.nom && (
+                  <FormHelperText error>{errors.nom.message}</FormHelperText>
+                )}
+              </FormControl>
 
-                {/* Unitées de mesure */}
-                <FormControl>
-                  <FormLabel>Unité de mesure</FormLabel>
-                  <OutlinedInput
-                    value={ingredient.unite}
-                    id="unite"
-                    {...register("unite")}
-                    onChange={(e) =>
-                      dispatch({
-                        type: "SET_UNITE",
-                        payload: e.target.value,
-                      })
-                    }
-                  />
-                  {errors.unite && (
-                    <FormHelperText error>
-                      {errors.unite.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-                {/* Note */}
-                <FormControl>
-                  <FormLabel>Note</FormLabel>
-                  <OutlinedInput
-                    id="note"
-                    value={ingredient.note}
-                    {...register("note")}
-                    multiline
-                    minRows={5}
-                    maxRows={5}
-                    onChange={(e) =>
-                      dispatch({
-                        type: "SET_NOTE",
-                        payload: e.target.value,
-                      })
-                    }
-                  />
-                  {errors.note && (
-                    <FormHelperText error>{errors.note.message}</FormHelperText>
-                  )}
-                </FormControl>
-              </Stack>
-            </form>
+              {/* Unitées de mesure */}
+              <FormControl>
+                <FormLabel>Unité de mesure</FormLabel>
+                <TextField
+                  id="unite"
+                  {...register("unite")}
+                  margin="normal"
+                  fullWidth
+                  name="unite"
+                  InputProps={{
+                    inputProps: {
+                      style: { textTransform: "capitalize" },
+                      maxLength: 50,
+                      onChange: (event) => {
+                        const target = event.target as HTMLInputElement;
+                        target.value =
+                          target.value.charAt(0).toUpperCase() +
+                          target.value.slice(1);
+                      },
+                    },
+                  }}
+                />
+                {errors.unite && (
+                  <FormHelperText error>{errors.unite.message}</FormHelperText>
+                )}
+              </FormControl>
+              {/* Note */}
+              <FormControl>
+                <FormLabel>Note</FormLabel>
+                <TextField
+                  id="note"
+                  {...register("description")}
+                  multiline
+                  minRows={5}
+                  maxRows={5}
+                  margin="normal"
+                  fullWidth
+                  name="description"
+                  InputProps={{
+                    inputProps: {
+                      style: { textTransform: "capitalize" },
+                      maxLength: 50,
+                      onChange: (event) => {
+                        const target = event.target as HTMLInputElement;
+                        target.value =
+                          target.value.charAt(0).toUpperCase() +
+                          target.value.slice(1);
+                      },
+                    },
+                  }}
+                />
+                {errors.description && (
+                  <FormHelperText error>
+                    {errors.description.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Stack>
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton
-            {...saveButtonProps}
-            // onClick={() => {
-            //   onFinish(ingredient as any);
-            //   dispatch({ type: "RESET" });
-            // }}
-          />
-
-          {/* <Button onClick={close}>Annuler</Button> */}
+          <SaveButton {...saveButtonProps} />
         </DialogActions>
       </Create>
     </Dialog>

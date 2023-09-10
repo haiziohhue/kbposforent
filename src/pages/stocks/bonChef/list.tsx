@@ -15,6 +15,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import { IBC, IIngredients } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateBC } from "./create";
+import { EditBC } from "./edit";
 
 export const ListBC: React.FC<IResourceComponentsProps> = () => {
   const { edit } = useNavigation();
@@ -126,7 +127,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <CreateBC {...createDrawerFormProps} />
-      {/* <EditIngredient {...editDrawerFormProps} /> */}
+      <EditBC {...editDrawerFormProps} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>

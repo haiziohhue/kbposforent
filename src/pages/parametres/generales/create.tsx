@@ -129,39 +129,6 @@ export const CreateRestaurantData: React.FC<
                     </FormHelperText>
                   )}
                 </FormControl>
-                {/* Phone */}
-                <FormControl>
-                  <FormLabel
-                    sx={{
-                      marginBottom: "8px",
-                      fontWeight: "700",
-                      fontSize: "14px",
-                      color: "text.primary",
-                    }}
-                  >
-                    N° Telephone
-                  </FormLabel>
-                  <InputMask
-                    mask="(999) 999 99 99"
-                    disabled={false}
-                    {...register("phone2")}
-                  >
-                    {/* @ts-expect-error False alarm */}
-                    {(props: TextFieldProps) => (
-                      <TextField
-                        {...props}
-                        size="small"
-                        margin="none"
-                        variant="outlined"
-                      />
-                    )}
-                  </InputMask>
-                  {errors.phone2 && (
-                    <FormHelperText error>
-                      {errors.phone2.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
               </Stack>
             </form>
           </Box>

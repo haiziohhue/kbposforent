@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useEffect, useState } from "react";
+import React, { useReducer } from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
@@ -11,25 +11,21 @@ import {
   FormHelperText,
   FormLabel,
   IconButton,
-  InputAdornment,
   OutlinedInput,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Edit, SaveButton } from "@refinedev/mui";
-import { Controller } from "react-hook-form";
+
 import { CloseOutlined } from "@mui/icons-material";
 import { IIngredients } from "../../../interfaces";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 
 export const EditIngredient: React.FC<
   UseModalFormReturnType<IIngredients, HttpError, IIngredients>
 > = ({
   saveButtonProps,
-  control,
+
   modal: { visible, close },
   register,
   refineCore: { onFinish },
@@ -77,122 +73,91 @@ export const EditIngredient: React.FC<
             <form onSubmit={handleSubmit(onFinish)}>
               <Stack gap="10px" marginTop="10px">
                 <FormControl>
-                  <FormLabel required>Nom</FormLabel>
-                  <OutlinedInput
-                    id="Nom"
+                  <FormLabel required>Nom d'Ingredient</FormLabel>
+                  <TextField
+                    id="nom"
                     {...register("nom", {
                       required: "This field is required",
                     })}
+                    error={!!errors.nom}
+                    helperText={errors.nom?.message}
+                    margin="normal"
+                    fullWidth
+                    name="nom"
+                    InputProps={{
+                      inputProps: {
+                        style: { textTransform: "capitalize" },
+                        maxLength: 50,
+                        onChange: (event) => {
+                          const target = event.target as HTMLInputElement;
+                          target.value =
+                            target.value.charAt(0).toUpperCase() +
+                            target.value.slice(1);
+                        },
+                      },
+                    }}
                   />
                   {errors.nom && (
                     <FormHelperText error>{errors.nom.message}</FormHelperText>
                   )}
                 </FormControl>
-
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  spacing={2}
-                >
-                  <FormControl fullWidth>
-                    <FormLabel required>Quantite</FormLabel>
-                    <OutlinedInput
-                      type="number"
-                      id="quantite"
-                      {...register("quantite", {
-                        required: "This field is required",
-                      })}
-                    />
-                    {errors.quantite && (
-                      <FormHelperText error>
-                        {errors.quantite.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <FormLabel required>Cout</FormLabel>
-                    <OutlinedInput
-                      id="Cout"
-                      {...register("cout", {
-                        required: "This field is required",
-                      })}
-                      type="number"
-                      startAdornment={
-                        <InputAdornment position="start">DA</InputAdornment>
-                      }
-                    />
-                    {errors.cout && (
-                      <FormHelperText error>
-                        {errors.cout.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                </Stack>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  spacing={2}
-                >
-                  <FormControl fullWidth>
-                    <FormLabel required>Source</FormLabel>
-                    <OutlinedInput
-                      type="text"
-                      id="source"
-                      {...register("source", {
-                        required: "This field is required",
-                      })}
-                    />
-                    {errors.source && (
-                      <FormHelperText error>
-                        {errors.source.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                  {/* date_expiration */}
-                  <FormControl fullWidth>
-                    <FormLabel>Date d'Expiration</FormLabel>
-
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      {/* <DatePicker
-                            value={watch('date_naissance') }
-                            format="DD-MM-YYYY"
-                             onChange={(newValue) => setDate(newValue)}
-                        
-                       
-                          /> */}
-                      <Controller
-                        name="date_expiration"
-                        control={control}
-                        render={({ field }) => (
-                          <DatePicker
-                            {...field}
-                            value={field.value ? dayjs(field.value) : null}
-                            onChange={(newValue) =>
-                              field.onChange(dayjs(newValue))
-                            }
-                          />
-                        )}
-                      />
-                    </LocalizationProvider>
-                    {errors.date_expiration && (
-                      <FormHelperText error>
-                        {errors.date_expiration.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                </Stack>
+                {/* Unitées de mesure */}
+                <FormControl>
+                  <FormLabel>Unité de mesure</FormLabel>
+                  <TextField
+                    id="unite"
+                    {...register("unite")}
+                    margin="normal"
+                    fullWidth
+                    name="unite"
+                    InputProps={{
+                      inputProps: {
+                        style: { textTransform: "capitalize" },
+                        maxLength: 50,
+                        onChange: (event) => {
+                          const target = event.target as HTMLInputElement;
+                          target.value =
+                            target.value.charAt(0).toUpperCase() +
+                            target.value.slice(1);
+                        },
+                      },
+                    }}
+                  />
+                  {errors.unite && (
+                    <FormHelperText error>
+                      {errors.unite.message}
+                    </FormHelperText>
+                  )}
+                </FormControl>
                 {/* Note */}
                 <FormControl>
                   <FormLabel>Note</FormLabel>
-                  <OutlinedInput
+                  <TextField
                     id="note"
-                    {...register("note")}
+                    {...register("description")}
                     multiline
                     minRows={5}
                     maxRows={5}
+                    margin="normal"
+                    fullWidth
+                    name="description"
+                    InputProps={{
+                      inputProps: {
+                        style: { textTransform: "capitalize" },
+                        maxLength: 50,
+                        onChange: (event) => {
+                          const target = event.target as HTMLInputElement;
+                          target.value =
+                            target.value.charAt(0).toUpperCase() +
+                            target.value.slice(1);
+                        },
+                      },
+                    }}
                   />
-                  {errors.note && (
-                    <FormHelperText error>{errors.note.message}</FormHelperText>
+                  {errors.description && (
+                    <FormHelperText error>
+                      {errors.description.message}
+                    </FormHelperText>
                   )}
                 </FormControl>
               </Stack>

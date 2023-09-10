@@ -62,12 +62,8 @@ export const CreateAchat: React.FC<
   UseModalFormReturnType<IAchat, HttpError, IAchat>
 > = ({
   saveButtonProps,
-  control,
   modal: { visible, close },
   register,
-  setValue,
-  refineCore: { onFinish },
-  handleSubmit,
   formState: { errors },
 }) => {
   //
@@ -86,9 +82,9 @@ export const CreateAchat: React.FC<
     const newArticle = {
       article: { id: 0, label: "" },
       quantite: 1,
-      prix: 0,
+      prix: 1,
       date_expiration: dayjs(),
-      total: 0,
+      total: 1,
       state: true,
     };
     newArticle.total = calculateSubtotal(newArticle);
@@ -147,21 +143,13 @@ export const CreateAchat: React.FC<
       })
   );
   //
-  console.log(
-    articles?.map((article) => ({
-      stock: article.article.id,
-      quantite: article.quantite,
-      cout: article.prix,
-      total: article.total,
-      date_expiration: article.date_expiration.format("DD-MM-YYYY"),
-    }))
-  );
+
   //
   const columns: GridColDef[] = [
     {
       field: "article",
       headerName: "Article",
-      width: 250,
+      width: 200,
       resizable: true,
       type: "string",
       minWidth: 200,
@@ -352,7 +340,7 @@ export const CreateAchat: React.FC<
     {
       field: "state",
       headerName: "State",
-      width: 80,
+      width: 120,
       resizable: true,
       type: "boolean",
       headerAlign: "left",
@@ -421,13 +409,14 @@ export const CreateAchat: React.FC<
   const onFinishHandler = async () => {
     const payload = {
       source: br.source,
+      note: br.note,
       ingredients: articles
         ?.filter((k) => !k.state)
         ?.map((article) => ({
           stock: article.article.id,
           quantite: article.quantite,
           cout: article.prix,
-          //   total: article.total,
+          total: calculateSubtotal(article),
           date_expiration: article.date_expiration,
         })),
       total: calculateTotal(),
@@ -454,7 +443,7 @@ export const CreateAchat: React.FC<
         sx: {
           width: "100%",
           height: "800px",
-          maxWidth: "1024px",
+          maxWidth: "1200px",
         },
       }}
     >
@@ -490,82 +479,78 @@ export const CreateAchat: React.FC<
             autoComplete="off"
             sx={{ display: "flex", flexDirection: "column" }}
           >
-            <form onSubmit={handleSubmit(onFinishHandler)}>
-              <Stack gap="10px" flexDirection="row">
-                <FormControl fullWidth>
-                  <FormLabel required>Source</FormLabel>
-                  <OutlinedInput
-                    id="Nom"
-                    value={br.source}
-                    {...register("source", {
-                      required: "This field is required",
-                    })}
-                    onChange={handleChange}
-                  />
-                  {errors.source && (
-                    <FormHelperText error>
-                      {errors.source.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-                {/* <FormControl fullWidth>
-                  <FormLabel>Note</FormLabel>
-                  <OutlinedInput
-                    id="Nom"
-                    value={br.note}
-                    {...register("note")}
-                    onChange={handleChange}
-                  />
-                  {errors.note && (
-                    <FormHelperText error>{errors.note.message}</FormHelperText>
-                  )}
-                </FormControl> */}
-              </Stack>
-              <Box sx={{ mt: 4 }}>
-                <Box
+            <Stack gap="10px" flexDirection="row">
+              <FormControl fullWidth>
+                <FormLabel required>Source</FormLabel>
+                <OutlinedInput
+                  id="Nom"
+                  value={br.source}
+                  {...register("source", {
+                    required: "This field is required",
+                  })}
+                  onChange={handleChange}
+                />
+                {errors.source && (
+                  <FormHelperText error>{errors.source.message}</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth>
+                <FormLabel>Note</FormLabel>
+                <OutlinedInput
+                  id="Note"
+                  value={br.note}
+                  {...register("note")}
+                  onChange={handleChange}
+                />
+                {errors.note && (
+                  <FormHelperText error>{errors.note.message}</FormHelperText>
+                )}
+              </FormControl>
+            </Stack>
+            <Box sx={{ mt: 4 }}>
+              <Box
+                sx={{
+                  height: 150 + 53 * articles.length,
+                  maxHeight: 350,
+                  width: "100%",
+                  overflow: `auto `,
+                }}
+              >
+                <ResizeDataGrid
                   sx={{
-                    height: 150 + 53 * articles.length,
-                    maxHeight: 350,
-                    width: "100%",
-                    overflow: `auto `,
+                    fontSize: 14,
                   }}
-                >
-                  <ResizeDataGrid
-                    sx={{
-                      fontSize: 14,
-                    }}
-                    onCellKeyDown={(p, e) => {
-                      e.stopPropagation();
-                    }}
-                    hideFooter
-                    columns={columns}
-                    onRowDoubleClick={(params) => {
-                      const products = articles.map((row, i) =>
-                        params.row.id === i ? { ...row, state: true } : row
-                      );
+                  onCellKeyDown={(p, e) => {
+                    e.stopPropagation();
+                  }}
+                  hideFooter
+                  columns={columns}
+                  onRowDoubleClick={(params) => {
+                    const products = articles.map((row, i) =>
+                      params.row.id === i ? { ...row, state: true } : row
+                    );
 
-                      dispatch({ type: "SET_ARTICLES", payload: products });
-                    }}
-                    rows={articles.map((e, i) => ({
-                      id: i,
-                      ...e,
-                    }))}
-                  />
-                </Box>
-                <Button
-                  sx={{
-                    my: 4,
-                    alignSelf: "start",
+                    dispatch({ type: "SET_ARTICLES", payload: products });
                   }}
-                  variant="outlined"
-                  onClick={addArticle}
-                  startIcon={<Add />}
-                >
-                  Ajouter un article
-                </Button>
-                <Typography>Total: {calculateTotal()}</Typography>
+                  rows={articles.map((e, i) => ({
+                    id: i,
+                    ...e,
+                  }))}
+                />
               </Box>
-            </form>
+              <Button
+                sx={{
+                  my: 4,
+                  alignSelf: "start",
+                }}
+                variant="outlined"
+                onClick={addArticle}
+                startIcon={<Add />}
+              >
+                Ajouter un article
+              </Button>
+              <Typography>Total: {calculateTotal()}</Typography>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

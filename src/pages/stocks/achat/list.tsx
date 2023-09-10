@@ -12,9 +12,10 @@ import Grid from "@mui/material/Grid";
 import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
 
 import { Delete, Edit } from "@mui/icons-material";
-import { IAchat, IIngredients } from "../../../interfaces";
+import { IAchat } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateAchat } from "./create";
+import { EditAchat } from "./edit";
 
 export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   const { edit } = useNavigation();
@@ -43,7 +44,14 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-
+      {
+        field: "total",
+        headerName: "Total",
+        headerAlign: "center",
+        align: "center",
+        flex: 1,
+        minWidth: 90,
+      },
       {
         field: "createdAt",
         headerName: "Date de Creation",
@@ -125,7 +133,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <CreateAchat {...createDrawerFormProps} />
-      {/* <EditIngredient {...editDrawerFormProps} /> */}
+      <EditAchat {...editDrawerFormProps} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>
