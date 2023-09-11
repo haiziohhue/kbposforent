@@ -365,7 +365,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                   {/* Caisse */}
                   <FormControl fullWidth sx={{ marginBottom: 2 }}>
                     <FormLabel
-                      required
                       sx={{
                         marginBottom: "8px",
                         fontWeight: "700",
@@ -400,7 +399,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                               {...params}
                               variant="outlined"
                               error={!!errors.caisse?.message}
-                              // required
                             />
                           )}
                         />

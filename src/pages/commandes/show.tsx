@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import { HttpError, useUpdate } from "@refinedev/core";
 import {
@@ -37,19 +37,33 @@ import { useNavigate } from "react-router-dom";
 interface ShowOrderProps {
   id: number;
 }
+const initialState = {
+  record: [],
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "SET_RECORD":
+      return { ...state, record: action.payload };
+    default:
+      return state;
+  }
+};
 export const ShowOrder: React.FC<
   UseModalFormReturnType<IOrder, HttpError, IOrder> & ShowOrderProps
 > = ({ modal: { visible, close }, id }) => {
   //
   const { mutate } = useUpdate();
   const navigate = useNavigate();
+  // const [state, dispatch] = useReducer(reducer, initialState);
+  // const {record}=state
   const [record, setRecord] = useState<IOrder | null>(null);
 
   useEffect(() => {
     const fetchRecord = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/commandes/${id}?populate=caisse&populate=table&populate=menus.menu.image&populate=users_permissions_user`
+          // `${API_URL}/api/commandes/${id}?populate=caisse&populate=table&populate=menus.menu.image&populate=users_permissions_user`
+          `${API_URL}/api/commandes/${id}?populate=deep`
         );
         const data = await response.json();
         console.log(data?.data.attributes);

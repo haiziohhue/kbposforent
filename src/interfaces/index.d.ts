@@ -28,7 +28,7 @@ export interface IMenu {
       ingredient: IIngredients;
       quantite: number;
     };
-    prix?: number;
+
     quantite?: number;
   };
 }
@@ -39,6 +39,8 @@ export interface ICartMenu {
   quantity: number;
   total?: number;
   component: string;
+  categorie?: string;
+  prix?: number;
 }
 
 export interface ICaisse {
@@ -103,8 +105,8 @@ export interface IUser {
   date_naissance?: Date;
   adresse?: string;
   caisse?: ICaisse;
-  // role?: { label?: string; id?: number };
-  role: IRole;
+  role?: { label?: string; id?: number };
+  // role: IRole;
 }
 export interface IUserMe {
   id: number;
@@ -149,7 +151,8 @@ export interface IIngredients {
   nom?: string;
   description?: string;
   unite?: string;
-  ingredients?: { nom: string; prix: number };
+  prix?: number;
+  count?: number;
 }
 
 export interface ICatIngredients {

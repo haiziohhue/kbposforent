@@ -4,7 +4,6 @@ import axios from "axios";
 import InputMask from "react-input-mask";
 import {
   IResourceComponentsProps,
-
   useApiUrl,
   HttpError,
   useCustom,
@@ -121,7 +120,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
     method: "get",
   });
   const roles = data?.data ?? [];
-
 
   const renderFormByStep = (step: number) => {
     switch (step) {
@@ -372,7 +370,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                   {/* Caisse */}
                   <FormControl fullWidth sx={{ marginBottom: 2 }}>
                     <FormLabel
-                      required
                       sx={{
                         marginBottom: "8px",
                         fontWeight: "700",
@@ -385,9 +382,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                     <Controller
                       control={control}
                       name="caisse"
-                      // rules={{
-                      //   required: "Store required",
-                      // }}
                       render={({ field }) => (
                         <Autocomplete
                           size="small"
@@ -409,7 +403,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                               {...params}
                               variant="outlined"
                               error={!!errors.caisse?.message}
-                              // required
                             />
                           )}
                         />
@@ -571,14 +564,15 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                     variant="outlined"
                   />
                   {errors.username && (
-                    <FormHelperText error>{errors.username.message}</FormHelperText>
+                    <FormHelperText error>
+                      {errors.username.message}
+                    </FormHelperText>
                   )}
                 </FormControl>
               </Grid>
             </Grid>
           </>
         );
-     
     }
   };
 

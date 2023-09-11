@@ -104,7 +104,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
-  console.log(cartItems);
+
   const handleRemoveItem = (itemId: number) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
   };
@@ -134,8 +134,6 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   };
   console.log(cartItems);
   const onFinishHandler = async (data: IOrder) => {
-    const componentType = cartItems.map((item) => item?.component);
-
     const payload = {
       ...data,
       // menus: cartItems.map((item) => ({
@@ -148,18 +146,18 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
         if (componentType === "menus.Commande-menu") {
           return {
             __component: "menus.commande-menu",
-            menu: item.id,
-            quantite: item.quantity,
+            menu: item?.id,
+            quantite: item?.quantity,
           };
         } else if (componentType === "menus.menu-compose") {
           return {
             __component: "menus.menu-compose",
-            categorie: item.menus?.menus?.categorie,
-            ingredient: {
-              ingredient: item.menus?.menus?.ingredient?.ingredient.id,
-              quantite: item.quantity,
-            },
-            prix: item.menus?.menus?.prix,
+            categorie: item?.categorie,
+            ingredient: item?.menus?.ingredients?.map((item) => ({
+              ingredient: item?.id,
+            })),
+            prix: item?.prix,
+            quantite: item?.quantity,
           };
         }
       }),
@@ -425,11 +423,13 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                                   x{item?.quantity}
                                 </span>
                               </Typography>
-                              <Typography>
-                                {item.menus?.ingredients?.flatMap(
-                                  (item) => item?.nom
-                                )}
-                              </Typography>
+                              <Box>
+                                {item?.menus?.ingredients?.flatMap((item) => (
+                                  <Typography>
+                                    ({item?.count} x {item?.nom}) {item?.prix}
+                                  </Typography>
+                                ))}
+                              </Box>
                               <Typography
                                 sx={{
                                   fontWeight: 600,

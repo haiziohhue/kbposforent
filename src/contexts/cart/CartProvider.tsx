@@ -6,6 +6,8 @@ type CartItem = {
   menus: IMenu;
   quantity: number;
   component: string;
+  categorie?: string;
+  prix?: number;
 };
 
 type CartState = {

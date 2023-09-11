@@ -32,7 +32,7 @@ import axios from "axios";
 import { CloseOutlined } from "@mui/icons-material";
 import { ICategory, IMenu } from "interfaces";
 import { API_URL } from "../../constants";
-
+import emptyMenu from "../../assets/emptyMenu.jpg";
 export const CreateMenuCompose: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
 > = ({
@@ -83,6 +83,7 @@ export const CreateMenuCompose: React.FC<
     const ingredients = ingredientsData?.map((ingredient) => ({
       nom: ingredient?.attributes?.nom,
       ingredients: ingredient?.attributes?.ingredients?.map((item) => ({
+        id: item?.ingredient?.data?.id,
         nom: item?.ingredient?.data?.attributes?.nom,
         prix: item?.prix,
       })),
@@ -127,19 +128,44 @@ export const CreateMenuCompose: React.FC<
   const totalPrice = calculateTotalPrice();
   console.log(selectedIngredients);
   //
+
   const handleAddToCart = () => {
+    const flattenedIngredients = selectedIngredients.flat();
+    const mergedIngredients = {};
+
+    for (const ingredient of flattenedIngredients) {
+      const { id, nom, prix } = ingredient;
+
+      if (mergedIngredients[nom]) {
+        mergedIngredients[nom].count += 1;
+        mergedIngredients[nom].prix += prix;
+      } else {
+        mergedIngredients[nom] = { id, nom, count: 1, prix };
+      }
+    }
+
+    const mergedIngredientsArray = Object.values(mergedIngredients);
+    console.log(mergedIngredientsArray);
     const newItem: any = {
       id: Math.random(),
       menus: {
         prix: totalPrice,
-        ingredients: ingredients.flatMap((item) =>
-          item?.ingredients.map((ing) => ({ nom: ing?.nom }))
-        ),
+        ingredients: (mergedIngredientsArray || []).map((item) => ({
+          id: (item as { id?: number }).id,
+          nom: (item as { nom?: string }).nom || "",
+          prix: (item as { prix?: number }).prix || 0,
+          count: (item as { count?: number }).count,
+        })),
         titre: `${selectedCategory} Personalisé`,
+        image: {
+          url: "/uploads/top_view_clipboard_ingredients_3d059aaf86.jpg",
+        },
       },
       name: `${selectedCategory} Personalisé`,
       quantity: 1,
       prix: totalPrice,
+      component: "menus.menu-compose",
+      categorie: selectedCategory,
     };
     dispatch({ type: "ADD_ITEM", payload: newItem });
     console.log(newItem);
