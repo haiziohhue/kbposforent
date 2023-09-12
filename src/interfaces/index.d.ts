@@ -159,7 +159,7 @@ export interface ICatIngredients {
   id: number;
   nom?: string;
   categories?: ICategory[];
-  // ingredients?: IIngredients[];
+  ingredients?: IIngredients[];
 }
 export interface IGeneraleDta {
   id: number;
@@ -201,4 +201,5 @@ export interface IStock {
   id: number;
   ingredient: IIngredients;
   quantité: number;
+  publishedAt: Date;
 }

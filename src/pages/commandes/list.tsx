@@ -29,9 +29,9 @@ import CardHeader from "@mui/material/CardHeader";
 
 import {
   DataGrid,
-  GridColumns,
   GridActionsCellItem,
   GridCellParams,
+  GridColDef,
 } from "@mui/x-data-grid";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
@@ -42,7 +42,6 @@ import { OrderStatus } from "../../components/order/OrderStatus";
 import { OrderTypes } from "../../components/order/OrderTypes";
 import { Edit } from "@mui/icons-material";
 import { ShowOrder } from "./show";
-
 import { useNavigate } from "react-router-dom";
 
 export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
@@ -109,7 +108,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<IOrder>>(
+  const columns = React.useMemo<GridColDef<IOrder>[]>(
     () => [
       {
         field: "code",
@@ -540,7 +539,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 setSelectedRowId(rowId);
                 showOrderDrawer(rowId);
               }}
-              rowsPerPageOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {

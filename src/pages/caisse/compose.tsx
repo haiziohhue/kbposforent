@@ -4,42 +4,27 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import { HttpError } from "@refinedev/core";
 import {
   Autocomplete,
-  Avatar,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  FormLabel,
   IconButton,
-  Input,
-  InputAdornment,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
-import { Controller } from "react-hook-form";
+import { Create } from "@refinedev/mui";
+
 import { CartContext } from "../../contexts/cart/CartProvider";
 import axios from "axios";
-
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CloseOutlined } from "@mui/icons-material";
-import { ICategory, IMenu } from "interfaces";
+import { IMenu } from "interfaces";
 import { API_URL } from "../../constants";
-import emptyMenu from "../../assets/emptyMenu.jpg";
+
 export const CreateMenuCompose: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
-> = ({
-  saveButtonProps,
-
-  modal: { visible, close },
-}) => {
+> = ({ saveButtonProps, modal: { visible, close } }) => {
   const { dispatch } = useContext(CartContext);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedIngredients, setSelectedIngredients] = useState<any[]>([]);
@@ -145,7 +130,6 @@ export const CreateMenuCompose: React.FC<
     }
 
     const mergedIngredientsArray = Object.values(mergedIngredients);
-    console.log(mergedIngredientsArray);
     const newItem: any = {
       id: Math.random(),
       menus: {
@@ -158,7 +142,7 @@ export const CreateMenuCompose: React.FC<
         })),
         titre: `${selectedCategory} Personalisé`,
         image: {
-          url: "/uploads/top_view_clipboard_ingredients_3d059aaf86.jpg",
+          url: "/uploads/menu_Compose_cb43bf60d1.png",
         },
       },
       name: `${selectedCategory} Personalisé`,
@@ -168,7 +152,7 @@ export const CreateMenuCompose: React.FC<
       categorie: selectedCategory,
     };
     dispatch({ type: "ADD_ITEM", payload: newItem });
-    console.log(newItem);
+    close();
   };
   return (
     <Dialog
@@ -216,7 +200,7 @@ export const CreateMenuCompose: React.FC<
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Choose a Category"
+                    label="choisissez une catégorie"
                     variant="outlined"
                   />
                 )}
@@ -243,7 +227,7 @@ export const CreateMenuCompose: React.FC<
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            label="Choose an Ingredient"
+                            label="Choisissez un ingrédient"
                             variant="outlined"
                           />
                         )}
@@ -253,7 +237,7 @@ export const CreateMenuCompose: React.FC<
                 </>
               )}
               <div>
-                <h3>Total Price: {calculateTotalPrice()} DA</h3>
+                <h3>Totale: {calculateTotalPrice()} DA</h3>
               </div>
             </div>
           </Box>
@@ -262,7 +246,7 @@ export const CreateMenuCompose: React.FC<
           <Button
             variant="contained"
             onClick={handleAddToCart}
-            // endIcon={<AddShoppingCartIcon />}
+            endIcon={<AddShoppingCartIcon />}
           >
             Ajouter
           </Button>

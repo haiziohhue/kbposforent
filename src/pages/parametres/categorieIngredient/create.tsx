@@ -38,7 +38,8 @@ const initialState = {
   articles: [],
   produits: [],
   ci: {
-    catIng: {
+    nom: "",
+    categories: {
       nom: "",
       id: null,
     },
@@ -54,6 +55,8 @@ const reducer = (state, action) => {
       return { ...state, produits: action.payload };
     case "SET_CI":
       return { ...state, ci: action.payload };
+    case "RESET":
+      return initialState;
     default:
       return state;
   }
@@ -76,10 +79,16 @@ export const CreateCatIngredients: React.FC<
     resource: "categories",
   });
   //
-  const [{ articles, bi, produits }, dispatch] = useReducer(
+  const [{ articles, ci, produits }, dispatch] = useReducer(
     reducer,
     initialState
   );
+  const handleChange = (event) => {
+    dispatch({
+      type: "SET_CI",
+      payload: { ...ci, [event.target.name]: event.target.value },
+    });
+  };
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
@@ -290,7 +299,7 @@ export const CreateCatIngredients: React.FC<
       ingredients: articles
         ?.filter((k) => !k.state)
         ?.map((article) => ({
-          ingredient: article.article.id,
+          ingredient: article.article?.value?.ingredient?.data?.id,
           prix: article.prix,
         })),
       // etat: "Validé",
@@ -304,13 +313,14 @@ export const CreateCatIngredients: React.FC<
         }
       );
       console.log("Request succeeded:", response.data);
-
-      //   navigate(`/commandes`);
+      close();
+      dispatch({ type: "RESET" });
     } catch (error) {
       console.error("Request failed:", error);
     }
   };
   //
+  console.log(articles);
   return (
     <Dialog
       open={visible}
@@ -352,65 +362,72 @@ export const CreateCatIngredients: React.FC<
             autoComplete="off"
             sx={{ display: "flex", flexDirection: "column" }}
           >
-            <form onSubmit={handleSubmit(onFinishHandler)}>
-              <Stack gap="20px" marginTop="10px" marginBottom="20px">
-                <FormControl>
-                  <FormLabel required>Nom</FormLabel>
-                  <OutlinedInput
-                    id="nom"
-                    {...register("nom", {
-                      required: "This field is required",
-                    })}
-                  />
-                  {errors.nom && (
-                    <FormHelperText error>{errors.nom.message}</FormHelperText>
+            <Stack gap="20px" marginTop="10px" marginBottom="20px">
+              <FormControl>
+                <FormLabel required>Nom</FormLabel>
+                <OutlinedInput
+                  id="nom"
+                  {...register("nom", {
+                    required: "This field is required",
+                  })}
+                  onChange={handleChange}
+                />
+                {errors.nom && (
+                  <FormHelperText error>{errors.nom.message}</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel required>Categories</FormLabel>
+                <Controller
+                  control={control}
+                  name="categories"
+                  render={({ field }) => (
+                    <Autocomplete
+                      disablePortal
+                      multiple
+                      {...autocompleteProps}
+                      {...register("categories", {
+                        required: "This field is required",
+                      })}
+                      {...field}
+                      // onChange={(_, value) => {
+                      //   field.onChange(value);
+                      // }}
+                      onChange={(event, newValue) => {
+                        if (newValue === null) return;
+                        dispatch({
+                          type: "SET_CI",
+                          payload: { ...ci, categories: newValue },
+                        });
+                      }}
+                      getOptionLabel={(item) => {
+                        return item.nom ? item.nom : "";
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          error={!!errors.categories?.message}
+                          required
+                        />
+                      )}
+                    />
                   )}
-                </FormControl>
-                <FormControl>
-                  <FormLabel required>Categories</FormLabel>
-                  <Controller
-                    control={control}
-                    name="categories"
-                    render={({ field }) => (
-                      <Autocomplete
-                        disablePortal
-                        multiple
-                        {...autocompleteProps}
-                        {...register("categories", {
-                          required: "This field is required",
-                        })}
-                        {...field}
-                        onChange={(_, value) => {
-                          field.onChange(value);
-                        }}
-                        getOptionLabel={(item) => {
-                          return item.nom ? item.nom : "";
-                        }}
-                        isOptionEqualToValue={(option, value) =>
-                          value === undefined ||
-                          option?.id?.toString() ===
-                            (value?.id ?? value)?.toString()
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            error={!!errors.categories?.message}
-                            required
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                  {errors.categories && (
-                    <FormHelperText error>
-                      {errors.categories.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
+                />
+                {errors.categories && (
+                  <FormHelperText error>
+                    {errors.categories.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
 
-                {/* Note */}
-                {/* <FormControl>
+              {/* Note */}
+              {/* <FormControl>
                   <FormLabel>Note</FormLabel>
                   <OutlinedInput
                     id="note"
@@ -423,69 +440,65 @@ export const CreateCatIngredients: React.FC<
                     <FormHelperText error>{errors.note.message}</FormHelperText>
                   )}
                 </FormControl> */}
-              </Stack>
-              <Box sx={{ mt: 4 }}>
-                <Box
+            </Stack>
+            <Box sx={{ mt: 4 }}>
+              <Box
+                sx={{
+                  // height: 150 + 53 * articles.length,
+                  height: 250,
+                  maxHeight: 250,
+                  width: "100%",
+                  overflow: `auto `,
+                }}
+              >
+                <ResizeDataGrid
                   sx={{
-                    // height: 150 + 53 * articles.length,
-                    height: 250,
-                    maxHeight: 250,
-                    width: "100%",
-                    overflow: `auto `,
+                    fontSize: 14,
                   }}
-                >
-                  <ResizeDataGrid
-                    sx={{
-                      fontSize: 14,
-                    }}
-                    onCellKeyDown={(p, e) => {
-                      e.stopPropagation();
-                    }}
-                    hideFooter
-                    columns={columns}
-                    onRowDoubleClick={(params) => {
-                      const products = articles.map((row, i) =>
-                        params.row.id === i ? { ...row, state: true } : row
-                      );
+                  onCellKeyDown={(p, e) => {
+                    e.stopPropagation();
+                  }}
+                  hideFooter
+                  columns={columns}
+                  onRowDoubleClick={(params) => {
+                    const products = articles.map((row, i) =>
+                      params.row.id === i ? { ...row, state: true } : row
+                    );
 
-                      dispatch({ type: "SET_ARTICLES", payload: products });
-                    }}
-                    rows={articles.map((e, i) => ({
-                      id: i,
-                      ...e,
-                    }))}
-                  />
-                </Box>
-                <Button
-                  sx={{
-                    my: 4,
-                    alignSelf: "start",
+                    dispatch({ type: "SET_ARTICLES", payload: products });
                   }}
-                  variant="outlined"
-                  onClick={addArticle}
-                  startIcon={<Add />}
-                >
-                  Ajouter un article
-                </Button>
+                  rows={articles.map((e, i) => ({
+                    id: i,
+                    ...e,
+                  }))}
+                />
               </Box>
-              <Button variant="contained" type="submit">
-                Enregistrer
+              <Button
+                sx={{
+                  my: 4,
+                  alignSelf: "start",
+                }}
+                variant="outlined"
+                onClick={addArticle}
+                startIcon={<Add />}
+              >
+                Ajouter un article
               </Button>
-            </form>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>
           <SaveButton {...saveButtonProps} />
-          {/* <Button
+          <Button
             {...saveButtonProps}
             variant="contained"
             onClick={() => {
-              onFinishHandler(bi);
+              onFinishHandler(ci);
             }}
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >
             Enregistrer
-          </Button> */}
+          </Button>
         </DialogActions>
       </Create>
     </Dialog>

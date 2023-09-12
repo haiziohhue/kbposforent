@@ -10,7 +10,12 @@ import { useDataGrid, List, CreateButton } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 
-import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColumns,
+  GridActionsCellItem,
+  GridColDef,
+} from "@mui/x-data-grid";
 
 import { IUser } from "../../../interfaces";
 import { API_URL } from "../../../constants";

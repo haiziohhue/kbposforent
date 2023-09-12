@@ -53,6 +53,8 @@ const reducer = (state, action) => {
       return { ...state, produits: action.payload };
     case "SET_BC":
       return { ...state, bc: action.payload };
+    case "RESET":
+      return initialState;
     default:
       return state;
   }
@@ -308,8 +310,8 @@ export const CreateBC: React.FC<
         data: payload,
       });
       console.log("Request succeeded:", response.data);
-
-      //   navigate(`/commandes`);
+      close();
+      dispatch({ type: "RESET" });
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -490,7 +492,12 @@ export const CreateBC: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
+          {/* <SaveButton
+            {...saveButtonProps}
+            onClick={() => {
+              onFinishHandler();
+            }}
+          /> */}
           <Button
             {...saveButtonProps}
             variant="contained"

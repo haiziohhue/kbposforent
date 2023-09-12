@@ -6,7 +6,7 @@ import {
 } from "@refinedev/core";
 import { useDataGrid, List, CreateButton } from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
-import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { Delete, Edit } from "@mui/icons-material";
 import { ICatIngredients, ICategory, IIngredients } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
@@ -20,7 +20,7 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
     meta: { populate: "deep" },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<ICatIngredients>>(
+  const columns = React.useMemo<GridColDef<ICatIngredients>[]>(
     () => [
       {
         field: "nom",
@@ -149,7 +149,8 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
               columns={columns}
               filterModel={undefined}
               autoHeight
-              rowsPerPageOptions={[10, 20, 50, 100]}
+              // rowsPerPageOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {

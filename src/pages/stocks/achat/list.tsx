@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IResourceComponentsProps,
   HttpError,
@@ -9,7 +9,7 @@ import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 
-import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 
 import { Delete, Edit } from "@mui/icons-material";
 import { IAchat } from "../../../interfaces";
@@ -19,13 +19,22 @@ import { EditAchat } from "./edit";
 
 export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   const { edit } = useNavigation();
+  const [refresh, setRefresh] = useState(false);
   const { mutate: mutateDelete } = useDelete();
   const { dataGridProps } = useDataGrid<IAchat, HttpError>({
     initialPageSize: 10,
+    sorters: {
+      permanent: [
+        {
+          field: "id",
+          order: "desc",
+        },
+      ],
+    },
     meta: { populate: "deep" },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<IAchat>>(
+  const columns = React.useMemo<GridColDef<IAchat>[]>(
     () => [
       {
         field: "id",
@@ -161,7 +170,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
               columns={columns}
               filterModel={undefined}
               autoHeight
-              rowsPerPageOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[5, 10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {

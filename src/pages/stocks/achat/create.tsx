@@ -32,7 +32,7 @@ import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
 //
 const initialState = {
   articles: [],
@@ -53,6 +53,8 @@ const reducer = (state: any, action: any) => {
       return { ...state, produits: action.payload };
     case "SET_BR":
       return { ...state, br: action.payload };
+    case "RESET":
+      return initialState;
     default:
       return state;
   }
@@ -67,7 +69,7 @@ export const CreateAchat: React.FC<
   formState: { errors },
 }) => {
   //
-  const navigate = useNavigate();
+
   const [{ articles, br, produits }, dispatch] = useReducer(
     reducer,
     initialState
@@ -81,8 +83,8 @@ export const CreateAchat: React.FC<
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
-      quantite: 1,
-      prix: 1,
+      quantite: 0,
+      prix: 0,
       date_expiration: dayjs(),
       total: 1,
       state: true,
@@ -282,6 +284,9 @@ export const CreateAchat: React.FC<
       type: "date",
       headerAlign: "left",
       align: "left",
+      valueGetter: (params) => {
+        return new Date(params.row.date_expiration);
+      },
       renderCell: (params) => {
         if (params.row.state) {
           return (
@@ -339,7 +344,7 @@ export const CreateAchat: React.FC<
     },
     {
       field: "state",
-      headerName: "State",
+      headerName: "",
       width: 120,
       resizable: true,
       type: "boolean",
@@ -422,14 +427,14 @@ export const CreateAchat: React.FC<
       total: calculateTotal(),
       etat: "Validé",
     };
-    console.log(payload);
+
     try {
       const response = await axios.post(`${API_URL}/api/achats`, {
         data: payload,
       });
       console.log("Request succeeded:", response.data);
-
-      //   navigate(`/commandes`);
+      close();
+      dispatch({ type: "RESET" });
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -554,12 +559,12 @@ export const CreateAchat: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
+          {/* <SaveButton {...saveButtonProps} /> */}
           <Button
+            {...saveButtonProps}
             variant="contained"
             onClick={() => {
               onFinishHandler();
-              navigate(`/stocks/achat`);
             }}
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >
