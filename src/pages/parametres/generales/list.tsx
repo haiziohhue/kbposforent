@@ -4,13 +4,12 @@ import {
   HttpError,
   useNavigation,
   useDelete,
-  useBack,
 } from "@refinedev/core";
-import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
+import { useDataGrid, List, CreateButton } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 
-import { DataGrid, GridColumns, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 
 import { Delete, Edit } from "@mui/icons-material";
 
@@ -19,17 +18,15 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import { IGeneraleDta } from "../../../interfaces";
 import { CreateRestaurantData } from "./create";
 import { EditRestaurantData } from "./edit";
-import { Button } from "@mui/material";
 
 export const ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
-  const { edit } = useNavigation();
   const { mutate: mutateDelete } = useDelete();
   const { dataGridProps } = useDataGrid<IGeneraleDta, HttpError>({
     initialPageSize: 10,
     meta: { populate: "*" },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<IGeneraleDta>>(
+  const columns = React.useMemo<GridColDef<IGeneraleDta>[]>(
     () => [
       {
         field: "nom",
@@ -155,7 +152,7 @@ export const ListRestaurantData: React.FC<IResourceComponentsProps> = () => {
               onRowClick={({ id }) => {
                 show("users", id);
               }}
-              rowsPerPageOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {

@@ -80,6 +80,7 @@ export const CreateBC: React.FC<
       article: { id: 0, label: "" },
       quantite: 1,
       state: true,
+      stock: 0,
     };
 
     dispatch({ type: "SET_ARTICLES", payload: [...articles, newArticle] });
@@ -154,7 +155,8 @@ export const CreateBC: React.FC<
                   .map((option) => {
                     return {
                       label: option.ingredient?.data?.attributes?.nom,
-                      id: option.id,
+                      id: option?.id,
+                      stock: option?.quantite,
                       value: option,
                     };
                   })}
@@ -170,6 +172,7 @@ export const CreateBC: React.FC<
                         ...e,
                         article: newValue,
                         prix: newValue.value.prix,
+                        stock: newValue.stock,
                       };
                     }
 
@@ -223,10 +226,32 @@ export const CreateBC: React.FC<
         return <Typography variant="body1">{params.row.quantite}</Typography>;
       },
     },
+    {
+      field: "stock",
+      headerName: "Stock",
+      width: 200,
+      resizable: true,
+      type: "number",
 
+      headerAlign: "left",
+      align: "left",
+      renderCell: (params) => {
+        if (params.row.state)
+          return (
+            <TextField
+              sx={{ fontSize: "10px" }}
+              value={params.row.stock}
+              fullWidth
+            />
+          );
+        return (
+          <Typography sx={{ fontSize: "10px" }}>{params.row.stock}</Typography>
+        );
+      },
+    },
     {
       field: "state",
-      headerName: "State",
+      headerName: "",
       width: 100,
       resizable: true,
       type: "boolean",

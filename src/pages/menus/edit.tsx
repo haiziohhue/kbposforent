@@ -176,9 +176,9 @@ export const EditMenu: React.FC<
                   >
                     Ajouter une Image
                   </Typography>
-                  <Typography style={{ fontSize: "12px" }}>
+                  {/* <Typography style={{ fontSize: "12px" }}>
                     must be 1080x1080 px
-                  </Typography>
+                  </Typography> */}
                 </Stack>
                 {errors.image && (
                   <FormHelperText error>{errors.image.message}</FormHelperText>

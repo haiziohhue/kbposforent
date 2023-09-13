@@ -158,6 +158,8 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
             })),
             prix: item?.prix,
             quantite: item?.quantity,
+            titre: item?.titre,
+            image: item?.image,
           };
         }
       }),

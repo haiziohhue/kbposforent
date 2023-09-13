@@ -111,36 +111,38 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
   useEffect(() => {
     axios
       .get(
-        `${API_URL}/api/commandes/${selectedOrder}?populate=caisse&populate=table&populate=menus.menu.image&populate=users_permissions_user`
+        // `${API_URL}/api/commandes/${selectedOrder}?populate=caisse&populate=table&populate=menus.menu.image&populate=users_permissions_user`
+        `${API_URL}/api/commandes/${selectedOrder}?populate=deep`
       )
       .then((res) => {
         const data = res.data.data;
         console.log(data);
         setRecord(data?.attributes);
         setSelectedCaisse({
-          id: data.attributes.caisse.data.id,
-          nom: data.attributes.caisse.data.attributes.nom,
-          balance: data.attributes.caisse.data.attributes.balance,
+          id: data?.attributes?.caisse?.data?.id,
+          nom: data?.attributes?.caisse?.data?.attributes?.nom,
+          balance: data?.attributes?.caisse?.data?.attributes?.balance,
         });
         setSelectedTable({
-          id: data.attributes.table.data.id,
-          nom: data.attributes.table.data.attributes.nom,
-          etat: data.attributes.table.data.attributes.etat,
+          id: data?.attributes?.table?.data?.id,
+          nom: data?.attributes?.table?.data?.attributes?.nom,
+          etat: data?.attributes?.table?.data?.attributes?.etat,
         });
-        setType(data.attributes?.type);
-        setValue("total", data.attributes.total);
-        setValue("menus", data?.attributes?.menus);
+        setType(data?.attributes?.type);
+        setValue("total", data?.attributes?.total);
+        setValue("menu", data?.attributes?.menus);
       });
   }, [selectedOrder, setValue]);
   console.log(record);
   console.log(selectedTable);
   console.log(type);
-  const cartOrder = (record?.menus as any)
-    ?.map((k: any) => ({ ...k, menu: k.menu.data }))
+  const cartOrder = (record?.menu as any)
+    ?.map((k: any) => ({ ...k, menu: k?.menu?.data }))
     .map((item: any) => ({
-      id: item?.menu?.id,
+      id: item?.menu?.id ? item?.menu?.id : item?.id,
       menus: item?.menu?.attributes,
       quantity: item?.quantite,
+      titre: item?.titre,
     }));
   console.log("cartOrder", cartOrder);
 
@@ -250,9 +252,9 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                       borderRadius: "30px",
                     }}
                     disabled={isLoading}
-                    defaultValue={caisse.id}
+                    defaultValue={caisse?.id}
                   >
-                    <ListItemText primary={caisse.nom} />
+                    <ListItemText primary={caisse?.nom} />
                     <input
                       type="hidden"
                       {...register("caisse")}
@@ -420,11 +422,15 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                 height: { xs: 60, sm: 60, lg: 80, xl: 144 },
                                 borderRadius: "50%",
                               }}
-                              alt={item.menus.titre}
+                              alt={
+                                item?.menus?.titre
+                                  ? item?.menus?.titre
+                                  : item?.titre
+                              }
                               image={
-                                item.menus.image?.data?.attributes?.url
-                                  ? `${API_URL}${item.menus.image.data.attributes.url}`
-                                  : `${API_URL}${item.menus.image?.url}`
+                                item?.menus?.image?.data?.attributes?.url
+                                  ? `${API_URL}${item?.menus?.image?.data?.attributes?.url}`
+                                  : `${API_URL}${item?.menus?.image?.url}`
                               }
                             />
                           </Box>
@@ -452,9 +458,10 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                   textOverflow: "ellipsis",
                                 }}
                               >
-                                {item.menus.titre}
-                                {""}
-                                {""}
+                                {item?.menus?.titre
+                                  ? item?.menus?.titre
+                                  : item?.titre}
+
                                 <span
                                   style={{
                                     fontWeight: 600,
@@ -495,8 +502,8 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                   size="small"
                                   onClick={() =>
                                     handleQuantityChange(
-                                      item.id,
-                                      item.quantity + 1
+                                      item?.id,
+                                      item?.quantity + 1
                                     )
                                   }
                                 >
@@ -513,15 +520,15 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                 >
                                   {item?.quantity}
                                 </Typography>
-                                {item.quantity > 1 && (
+                                {item?.quantity > 1 && (
                                   <Button
                                     variant="contained"
                                     onClick={() =>
                                       handleQuantityChange(
-                                        item.id,
-                                        item.quantity === 1
+                                        item?.id,
+                                        item?.quantity === 1
                                           ? 1
-                                          : item.quantity - 1
+                                          : item?.quantity - 1
                                       )
                                     }
                                   >

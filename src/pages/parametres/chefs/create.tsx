@@ -41,10 +41,11 @@ export const CreateChef: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { width: "100%", height: "500px" } }}
+      PaperProps={{ sx: { width: "100%", height: "600px" } }}
     >
       <Create
         saveButtonProps={saveButtonProps}
+        breadcrumb={<div style={{ display: "none" }} />}
         title={<Typography fontSize={24}>Ajouter Chef</Typography>}
         headerProps={{
           avatar: (
@@ -75,7 +76,7 @@ export const CreateChef: React.FC<
             sx={{ display: "flex", flexDirection: "column" }}
           >
             <form onSubmit={handleSubmit(onFinish)}>
-              <Stack gap="20px" marginTop="10px" marginBottom="20px">
+              <Stack gap="20px" marginTop="10px" marginBottom="200px">
                 <FormControl>
                   <FormLabel required>Chef</FormLabel>
                   <OutlinedInput
@@ -150,7 +151,7 @@ export const CreateChef: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
           {/* <Button onClick={close}>Annuler</Button> */}
         </DialogActions>
       </Create>

@@ -210,7 +210,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
             return (
               <>
                 <GridActionsCellItem
-                  key={2}
+                  key={1}
                   icon={<CheckOutlinedIcon color="success" />}
                   sx={{ padding: "2px 6px", color: "#4caf50" }}
                   label=""
@@ -247,16 +247,19 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 />
 
                 <GridActionsCellItem
-                  key={2}
+                  key={3}
                   icon={<CloseOutlinedIcon color="error" />}
                   sx={{ padding: "2px 6px", color: "#f44336" }}
                   label=""
                   showInMenu
                   onClick={() => {
+                    console.log(id);
+                    console.log(row);
                     mutate({
                       resource: "commandes",
                       id,
                       values: {
+                        ...row,
                         etat: "Annulé",
                       },
                     });
@@ -268,7 +271,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
             return (
               <>
                 <GridActionsCellItem
-                  key={2}
+                  key={4}
                   icon={<Edit color="warning" />}
                   sx={{ padding: "2px 6px", color: "#ff9800" }}
                   label=""

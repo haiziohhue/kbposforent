@@ -8,6 +8,8 @@ type CartItem = {
   component: string;
   categorie?: string;
   prix?: number;
+  titre?: string;
+  image?: string;
 };
 
 type CartState = {

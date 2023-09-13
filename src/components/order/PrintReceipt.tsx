@@ -165,10 +165,10 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               </tr>
             </thead>
             <tbody>
-              {(record?.menus as any)
-                ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-                .map((item: any) => (
-                  <tr key={item.menu.id}>
+              {(record?.menu as any)
+                ?.map((k: any) => ({ ...k, menu: k?.menu?.data?.attributes }))
+                ?.map((item: any) => (
+                  <tr key={item?.menu?.id}>
                     <td
                       style={{
                         border: "solid",
@@ -193,7 +193,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                       }}
                     >
                       <Typography sx={{ fontWeight: 400, fontSize: 14 }}>
-                        {item.menu?.titre}
+                        {item?.menu?.titre ? item?.menu?.titre : item?.titre}
                       </Typography>
                       <Typography></Typography>
                     </td>
@@ -210,7 +210,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                           fontSize: 14,
                         }}
                       >
-                        {item.menu?.prix}
+                        {item?.menu?.prix ? item?.menu?.prix : item?.prix}
                       </Typography>
                     </td>
                   </tr>

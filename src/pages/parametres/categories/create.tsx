@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React from "react";
 import { ICategory } from "interfaces";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { HttpError } from "@refinedev/core";
@@ -29,10 +29,9 @@ export const CreateCategory: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { minWidth: 500 } }}
+      PaperProps={{ sx: { minWidth: 500, padding: 3 } }}
     >
       <DialogTitle>
-        {" "}
         {<Typography fontSize={24}>Ajouter Categorie</Typography>}
       </DialogTitle>
       <DialogContent>
@@ -50,7 +49,7 @@ export const CreateCategory: React.FC<
             helperText={errors.nom?.message}
             margin="normal"
             fullWidth
-            label="Title"
+            label="Nom Categorie"
             name="nom"
             InputProps={{
               inputProps: {
@@ -74,8 +73,8 @@ export const CreateCategory: React.FC<
         </Box>
       </DialogContent>
       <DialogActions>
-        <SaveButton {...saveButtonProps} />
-        <Button onClick={close}>Cancel</Button>
+        {/* <SaveButton {...saveButtonProps} /> */}
+        <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
       </DialogActions>
     </Dialog>
   );

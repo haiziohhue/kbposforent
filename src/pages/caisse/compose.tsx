@@ -145,9 +145,11 @@ export const CreateMenuCompose: React.FC<
           url: "/uploads/menu_Compose_cb43bf60d1.png",
         },
       },
-      name: `${selectedCategory} Personalisé`,
+      titre: `${selectedCategory} Personalisé`,
       quantity: 1,
       prix: totalPrice,
+      image: "/uploads/menu_Compose_cb43bf60d1.png",
+
       component: "menus.menu-compose",
       categorie: selectedCategory,
     };

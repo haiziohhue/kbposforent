@@ -41,6 +41,8 @@ export interface ICartMenu {
   component: string;
   categorie?: string;
   prix?: number;
+  titre?: string;
+  image?: string;
 }
 
 export interface ICaisse {
@@ -63,7 +65,7 @@ export interface IOrder {
   etat?: "Validé" | "En cours" | "Annulé";
   caisse?: ICaisse;
   // menus?: number[];
-  menus?: IMenu[];
+  menu?: IMenu[];
   total: number;
   createdAt?: string;
   users_permissions_user?: IUser;

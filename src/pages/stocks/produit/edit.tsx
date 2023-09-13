@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useReducer } from "react";
+import React from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
@@ -11,7 +11,6 @@ import {
   FormHelperText,
   FormLabel,
   IconButton,
-  OutlinedInput,
   Stack,
   TextField,
   Typography,
@@ -165,7 +164,7 @@ export const EditIngredient: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
           {/* <Button onClick={close}>Annuler</Button> */}
         </DialogActions>
       </Edit>

@@ -31,12 +31,7 @@ import {
   Payments,
 } from "@mui/icons-material";
 import { CreateMenu, EditMenu, ListMenus } from "./pages/menus";
-import {
-  CreateOrder,
-  EditOrder,
-  ListOrdes,
-  ShowOrder,
-} from "./pages/commandes";
+import { CreateOrder, ListOrdes, ShowOrder, NewEdit } from "./pages/commandes";
 
 import { MenusList } from "./pages/caisse";
 import { ListTresor } from "./pages/tresoriers";
@@ -117,8 +112,8 @@ function App() {
                   routerProvider={routerBindings}
                   resources={[
                     {
-                      name: "menus",
-                      list: "/menus",
+                      name: "",
+                      list: "/caisse",
                       create: "/commandes/create",
                       edit: "",
                       show: "",
@@ -132,7 +127,7 @@ function App() {
                       name: "commandes",
                       list: "/commandes",
                       create: "/commandes/create",
-                      edit: "/commandes/edit/:id",
+                      edit: "/commandes/newEdit/:id",
                       show: "/commandes/show/:id",
                       meta: {
                         canDelete: true,
@@ -168,7 +163,7 @@ function App() {
 
                         <>
                           {/* Menus */}
-                          <Route path="/menus">
+                          <Route path="/caisse">
                             <Route index element={<MenusList />} />
                             <Route path="create" element={<CreateOrder />} />
                           </Route>
@@ -176,7 +171,7 @@ function App() {
                           <Route path="/commandes">
                             <Route index element={<ListOrdes />} />
                             <Route path="create" element={<CreateOrder />} />
-                            <Route path="edit/:id" element={<EditOrder />} />
+                            <Route path="newEdit/:id" element={<NewEdit />} />
                             <Route path="show/:id" element={<ShowOrder />} />
                           </Route>
                         </>
@@ -225,7 +220,7 @@ function App() {
                       name: "commandes",
                       list: "/commandes",
                       create: "/commandes/create",
-                      edit: "/commandes/edit/:id",
+                      edit: "/commandes/newEdit/:id",
                       show: "/commandes/show/:id",
                       meta: {
                         canDelete: true,
@@ -271,7 +266,7 @@ function App() {
                       meta: {
                         canDelete: true,
                         parent: "gestionDeStock",
-                        label: "Ingredients",
+                        label: "Articles",
                         icon: false,
                       },
                     },
@@ -329,6 +324,7 @@ function App() {
                       meta: {
                         hide: true,
                         parent: "parametres",
+                        label: "Donnée de Restaurant",
                         canDelete: true,
                       },
                     },
@@ -451,7 +447,7 @@ function App() {
                           <Route path="/commandes">
                             <Route index element={<ListOrdes />} />
                             <Route path="create" element={<CreateOrder />} />
-                            <Route path="edit/:id" element={<EditOrder />} />
+                            <Route path="newEdit/:id" element={<NewEdit />} />
                             <Route path="show/:id" element={<ShowOrder />} />
                           </Route>
                           {/* Tresories */}
@@ -584,8 +580,8 @@ function App() {
                 routerProvider={routerBindings}
                 resources={[
                   {
-                    name: "menus",
-                    list: "/menus",
+                    name: "",
+                    list: "/caisse",
                     create: "/commandes/create",
                     edit: "",
                     show: "",

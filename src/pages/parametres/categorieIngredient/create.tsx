@@ -92,7 +92,7 @@ export const CreateCatIngredients: React.FC<
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
-      prix: 1,
+      prix: 0,
       state: true,
     };
 
@@ -226,7 +226,7 @@ export const CreateCatIngredients: React.FC<
 
     {
       field: "state",
-      headerName: "State",
+      headerName: "",
       width: 100,
       resizable: true,
       type: "boolean",
@@ -488,7 +488,7 @@ export const CreateCatIngredients: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
+          {/* <SaveButton {...saveButtonProps} /> */}
           <Button
             {...saveButtonProps}
             variant="contained"

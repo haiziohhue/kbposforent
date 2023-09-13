@@ -250,7 +250,7 @@ export const LoginPage: React.FC<LoginProps> = ({
               alignItems: "center",
             }}
           >
-            {rememberMe ?? (
+            {/* {rememberMe ?? (
               <FormControlLabel
                 sx={{
                   span: {
@@ -271,7 +271,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   "Remember me"
                 )}
               />
-            )}
+            )} */}
             {/* {forgotPasswordLink ?? (
               <MuiLink
                 variant="body2"

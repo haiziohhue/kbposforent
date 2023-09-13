@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import axios from "axios";
-import { HttpError, useUpdate } from "@refinedev/core";
+import { HttpError, useCreate, useUpdate } from "@refinedev/core";
 import {
   UseModalFormReturnType,
   useModalForm,
@@ -53,6 +53,7 @@ export const ShowOrder: React.FC<
 > = ({ modal: { visible, close }, id }) => {
   //
   const { mutate } = useUpdate();
+  const { mutate: mutateCreate } = useCreate();
   const navigate = useNavigate();
   // const [state, dispatch] = useReducer(reducer, initialState);
   // const {record}=state
@@ -66,8 +67,8 @@ export const ShowOrder: React.FC<
           `${API_URL}/api/commandes/${id}?populate=deep`
         );
         const data = await response.json();
-        console.log(data?.data.attributes);
-        setRecord(data?.data.attributes);
+        console.log(data?.data?.attributes);
+        setRecord(data?.data?.attributes);
       } catch (error) {
         console.error(error);
       }
@@ -146,9 +147,9 @@ export const ShowOrder: React.FC<
               </Stack>
               <Divider />
               <Stack gap={3}>
-                {(record?.menus as any)
-                  ?.map((k: any) => ({ ...k, menu: k.menu.data.attributes }))
-                  .map((item: any) => (
+                {(record?.menu as any)
+                  ?.map((k: any) => ({ ...k, menu: k?.menu?.data?.attributes }))
+                  ?.map((item: any) => (
                     <>
                       <Card
                         key={item?.id}
@@ -177,9 +178,17 @@ export const ShowOrder: React.FC<
                                 height: { xs: 60, sm: 60, lg: 80, xl: 144 },
                                 borderRadius: "50%",
                               }}
-                              alt={item.menu.titre}
+                              alt={
+                                item?.menu?.titre
+                                  ? item?.menu?.titre
+                                  : item?.titre
+                              }
                               //   image={image?.url}
-                              image={`${API_URL}${item.menu.image?.data?.attributes?.url}`}
+                              image={
+                                `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
+                                  ? `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
+                                  : `${API_URL}${item?.image}`
+                              }
                             />
                           </Box>
                           <Divider
@@ -206,7 +215,10 @@ export const ShowOrder: React.FC<
                                   textOverflow: "ellipsis",
                                 }}
                               >
-                                {item.menu?.titre} {""}
+                                {item?.menu?.titre
+                                  ? item?.menu?.titre
+                                  : item?.titre}{" "}
+                                {""}
                                 {""}
                                 <span
                                   style={{
@@ -225,7 +237,10 @@ export const ShowOrder: React.FC<
                                   textOverflow: "ellipsis",
                                 }}
                               >
-                                {item?.quantite} {""}x{item.menu?.prix}
+                                {item?.quantite} {""}x
+                                {item?.menu?.prix
+                                  ? item?.menu?.prix
+                                  : item?.prix}
                               </Typography>
                             </CardContent>
                           </Box>
@@ -284,6 +299,15 @@ export const ShowOrder: React.FC<
                             etat: "Validé",
                           },
                         });
+                        mutateCreate({
+                          resource: "tresoriers",
+                          values: {
+                            type: "Vente",
+                            titre: "Vente",
+                            user: record?.users_permissions_user?.id,
+                            montant: record?.total,
+                          },
+                        });
                       }}
                     >
                       Validé
@@ -297,7 +321,7 @@ export const ShowOrder: React.FC<
                         width: "100%",
                       }}
                       onClick={() => {
-                        navigate("/menus?selectedOrder=" + id);
+                        navigate("/caisse?selectedOrder=" + id);
                       }}
                     >
                       Modifier
@@ -363,7 +387,7 @@ export const ShowOrder: React.FC<
                     width: "100%",
                   }}
                   onClick={() => {
-                    navigate("/menus?selectedOrder=" + id);
+                    navigate("/caisse?selectedOrder=" + id);
                   }}
                 >
                   Modifier

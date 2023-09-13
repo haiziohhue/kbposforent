@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { UseModalFormReturnType } from '@refinedev/react-hook-form';
-import { HttpError } from '@refinedev/core';
+import { UseModalFormReturnType } from "@refinedev/react-hook-form";
+import { HttpError } from "@refinedev/core";
 import {
   Box,
   Button,
@@ -11,9 +11,9 @@ import {
   DialogTitle,
   TextField,
   Typography,
-} from '@mui/material';
-import { SaveButton } from '@refinedev/mui';
-import { ICatDepense } from '../../../interfaces';
+} from "@mui/material";
+import { SaveButton } from "@refinedev/mui";
+import { ICatDepense } from "../../../interfaces";
 
 export const CreateCategoryDepense: React.FC<
   UseModalFormReturnType<ICatDepense, HttpError, ICatDepense>
@@ -27,22 +27,22 @@ export const CreateCategoryDepense: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { minWidth: 500 } }}
+      PaperProps={{ sx: { minWidth: 500, padding: 3 } }}
     >
       <DialogTitle>
-        {' '}
+        {" "}
         {<Typography fontSize={24}>Ajouter Categorie Depense </Typography>}
       </DialogTitle>
       <DialogContent>
         <Box
           component="form"
           autoComplete="off"
-          sx={{ display: 'flex', flexDirection: 'column' }}
+          sx={{ display: "flex", flexDirection: "column" }}
         >
           <TextField
             id="nom"
-            {...register('nom', {
-              required: 'This field is required',
+            {...register("nom", {
+              required: "This field is required",
             })}
             error={!!errors.nom}
             helperText={errors.nom?.message}
@@ -52,7 +52,7 @@ export const CreateCategoryDepense: React.FC<
             name="nom"
             InputProps={{
               inputProps: {
-                style: { textTransform: 'capitalize' },
+                style: { textTransform: "capitalize" },
                 maxLength: 50,
                 onChange: (event) => {
                   const target = event.target as HTMLInputElement;
@@ -66,8 +66,8 @@ export const CreateCategoryDepense: React.FC<
         </Box>
       </DialogContent>
       <DialogActions>
-        <SaveButton {...saveButtonProps} />
-        <Button onClick={close}>Cancel</Button>
+        {/* <SaveButton {...saveButtonProps} /> */}
+        <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
       </DialogActions>
     </Dialog>
   );

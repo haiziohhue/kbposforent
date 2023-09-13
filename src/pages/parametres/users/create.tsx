@@ -595,7 +595,10 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
             <Button onClick={() => gotoStep(currentStep + 1)}>Suivant</Button>
           )}
           {currentStep === stepTitles.length - 1 && (
-            <SaveButton onClick={handleSubmit(onFinish)} />
+            // <SaveButton onClick={handleSubmit(onFinish)} />
+            <SaveButton onClick={handleSubmit(onFinish)}>
+              Enregistrer
+            </SaveButton>
           )}
         </>
       }

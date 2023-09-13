@@ -2,7 +2,6 @@ import { CloseOutlined } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,13 +14,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { HttpError, useBack } from "@refinedev/core";
-import {
-  Edit,
-  RefreshButton,
-  SaveButton,
-  useAutocomplete,
-} from "@refinedev/mui";
+import { HttpError } from "@refinedev/core";
+import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { ICategory, IChef } from "interfaces";
 import React from "react";
@@ -48,11 +42,12 @@ export const EditChef: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { width: "100%", height: "500px" } }}
+      PaperProps={{ sx: { width: "100%", height: "600px" } }}
     >
       <Edit
         isLoading={isLoading}
         saveButtonProps={saveButtonProps}
+        breadcrumb={<div style={{ display: "none" }} />}
         title={<Typography fontSize={24}>Modifier Chef</Typography>}
         headerProps={{
           avatar: (
@@ -83,7 +78,7 @@ export const EditChef: React.FC<
             sx={{ display: "flex", flexDirection: "column" }}
           >
             <form onSubmit={handleSubmit(onFinish)}>
-              <Stack gap="20px" marginTop="10px" marginBottom="20px">
+              <Stack gap="20px" marginTop="10px" marginBottom="200px">
                 <FormControl>
                   <FormLabel required>Chef</FormLabel>
                   <OutlinedInput

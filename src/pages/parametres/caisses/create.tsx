@@ -26,10 +26,9 @@ export const CreateCaisse: React.FC<
     <Dialog
       open={visible}
       onClose={close}
-      PaperProps={{ sx: { minWidth: 500 } }}
+      PaperProps={{ sx: { minWidth: 500, padding: 3 } }}
     >
       <DialogTitle>
-        {" "}
         {<Typography fontSize={24}>Ajouter Caisse</Typography>}
       </DialogTitle>
       <DialogContent>
@@ -47,7 +46,7 @@ export const CreateCaisse: React.FC<
             helperText={errors.nom?.message}
             margin="normal"
             fullWidth
-            label="Title"
+            label="Caisse"
             name="nom"
             InputProps={{
               inputProps: {
@@ -65,8 +64,8 @@ export const CreateCaisse: React.FC<
         </Box>
       </DialogContent>
       <DialogActions>
-        <SaveButton {...saveButtonProps} />
-        <Button onClick={close}>Cancel</Button>
+        {/* <SaveButton {...saveButtonProps} /> */}
+        <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
       </DialogActions>
     </Dialog>
   );

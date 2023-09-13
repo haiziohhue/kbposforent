@@ -22,7 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
-import { EditButton, List, SaveButton } from "@refinedev/mui";
+import { CreateButton, EditButton, List, SaveButton } from "@refinedev/mui";
 import { CreateCategory } from "./create";
 import { ICategory } from "interfaces";
 
@@ -195,9 +195,18 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <List
-        createButtonProps={{
-          onClick: () => showCreateModal(),
-        }}
+        // createButtonProps={{
+        //   onClick: () => showCreateModal(),
+        // }}
+        headerButtons={
+          <CreateButton
+            onClick={() => showCreateModal()}
+            variant="contained"
+            sx={{ marginBottom: "5px" }}
+          >
+            Ajouter
+          </CreateButton>
+        }
       >
         <form onSubmit={handleSubmit(onFinish)}>
           <TableContainer>
