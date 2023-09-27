@@ -13,3 +13,6 @@
 .swal2-container {
   z-index: 2000;
 }
+.print-visible {
+  display: block !important;
+}

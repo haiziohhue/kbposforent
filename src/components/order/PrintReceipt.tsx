@@ -1,6 +1,15 @@
-import { Box, Button, Dialog, DialogTitle, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { IGeneraleDta, IMenu } from "../../interfaces";
 import moment from "moment";
@@ -15,13 +24,27 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
   record,
 }) => {
   const componentRef = useRef(null);
-
+  const [moneyGiven, setMoneyGiven] = useState("");
+  const [numCopies, setNumCopies] = useState(1);
   // Function to trigger printing
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+  //
 
   //
+
+  // Calculate the change (rest)
+  const calculateChange = () => {
+    const moneyGivenValue = parseFloat(moneyGiven);
+    const total = parseFloat(record?.total);
+    if (!isNaN(moneyGivenValue) && !isNaN(total)) {
+      return moneyGivenValue - total;
+    }
+    return "";
+  };
+  //
+
   const apiUrl = useApiUrl();
   const { data } = useCustom<IGeneraleDta[]>({
     url: `${apiUrl}/data-restaurants`,
@@ -275,14 +298,45 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
           </tbody>
         </table>
       </Box>
-      {/* <button
-        onClick={() => {
-          handlePrint();
-        }}
-      >
-        Print
-      </button> */}
+
       <Box sx={{ width: 400, margin: "auto", mb: 3 }}>
+        {/* Money given input */}
+        <TextField
+          label="Money Given"
+          variant="outlined"
+          value={moneyGiven}
+          onChange={(e) => setMoneyGiven(e.target.value)}
+          fullWidth
+          type="number"
+          sx={{ marginBottom: 3 }}
+        />
+        {/* Number of copies select */}
+        <TextField
+          label="Number of Copies"
+          variant="outlined"
+          value={numCopies}
+          onChange={(e) => {
+            // Ensure input is numeric and non-negative
+            const inputNumCopies = parseInt(e.target.value, 10);
+            if (!isNaN(inputNumCopies) && inputNumCopies >= 1) {
+              setNumCopies(inputNumCopies);
+            }
+          }}
+          fullWidth
+          type="number"
+          sx={{ marginBottom: 3 }}
+        />
+        {/* Change (rest) calculation */}
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontWeight: 400,
+            fontSize: 14,
+            marginBottom: 3,
+          }}
+        >
+          Change (Rest): {calculateChange()}
+        </Typography>
         <Button
           onClick={handlePrint}
           variant="outlined"

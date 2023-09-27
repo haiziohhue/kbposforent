@@ -58,13 +58,17 @@ const reducer = (state: any, action: any) => {
   }
 };
 //
+interface EditBR {
+  id: number | undefined;
+}
 export const EditAchat: React.FC<
-  UseModalFormReturnType<IAchat, HttpError, IAchat>
+  UseModalFormReturnType<IAchat, HttpError, IAchat> & EditBR
 > = ({
   saveButtonProps,
   modal: { visible, close },
   register,
   formState: { errors },
+  id,
 }) => {
   //
   const navigate = useNavigate();
@@ -125,23 +129,48 @@ export const EditAchat: React.FC<
       console.log(err);
     }
   }, []);
+  //Get BR By id
+  const fetchBRByID = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/achats/${id}?populate=deep`);
+      const data = await res.json();
+      const deepData = data?.data?.attributes;
+      console.log(deepData);
+      const ingredientsArray = deepData?.ingredients || [];
+      dispatch({ type: "SET_BR", payload: deepData });
+      const articlesArray = ingredientsArray?.map((e) => ({
+        article: {
+          id: e.stock?.data?.id || 0,
+          label:
+            e.stock?.data?.attributes?.ingredient?.data?.attributes?.nom || "",
+          value: {
+            id: e.stock?.data?.id || 0,
+            ...e.stock?.data?.attributes?.ingredient?.data?.attributes,
+          },
+        },
+        quantite: e?.quantite || 0,
+        prix: e?.cout || 0,
+        stock: e.stock?.data?.attributes?.quantite || 0,
+        state: false,
+        old: true,
+      }));
+      console.log(articlesArray);
+      dispatch({
+        type: "SET_ARTICLES",
+        payload: articlesArray,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }, [id]);
   useEffect(() => {
     fetchProduits();
-  }, []);
+    fetchBRByID();
+  }, [fetchBRByID, fetchProduits]);
   //
-  console.log(produits);
-  //   console.log(articles);
-  console.log(
-    produits
-      .filter((k) => !articles.map((e) => e.article.id).includes(k.id))
-      .map((option) => {
-        return {
-          label: option.ingredient?.data?.attributes?.nom,
-          id: option.id,
-          value: option,
-        };
-      })
-  );
+
+  //
+
   //
 
   //

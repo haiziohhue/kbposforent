@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   IResourceComponentsProps,
   HttpError,
-  useNavigation,
   useDelete,
 } from "@refinedev/core";
 import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
-
 import Grid from "@mui/material/Grid";
-
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-
 import { Delete, Edit } from "@mui/icons-material";
 import { IAchat } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
@@ -18,9 +14,8 @@ import { CreateAchat } from "./create";
 import { EditAchat } from "./edit";
 
 export const ListAchat: React.FC<IResourceComponentsProps> = () => {
-  const { edit } = useNavigation();
-  const [refresh, setRefresh] = useState(false);
   const { mutate: mutateDelete } = useDelete();
+  const [selectedRowId, setSelectedRowId] = React.useState<number>();
   const { dataGridProps } = useDataGrid<IAchat, HttpError>({
     initialPageSize: 10,
     sorters: {
@@ -96,7 +91,9 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
             key={1}
             label=""
             icon={<Edit color="success" />}
-            onClick={() => showEditModal(row.id)}
+            onClick={() => {
+              showEditModal(row.id), setSelectedRowId(row.id);
+            }}
           />,
 
           <GridActionsCellItem
@@ -120,8 +117,6 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
     []
   );
 
-  const { show } = useNavigation();
-
   //
   const createDrawerFormProps = useModalForm<IAchat, HttpError, IAchat>({
     refineCoreProps: { action: "create" },
@@ -142,7 +137,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <CreateAchat {...createDrawerFormProps} />
-      <EditAchat {...editDrawerFormProps} />
+      <EditAchat id={selectedRowId} {...editDrawerFormProps} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>

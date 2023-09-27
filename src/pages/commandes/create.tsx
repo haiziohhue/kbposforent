@@ -515,7 +515,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                 textOverflow: "ellipsis",
               }}
             >
-              Total:
+              Totale:
             </Typography>
             <Typography
               sx={{

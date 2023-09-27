@@ -25,7 +25,7 @@ import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
 import { IBC, IChef } from "interfaces";
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
@@ -61,14 +61,17 @@ const reducer = (state, action) => {
 };
 //
 export const CreateBC: React.FC<
-  UseModalFormReturnType<IBC, HttpError, IBC>
-> = ({ saveButtonProps, modal: { visible, close } }) => {
+  UseModalFormReturnType<IBC, HttpError, IBC> & {
+    updateData: (newData: IBC) => void;
+  }
+> = ({ saveButtonProps, modal: { visible, close }, updateData }) => {
   //
 
   const [{ articles, bc, produits }, dispatch] = useReducer(
     reducer,
     initialState
   );
+
   const handleChange = (event) => {
     dispatch({
       type: "SET_BC",
@@ -334,13 +337,18 @@ export const CreateBC: React.FC<
       const response = await axios.post(`${API_URL}/api/bon-chefs`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Current articles state:", articles);
+      const newBonChefData = response?.data?.data;
+      updateData(newBonChefData);
+      console.log(newBonChefData);
+      console.log("Updated articles state:", articles);
       close();
       dispatch({ type: "RESET" });
     } catch (error) {
       console.error("Request failed:", error);
     }
   };
+
   //
   return (
     <Dialog

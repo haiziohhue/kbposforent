@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
-import { API_URL } from "../../constants";
+import { API_URL, TOKEN_KEY } from "../../constants";
 import axios from "axios";
 
 import { CloseOutlined } from "@mui/icons-material";
@@ -63,9 +63,9 @@ export const CreateMenu: React.FC<
       formData.append("files", file);
 
       const res = await axios.post(`${API_URL}/api/upload`, formData, {
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
       });
 
       setImageURL(`${API_URL}${res.data[0].url}`);

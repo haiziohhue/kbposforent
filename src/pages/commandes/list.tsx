@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
@@ -21,12 +21,13 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-
+import { DateRangePicker } from "react-date-range";
 import Autocomplete from "@mui/material/Autocomplete";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -40,14 +41,26 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { IOrder, IOrderFilterVariables } from "../../interfaces";
 import { OrderStatus } from "../../components/order/OrderStatus";
 import { OrderTypes } from "../../components/order/OrderTypes";
-import { Edit } from "@mui/icons-material";
+import { CalendarToday, Edit } from "@mui/icons-material";
 import { ShowOrder } from "./show";
 import { useNavigate } from "react-router-dom";
-
+import { Popover } from "@mui/material";
+import moment from "moment";
 export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
   const { mutate: mutateCreate } = useCreate();
-
+  //
+  const [periode, setPeriode] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+  const [showRange, setShowRange] = useState(false);
+  const [refresh, setrefresh] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  //
   //
   const navigate = useNavigate();
   const { dataGridProps, search, filters } = useDataGrid<
@@ -103,10 +116,21 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         operator: "in",
         value: (type ?? []).length > 0 ? type : undefined,
       });
-
+      const startDate = moment(periode[0].startDate)
+        .startOf("day")
+        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+      const endDate = moment(periode[0].endDate)
+        .endOf("day")
+        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+      filters.push({
+        field: "createdAt",
+        operator: "between",
+        value: [startDate, endDate],
+      });
       return filters;
     },
   });
+  console.log(periode);
   console.log(dataGridProps.rows);
   const columns = React.useMemo<GridColDef<IOrder>[]>(
     () => [
@@ -335,6 +359,21 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showOrderDrawer },
   } = createDrawerFormProps;
   //
+  //
+  const openDatePicker = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeDatePicker = () => {
+    setAnchorEl(null);
+  };
+
+  const applyDateRange = () => {
+    closeDatePicker();
+    handleSubmit(search)();
+    // Handle date range selection here
+  };
+  //
   return (
     <>
       {/* <EditOrder id={selectedRowId}/> */}
@@ -527,29 +566,135 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
               },
             }}
           >
-            <DataGrid
-              {...dataGridProps}
-              columns={columns}
-              filterModel={undefined}
-              autoHeight
-              // onRowClick={({ id }) => {
-              //   showOrderDrawer(id);
-              //   setSelectedRowId(id)
-              //   console.log(id)
-              // }}
-              onRowClick={(params) => {
-                const rowId = Number(params.id); // Convert the id to a number
-                setSelectedRowId(rowId);
-                showOrderDrawer(rowId);
+            {/* <FormControl sx={{ marginBottom: 2 }}>
+              <TextField
+                sx={{
+                  position: "relative",
+                }}
+                fullWidth
+                label="Période"
+                placeholder="Période"
+                type="string"
+                onClick={() => {
+                  setShowRange(true);
+                }}
+                value={`${moment(periode[0].startDate).format(
+                  "DD/MM/YYYY"
+                )}  → ${moment(periode[0].endDate).format("DD/MM/YYYY")}`}
+                InputProps={{
+                  endAdornment: (
+                    <>
+                      <InputAdornment position="end">
+                        <CalendarToday />
+                      </InputAdornment>
+                    </>
+                  ),
+                }}
+              />
+              {showRange && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    zIndex: 100,
+                    top: "100%",
+                    left: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <DateRangePicker
+                    onChange={(item) => {
+                      setPeriode([item.selection]);
+                      setrefresh(!refresh);
+                    }}
+                    ranges={periode}
+                    showSelectionPreview={false}
+                    showPreview={false}
+                  />
+                  <Button
+                    sx={{
+                      background: "white",
+                      "&:hover": {
+                        backgroundColor: "white",
+                      },
+                    }}
+                    onClick={() => {
+                      setShowRange(false);
+                      handleSubmit(search)();
+                    }}
+                  >
+                    Apply
+                  </Button>
+                </Box>
+              )}
+            </FormControl> */}
+            <Button
+              size="large"
+              onClick={openDatePicker}
+              startIcon={<CalendarToday />}
+              variant="outlined"
+              sx={{ marginBottom: 2 }}
+            >
+              {`${moment(periode[0].startDate).format("DD/MM/YYYY")} → ${moment(
+                periode[0].endDate
+              ).format("DD/MM/YYYY")}`}
+            </Button>
+
+            <Popover
+              open={Boolean(anchorEl)}
+              anchorEl={anchorEl}
+              onClose={closeDatePicker}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
               }}
-              pageSizeOptions={[10, 20, 50, 100]}
-              sx={{
-                ...dataGridProps.sx,
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
               }}
-            />
+            >
+              <div
+                style={{
+                  padding: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <DateRangePicker
+                  onChange={(item) => setPeriode([item.selection])}
+                  ranges={periode}
+                  showSelectionPreview={false}
+                  showPreview={false}
+                />
+                <Button
+                  onClick={applyDateRange}
+                  variant="contained"
+                  style={{ marginTop: "16px" }}
+                >
+                  Appliquer
+                </Button>
+              </div>
+            </Popover>
+            <Box sx={{ height: 450 }}>
+              <DataGrid
+                {...dataGridProps}
+                columns={columns}
+                filterModel={undefined}
+                autoHeight
+                onRowClick={(params) => {
+                  const rowId = Number(params.id); // Convert the id to a number
+                  setSelectedRowId(rowId);
+                  showOrderDrawer(rowId);
+                }}
+                pageSizeOptions={[10, 20, 50, 100]}
+                sx={{
+                  ...dataGridProps.sx,
+                  "& .MuiDataGrid-row": {
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            </Box>
           </List>
         </Grid>
       </Grid>

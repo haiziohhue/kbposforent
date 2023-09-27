@@ -22,22 +22,21 @@ import {
   Typography,
 } from "@mui/material";
 import { HttpError } from "@refinedev/core";
-import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
+import { Edit } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
-import { IBC, IChef } from "interfaces";
+import { IBC } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { Controller } from "react-hook-form";
 
 //
 const initialState = {
   articles: [],
   produits: [],
+  chefs: [],
   bc: {
-    // chef: "",
     chef: {
       chef: "",
       id: null,
@@ -55,20 +54,27 @@ const reducer = (state, action) => {
       return { ...state, produits: action.payload };
     case "SET_BC":
       return { ...state, bc: action.payload };
+    case "SET_CHEF":
+      return { ...state, chefs: action.payload };
     default:
       return state;
   }
 };
 //
-export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
+interface EditBC {
+  id: number | undefined;
+}
+export const EditBC: React.FC<
+  UseModalFormReturnType<IBC, HttpError, IBC> & EditBC
+> = ({
   saveButtonProps,
-  control,
   formState: { errors },
   modal: { visible, close },
+  id,
 }) => {
   //
 
-  const [{ articles, bc, produits }, dispatch] = useReducer(
+  const [{ articles, bc, chefs, produits }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -77,6 +83,7 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
     const newArticle = {
       article: { id: 0, label: "" },
       quantite: 1,
+      stock: 0,
       state: true,
       old: false,
     };
@@ -85,7 +92,7 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
   };
 
   //delete row by index
-  const deleteRow = (index: unknown) => {
+  const deleteRow = (index) => {
     dispatch({
       type: "SET_ARTICLES",
       payload: articles.filter((_, i) => i !== index),
@@ -93,11 +100,6 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
   };
   //
 
-  const { autocompleteProps } = useAutocomplete<IChef>({
-    resource: "chefs",
-    meta: { populate: "*" },
-  });
-  //
   const handleArticleChange = (
     field: string,
     value: any,
@@ -107,7 +109,7 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
     if (old) {
       dispatch({
         type: "SET_ARTICLES",
-        payload: articles.map((row, i) =>
+        payload: articles?.map((row) =>
           index === row.id ? { ...row, [field]: value } : row
         ),
       });
@@ -116,7 +118,7 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
       article[field] = value;
       dispatch({
         type: "SET_ARTICLES",
-        payload: articles.map((row, i) => (i === index ? article : row)),
+        payload: articles?.map((row, i) => (i === index ? article : row)),
       });
     }
   };
@@ -126,7 +128,7 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
       const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
       const data = await res.json();
 
-      const produitsData = data.data.map((e) => ({
+      const produitsData = data?.data?.map((e) => ({
         id: e.id,
         ...e.attributes,
       }));
@@ -135,11 +137,63 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
       console.log(err);
     }
   }, []);
+  //Get BC By id
+  const fetchBCByID = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/bon-chefs/${id}?populate=deep`);
+      const data = await res.json();
+      const deepData = data?.data?.attributes;
+      const ingredientsArray = deepData?.ingredients || [];
+      dispatch({ type: "SET_BC", payload: deepData });
+      const articlesArray = ingredientsArray?.map((e) => ({
+        article: {
+          id: e.stock?.data?.id || 0,
+          label:
+            e.stock?.data?.attributes?.ingredient?.data?.attributes?.nom || "",
+          value: {
+            id: e.stock?.data?.id || 0,
+            ...e.stock?.data?.attributes?.ingredient?.data?.attributes,
+          },
+        },
+        quantite: e?.quantite || 0,
+        stock: e.stock?.data?.attributes?.quantite || 0,
+        state: false,
+        old: true,
+      }));
+
+      dispatch({
+        type: "SET_ARTICLES",
+        payload: articlesArray,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }, [id]);
+  // Get Chefs
+  const fetchChefs = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/chefs?populate=deep`);
+      const data = await res.json();
+      const chefData = data?.data;
+      console.log(chefData);
+      dispatch({
+        type: "SET_CHEF",
+        payload: chefData?.map((c) => ({
+          id: c.id,
+          ...c.attributes,
+        })),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProduits();
-  }, []);
+    fetchBCByID();
+    fetchChefs();
+  }, [fetchBCByID, fetchChefs, fetchProduits]);
   //
-
   //
   const columns: GridColDef[] = [
     {
@@ -165,35 +219,85 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
                 id="tags-filled"
                 value={params.row.article}
                 options={produits
-                  .filter(
-                    (k) => !articles.map((e) => e.article.id).includes(k.id)
+                  ?.filter(
+                    (k) => !articles?.map((e) => e.article.id)?.includes(k.id)
                   )
-                  .map((option) => {
-                    console.log(option);
+                  ?.map((option) => {
                     return {
                       label: option.ingredient?.data?.attributes?.nom,
                       id: option.id,
+                      stock: option?.quantite,
                       value: option,
                     };
                   })}
                 sx={{
                   flex: 1,
                 }}
-                freeSolo
+                // onChange={(event, newValue) => {
+                //   if (newValue.value) {
+                //     if (params.row.old) {
+                //       dispatch({
+                //         type: "SET_ARTICLES",
+                //         payload: articles.map((e) => {
+                //           if (e.id === params.row.id) {
+                //             return {
+                //               ...e,
+                //               article: newValue,
+                //               prix: newValue.value.prix,
+                //               tva: newValue.value.tva,
+                //             };
+                //           }
+                //           return e;
+                //         }),
+                //       });
+                //     } else
+                //       dispatch({
+                //         type: "SET_ARTICLES",
+                //         payload: articles.map((e, i) => {
+                //           if (i === params.row.id) {
+                //             return {
+                //               ...e,
+                //               article: newValue,
+                //               prix: newValue.value.prix,
+                //               tva: newValue.value.tva,
+                //             };
+                //           }
+                //           return e;
+                //         }),
+                //       });
+                //   }
+                // }}
                 onChange={(event, newValue) => {
                   if (!newValue.value) return;
-                  const products = articles.map((e, i) => {
-                    if (i === params.row.id) {
-                      return {
-                        ...e,
-                        article: newValue,
-                      };
-                    }
-
-                    return e;
-                  });
-
-                  dispatch({ type: "SET_ARTICLES", payload: products });
+                  if (params.row.old) {
+                    dispatch({
+                      type: "SET_ARTICLES",
+                      payload: articles.map((e) => {
+                        if (e.id === params.row.id) {
+                          return {
+                            ...e,
+                            article: newValue,
+                            stock: newValue.stock,
+                          };
+                        }
+                        return e;
+                      }),
+                    });
+                  } else {
+                    dispatch({
+                      type: "SET_ARTICLES",
+                      payload: articles.map((e, i) => {
+                        if (i === params.row.id) {
+                          return {
+                            ...e,
+                            article: newValue,
+                            stock: newValue.stock,
+                          };
+                        }
+                        return e;
+                      }),
+                    });
+                  }
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -216,7 +320,6 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
       width: 200,
       resizable: true,
       type: "number",
-
       headerAlign: "left",
       align: "left",
       renderCell: (params) => {
@@ -238,10 +341,23 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
         return <Typography variant="body1">{params.row.quantite}</Typography>;
       },
     },
-
+    {
+      field: "stock",
+      headerName: "Stock",
+      width: 200,
+      resizable: true,
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      renderCell: (params) => {
+        if (params.row.state)
+          return <TextField value={params.row.stock} fullWidth />;
+        return <Typography variant="body1">{params.row.stock}</Typography>;
+      },
+    },
     {
       field: "state",
-      headerName: "State",
+      headerName: "",
       width: 100,
       resizable: true,
       type: "boolean",
@@ -259,23 +375,44 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
-                    if (params.row.article.value)
-                      dispatch({
-                        type: "SET_ARTICLES",
-                        payload: articles.map((row, i) =>
-                          params.row.id === i ? { ...row, state: false } : row
-                        ),
-                      });
+                    if (params.row.article.value) {
+                      if (params.row.old) {
+                        dispatch({
+                          type: "SET_ARTICLES",
+                          payload: articles.map((row) =>
+                            params.row.id === row.id
+                              ? { ...row, state: false }
+                              : row
+                          ),
+                        });
+                      } else {
+                        dispatch({
+                          type: "SET_ARTICLES",
+                          payload: articles.map((row, i) =>
+                            params.row.id === i ? { ...row, state: false } : row
+                          ),
+                        });
+                      }
+                    }
                   }}
                 />
               )}
               {/* Render your desired icon or component for cancelling state */}
-              <Delete
+              <Close
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
                 color="error"
-                onClick={() => deleteRow(params.row.id)}
+                onClick={() => {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles.map((row) => {
+                      if (row.id === params.row.id) {
+                        return { ...row, state: false };
+                      }
+                      return row;
+                    }),
+                  });
+                }}
               />
             </Box>
           );
@@ -286,21 +423,38 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
               sx={{ cursor: "pointer" }}
               fontSize="small"
               onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
+                if (params.row.old) {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles?.map((row) =>
+                      params.row.id === row.id ? { ...row, state: true } : row
+                    ),
+                  });
+                } else {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles?.map((row, i) =>
+                      params.row.id === i ? { ...row, state: true } : row
+                    ),
+                  });
+                }
               }}
             />
             {/* Render your desired icon or component for deleting a row */}
-            <Close
+            <Delete
               sx={{ cursor: "pointer" }}
               fontSize="small"
               color="error"
-              onClick={() => deleteRow(params.row.id)}
+              onClick={() => {
+                if (params.row.old) {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles.filter((r) => r.id !== params.row.id),
+                  });
+                } else {
+                  deleteRow(params.row.id);
+                }
+              }}
             />
           </Box>
         );
@@ -325,8 +479,6 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
         data: payload,
       });
       console.log("Request succeeded:", response.data);
-
-      //   navigate(`/commandes`);
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -377,85 +529,33 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
             sx={{ display: "flex", flexDirection: "column" }}
           >
             <Stack gap="10px" flexDirection="row">
-              {/* <FormControl fullWidth>
-                  <FormLabel required>Chef</FormLabel>
-                  <Controller
-                    control={control}
-                    name="chef"
-                    rules={{
-                      required: "This field is required",
-                    }}
-                    render={({ field }) => (
-                      <Autocomplete
-                        disablePortal
-                        {...field}
-                        {...autocompleteProps}
-                        value={bc.chef}
-                        onChange={(_, value) => {
-                          field.onChange(value?.id);
-                        }}
-                        getOptionLabel={(item) => {
-                          console.log(item);
-                          return item?.chef ? item?.chef : "";
-                        }}
-                        isOptionEqualToValue={(option, value) =>
-                          value === undefined ||
-                          option?.id?.toString() ===
-                            (value?.id ?? value)?.toString()
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            error={!!errors.chef?.message}
-                            required
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                  {errors.chef && (
-                    <FormHelperText error>{errors.chef.message}</FormHelperText>
-                  )}
-                </FormControl> */}
-              <FormControl fullWidth required>
+              <FormControl fullWidth>
                 <FormLabel>Chef</FormLabel>
-                <Controller
-                  control={control}
-                  name="chef"
-                  rules={{
-                    required: "This field is required",
+                <Autocomplete
+                  id="tags-filled"
+                  value={bc?.chef || null}
+                  options={chefs}
+                  getOptionLabel={(option) => {
+                    return option?.data?.attributes?.chef
+                      ? option.data.attributes.chef
+                      : option?.chef ?? "";
                   }}
-                  render={({ field }) => (
-                    <Autocomplete
-                      disablePortal
-                      {...autocompleteProps}
-                      {...field}
-                      // value={bc.chef || null}
-                      getOptionLabel={(item) => {
-                        console.log(item);
-                        return item.chef ? item.chef : "";
-                      }}
-                      onChange={(event, newValue) => {
-                        if (newValue === null) return;
-                        dispatch({
-                          type: "SET_BC",
-                          payload: { ...bc, chef: newValue },
-                        });
-                      }}
-                      // isOptionEqualToValue={(option, value) =>
-                      //   value === undefined ||
-                      //   option?.id?.toString() ===
-                      //     (value?.id ?? value)?.toString()
-                      // }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          required
-                          error={!!errors.chef?.message}
-                        />
-                      )}
+                  onChange={(event, newValue) => {
+                    if (newValue === null) return;
+                    dispatch({
+                      type: "SET_BC",
+                      payload: { ...bc, chef: newValue || null },
+                    });
+                  }}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      required
+                      error={!!errors.chef?.message}
                     />
                   )}
                 />
@@ -463,19 +563,6 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
                   <FormHelperText error>{errors.chef.message}</FormHelperText>
                 )}
               </FormControl>
-
-              {/* <FormControl fullWidth>
-                    <FormLabel>Note</FormLabel>
-                    <OutlinedInput
-                      id="Nom"
-                      value={br.note}
-                      {...register("note")}
-                      onChange={handleChange}
-                    />
-                    {errors.note && (
-                      <FormHelperText error>{errors.note.message}</FormHelperText>
-                    )}
-                  </FormControl> */}
             </Stack>
             <Box sx={{ mt: 4 }}>
               <Box
@@ -497,13 +584,13 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
                   hideFooter
                   columns={columns}
                   onRowDoubleClick={(params) => {
-                    const products = articles.map((e) =>
+                    const products = articles?.map((e) =>
                       Number(params.row.id) === e.id ? { ...e, state: true } : e
                     );
 
                     dispatch({ type: "SET_ARTICLES", payload: products });
                   }}
-                  rows={articles.map((e, i) => ({
+                  rows={articles?.map((e, i) => ({
                     id: i,
                     ...e,
                   }))}
@@ -524,7 +611,6 @@ export const EditBC: React.FC<UseModalFormReturnType<IBC, HttpError, IBC>> = ({
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
           <Button
             {...saveButtonProps}
             variant="contained"
