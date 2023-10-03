@@ -23,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { HttpError } from "@refinedev/core";
-import { Edit, SaveButton } from "@refinedev/mui";
+import { Edit } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
 import dayjs from "dayjs";
@@ -71,7 +71,6 @@ export const EditAchat: React.FC<
   id,
 }) => {
   //
-  const navigate = useNavigate();
   const [{ articles, br, produits }, dispatch] = useReducer(
     reducer,
     initialState
@@ -152,7 +151,7 @@ export const EditAchat: React.FC<
         prix: e?.cout || 0,
         stock: e.stock?.data?.attributes?.quantite || 0,
         state: false,
-        old: true,
+        // old: true,
       }));
       console.log(articlesArray);
       dispatch({
@@ -311,6 +310,9 @@ export const EditAchat: React.FC<
       type: "date",
       headerAlign: "left",
       align: "left",
+      valueGetter: (params) => {
+        return new Date(params.row.date_expiration);
+      },
       renderCell: (params) => {
         if (params.row.state) {
           return (
@@ -368,7 +370,7 @@ export const EditAchat: React.FC<
     },
     {
       field: "state",
-      headerName: "State",
+      headerName: "",
       width: 120,
       resizable: true,
       type: "boolean",
@@ -453,12 +455,11 @@ export const EditAchat: React.FC<
     };
     console.log(payload);
     try {
-      const response = await axios.post(`${API_URL}/api/achats`, {
+      const response = await axios.put(`${API_URL}/api/achats/${id}`, {
         data: payload,
       });
       console.log("Request succeeded:", response.data);
-
-      //   navigate(`/commandes`);
+      close();
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -513,7 +514,7 @@ export const EditAchat: React.FC<
                 <FormLabel required>Source</FormLabel>
                 <OutlinedInput
                   id="Nom"
-                  value={br.source}
+                  value={br?.source}
                   {...register("source", {
                     required: "This field is required",
                   })}
@@ -527,7 +528,7 @@ export const EditAchat: React.FC<
                 <FormLabel>Note</FormLabel>
                 <OutlinedInput
                   id="Note"
-                  value={br.note}
+                  value={br?.note}
                   {...register("note")}
                   onChange={handleChange}
                 />
@@ -583,12 +584,11 @@ export const EditAchat: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
           <Button
+            {...saveButtonProps}
             variant="contained"
             onClick={() => {
               onFinishHandler();
-              navigate(`/stocks/achat`);
             }}
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >

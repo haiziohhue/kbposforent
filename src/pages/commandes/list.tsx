@@ -4,7 +4,6 @@ import {
   BaseRecord,
   CrudFilters,
   HttpError,
-  useNavigation,
   useUpdate,
   getDefaultFilter,
   useCreate,
@@ -49,6 +48,9 @@ import moment from "moment";
 export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const { mutate } = useUpdate();
   const { mutate: mutateCreate } = useCreate();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [selectedRowId, setSelectedRowId] = React.useState<number>();
   //
   const [periode, setPeriode] = useState([
     {
@@ -57,12 +59,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       key: "selection",
     },
   ]);
-  const [showRange, setShowRange] = useState(false);
-  const [refresh, setrefresh] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   //
-  //
-  const navigate = useNavigate();
   const { dataGridProps, search, filters } = useDataGrid<
     IOrder,
     HttpError,
@@ -77,7 +74,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         },
       ],
     },
-    meta: { populate: "*" },
+    meta: { populate: "deep" },
     onSearch: (params) => {
       const filters: CrudFilters = [];
       const { code, table, caisse, users_permissions_user, etat, type } =
@@ -130,8 +127,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(periode);
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColDef<IOrder>[]>(
     () => [
       {
@@ -313,8 +309,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
     []
   );
 
-  const { show } = useNavigation();
-
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
     HttpError,
@@ -349,7 +343,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   });
 
   //
-  const [selectedRowId, setSelectedRowId] = React.useState<number>();
 
   const createDrawerFormProps = useModalForm<IOrder, HttpError, IOrder>({
     refineCoreProps: {},
@@ -371,7 +364,15 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const applyDateRange = () => {
     closeDatePicker();
     handleSubmit(search)();
-    // Handle date range selection here
+  };
+  const clearDateSelection = () => {
+    setPeriode([
+      {
+        startDate: new Date(),
+        endDate: new Date(),
+        key: "selection",
+      },
+    ]);
   };
   //
   return (
@@ -553,81 +554,12 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         <Grid item xs={12} lg={9}>
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-            headerProps={
-              {
-                // action: (
-                //   <ExportButton onClick={triggerExport} loading={isLoading} />
-                // ),
-              }
-            }
             createButtonProps={{
               sx: {
                 display: "none",
               },
             }}
           >
-            {/* <FormControl sx={{ marginBottom: 2 }}>
-              <TextField
-                sx={{
-                  position: "relative",
-                }}
-                fullWidth
-                label="Période"
-                placeholder="Période"
-                type="string"
-                onClick={() => {
-                  setShowRange(true);
-                }}
-                value={`${moment(periode[0].startDate).format(
-                  "DD/MM/YYYY"
-                )}  → ${moment(periode[0].endDate).format("DD/MM/YYYY")}`}
-                InputProps={{
-                  endAdornment: (
-                    <>
-                      <InputAdornment position="end">
-                        <CalendarToday />
-                      </InputAdornment>
-                    </>
-                  ),
-                }}
-              />
-              {showRange && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    zIndex: 100,
-                    top: "100%",
-                    left: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <DateRangePicker
-                    onChange={(item) => {
-                      setPeriode([item.selection]);
-                      setrefresh(!refresh);
-                    }}
-                    ranges={periode}
-                    showSelectionPreview={false}
-                    showPreview={false}
-                  />
-                  <Button
-                    sx={{
-                      background: "white",
-                      "&:hover": {
-                        backgroundColor: "white",
-                      },
-                    }}
-                    onClick={() => {
-                      setShowRange(false);
-                      handleSubmit(search)();
-                    }}
-                  >
-                    Apply
-                  </Button>
-                </Box>
-              )}
-            </FormControl> */}
             <Button
               size="large"
               onClick={openDatePicker}
@@ -673,6 +605,14 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 >
                   Appliquer
                 </Button>
+
+                <Button
+                  onClick={clearDateSelection}
+                  variant="contained"
+                  style={{ marginTop: "16px" }}
+                >
+                  Effacer la sélection
+                </Button>
               </div>
             </Popover>
             <Box sx={{ height: 450 }}>
@@ -682,7 +622,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 filterModel={undefined}
                 autoHeight
                 onRowClick={(params) => {
-                  const rowId = Number(params.id); // Convert the id to a number
+                  const rowId = Number(params.id);
                   setSelectedRowId(rowId);
                   showOrderDrawer(rowId);
                 }}

@@ -1,12 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
   CrudFilters,
   HttpError,
   useNavigation,
-  useUpdate,
-  useExport,
   getDefaultFilter,
   useDelete,
 } from "@refinedev/core";
@@ -16,7 +14,6 @@ import {
   DateField,
   useAutocomplete,
   List,
-  ExportButton,
   CreateButton,
 } from "@refinedev/mui";
 
@@ -29,12 +26,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-
+import { DateRangePicker } from "react-date-range";
 import {
   DataGrid,
-  GridColumns,
   GridActionsCellItem,
   GridCellParams,
+  GridColDef,
 } from "@mui/x-data-grid";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
@@ -42,12 +39,24 @@ import { ITresor, ITresorFilterVariables } from "../../interfaces";
 
 import { TresorTypes } from "../../components/tresor/TresorTypes";
 import { CreateDepense } from "./create";
-import { Delete, Edit } from "@mui/icons-material";
+import { CalendarToday, Delete, Edit } from "@mui/icons-material";
 import { EditDepense } from "./edit";
-import { InputAdornment } from "@mui/material";
+import { Popover } from "@mui/material";
+import moment from "moment";
 
 export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
+  //
+  const [periode, setPeriode] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  //
   const { dataGridProps, search, filters } = useDataGrid<
     ITresor,
     HttpError,
@@ -84,12 +93,22 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         operator: "eq",
         value: user,
       });
-
+      const startDate = moment(periode[0].startDate)
+        .startOf("day")
+        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+      const endDate = moment(periode[0].endDate)
+        .endOf("day")
+        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+      filters.push({
+        field: "createdAt",
+        operator: "between",
+        value: [startDate, endDate],
+      });
       return filters;
     },
   });
   console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColumns<ITresor>>(
+  const columns = React.useMemo<GridColDef<ITresor>[]>(
     () => [
       {
         field: "id",
@@ -203,44 +222,9 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
           }
         },
       },
-      // {
-      //   field: "actions",
-      //   type: "actions",
-      //   headerName: "Actions",
-      //   flex: 1,
-      //   minWidth: 100,
-      //   sortable: false,
-      //   getActions: ({ row }) => [
-      //     <GridActionsCellItem
-      //       key={1}
-      //       label=""
-      //       icon={<Edit color="success" />}
-      //       // onClick={() => edit("tresoriers", row.id)}
-      //       onClick={()=> showEditModal(row.id)}
-      //     />,
-
-      //     <GridActionsCellItem
-      //       key={2}
-      //       // icon={<CloseOutlinedIcon color="error" />}
-      //       sx={{ padding: "2px 6px" }}
-      //       label=""
-      //       icon={<Delete color="error" />}
-      //       onClick={() => {
-      //         mutateDelete({
-      //           resource: "tresoriers",
-      //           id: row.id,
-      //           mutationMode: "undoable",
-      //           undoableTimeout: 10000,
-      //         });
-      //       }}
-      //     />,
-      //   ],
-      // },
     ],
     []
   );
-
-  const { show } = useNavigation();
 
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
@@ -286,6 +270,29 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     minimumFractionDigits: 2,
   }).format(calculateTotalSum(dataGridProps.rows as ITresor[]));
 
+  //
+  //
+  const openDatePicker = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeDatePicker = () => {
+    setAnchorEl(null);
+  };
+
+  const applyDateRange = () => {
+    closeDatePicker();
+    handleSubmit(search)();
+  };
+  const clearDateSelection = () => {
+    setPeriode([
+      {
+        startDate: new Date(),
+        endDate: new Date(),
+        key: "selection",
+      },
+    ]);
+  };
   //
   return (
     <>
@@ -375,18 +382,6 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
             </CardContent>
           </Card>
           <Box sx={{ mt: 10 }}>
-            {/* <TextField
-            label="Total Sum"
-            type="number"
-            variant="outlined"
-            value={formattedNumber}
-            disabled
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">DZD</InputAdornment>
-              ),
-            }}
-          /> */}
             <TextField
               label="Total"
               value={formattedNumber}
@@ -398,13 +393,6 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         <Grid item xs={12} lg={9}>
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-            headerProps={
-              {
-                // action: (
-                //   <ExportButton onClick={triggerExport} loading={isLoading} />
-                // ),
-              }
-            }
             headerButtons={
               <CreateButton
                 onClick={() => showCreateModal()}
@@ -414,23 +402,66 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                 Ajouter Dépenses
               </CreateButton>
             }
-            createButtonProps={
-              {
-                // sx: {
-                //   display: 'none',
-                // },
-              }
-            }
           >
+            <Button
+              size="large"
+              onClick={openDatePicker}
+              startIcon={<CalendarToday />}
+              variant="outlined"
+              sx={{ marginBottom: 2 }}
+            >
+              {`${moment(periode[0].startDate).format("DD/MM/YYYY")} → ${moment(
+                periode[0].endDate
+              ).format("DD/MM/YYYY")}`}
+            </Button>
+            <Popover
+              open={Boolean(anchorEl)}
+              anchorEl={anchorEl}
+              onClose={closeDatePicker}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <div
+                style={{
+                  padding: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <DateRangePicker
+                  onChange={(item) => setPeriode([item.selection])}
+                  ranges={periode}
+                  showSelectionPreview={false}
+                  showPreview={false}
+                />
+                <Button
+                  onClick={applyDateRange}
+                  variant="contained"
+                  style={{ marginTop: "16px" }}
+                >
+                  Appliquer
+                </Button>
+                <Button
+                  onClick={clearDateSelection}
+                  variant="contained"
+                  style={{ marginTop: "16px" }}
+                >
+                  Effacer la sélection
+                </Button>
+              </div>
+            </Popover>
             <DataGrid
               {...dataGridProps}
               columns={columns}
               filterModel={undefined}
               autoHeight
-              onRowClick={({ id }) => {
-                show("tresoriers", id);
-              }}
-              rowsPerPageOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {
