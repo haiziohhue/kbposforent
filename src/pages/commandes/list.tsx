@@ -127,7 +127,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-
+  console.log(dataGridProps.rows);
   const columns = React.useMemo<GridColDef<IOrder>[]>(
     () => [
       {

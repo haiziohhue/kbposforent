@@ -142,8 +142,9 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       // })),
 
       menu: cartItems.map((item) => {
+        console.log(item);
         const componentType = item?.component;
-        if (componentType === "menus.Commande-menu") {
+        if (componentType === "menus.commande-menu") {
           return {
             __component: "menus.commande-menu",
             menu: item?.id,
@@ -153,8 +154,11 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
           return {
             __component: "menus.menu-compose",
             categorie: item?.categorie,
-            ingredient: item?.menus?.ingredients?.map((item) => ({
+            ingredients: item?.menus?.ingredients?.map((item) => ({
               ingredient: item?.id,
+              count: item?.count,
+              nom: item?.nom,
+              prix: item?.prix,
             })),
             prix: item?.prix,
             quantite: item?.quantity,
@@ -325,7 +329,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                 my: 3,
               }}
             >
-              {cartItems.length === 0 ? (
+              {cartItems?.length === 0 ? (
                 <Box
                   sx={{
                     display: "flex",

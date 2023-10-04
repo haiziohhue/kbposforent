@@ -190,54 +190,68 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
             <tbody>
               {(record?.menu as any)
                 ?.map((k: any) => ({ ...k, menu: k?.menu?.data?.attributes }))
-                ?.map((item: any) => (
-                  <tr key={item?.menu?.id}>
-                    <td
-                      style={{
-                        border: "solid",
-                        borderColor: "#000",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          textAlign: "center",
-                          fontWeight: 400,
-                          fontSize: 14,
-                        }}
-                      >
-                        {" "}
-                        {item?.quantite}
-                      </Typography>
-                    </td>
-                    <td
-                      style={{
-                        border: "solid",
-                        borderColor: "#000",
-                      }}
-                    >
-                      <Typography sx={{ fontWeight: 400, fontSize: 14 }}>
-                        {item?.menu?.titre ? item?.menu?.titre : item?.titre}
-                      </Typography>
-                      <Typography></Typography>
-                    </td>
-                    <td
-                      style={{
-                        border: "solid",
-                        borderColor: "#000",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          textAlign: "center",
-                          fontWeight: 400,
-                          fontSize: 14,
-                        }}
-                      >
-                        {item?.menu?.prix ? item?.menu?.prix : item?.prix}
-                      </Typography>
-                    </td>
-                  </tr>
-                ))}
+                ?.map(
+                  (item: any) => (
+                    console.log(item),
+                    (
+                      <>
+                        <tr key={item?.menu?.id}>
+                          <td
+                            style={{
+                              border: "solid",
+                              borderColor: "#000",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                textAlign: "center",
+                                fontWeight: 400,
+                                fontSize: 14,
+                              }}
+                            >
+                              {item?.quantite}
+                            </Typography>
+                          </td>
+                          <td
+                            style={{
+                              border: "solid",
+                              borderColor: "#000",
+                            }}
+                          >
+                            <Typography sx={{ fontWeight: 400, fontSize: 14 }}>
+                              {item?.menu?.titre
+                                ? item?.menu?.titre
+                                : item?.titre}
+                            </Typography>
+                            <Box>
+                              {item?.ingredients?.flatMap((item) => (
+                                <Typography key={item?.id}>
+                                  ({item?.count} x {item?.nom}) {item?.prix}
+                                </Typography>
+                              ))}
+                            </Box>
+                          </td>
+                          <td
+                            style={{
+                              border: "solid",
+                              borderColor: "#000",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                textAlign: "center",
+                                fontWeight: 400,
+                                fontSize: 14,
+                              }}
+                            >
+                              {item?.menu?.prix ? item?.menu?.prix : item?.prix}
+                            </Typography>
+                          </td>
+                        </tr>
+                      </>
+                    )
+                  )
+                )}
             </tbody>
           </table>
         )}

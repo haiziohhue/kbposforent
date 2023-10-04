@@ -156,10 +156,7 @@ function App() {
                           </Authenticated>
                         }
                       >
-                        <Route
-                          index
-                          element={<NavigateToResource resource="menus" />}
-                        />
+                        <Route index element={<MenusList />} />
 
                         <>
                           {/* Menus */}
@@ -249,10 +246,7 @@ function App() {
                           </Authenticated>
                         }
                       >
-                        <Route
-                          index
-                          element={<NavigateToResource resource="menus" />}
-                        />
+                        <Route index element={<MenusList />} />
 
                         <>
                           {/* Menus */}
@@ -525,10 +519,7 @@ function App() {
                           </Authenticated>
                         }
                       >
-                        <Route
-                          index
-                          element={<NavigateToResource resource="menus" />}
-                        />
+                        <Route index element={<MenusList />} />
 
                         <>
                           {/* Menus */}
@@ -706,10 +697,7 @@ function App() {
                         </Authenticated>
                       }
                     >
-                      <Route
-                        index
-                        element={<NavigateToResource resource="menus" />}
-                      />
+                      <Route index element={<MenusList />} />
 
                       <Route path="*" element={<ErrorComponent />} />
                     </Route>

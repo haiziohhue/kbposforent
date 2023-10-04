@@ -37,17 +37,7 @@ import { useNavigate } from "react-router-dom";
 interface ShowOrderProps {
   id: number;
 }
-const initialState = {
-  record: [],
-};
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "SET_RECORD":
-      return { ...state, record: action.payload };
-    default:
-      return state;
-  }
-};
+
 export const ShowOrder: React.FC<
   UseModalFormReturnType<IOrder, HttpError, IOrder> & ShowOrderProps
 > = ({ modal: { visible, close }, id }) => {
@@ -55,8 +45,6 @@ export const ShowOrder: React.FC<
   const { mutate } = useUpdate();
   const { mutate: mutateCreate } = useCreate();
   const navigate = useNavigate();
-  // const [state, dispatch] = useReducer(reducer, initialState);
-  // const {record}=state
   const [record, setRecord] = useState<IOrder | null>(null);
 
   useEffect(() => {
@@ -149,105 +137,116 @@ export const ShowOrder: React.FC<
               <Stack gap={3}>
                 {(record?.menu as any)
                   ?.map((k: any) => ({ ...k, menu: k?.menu?.data?.attributes }))
-                  ?.map((item: any) => (
-                    <>
-                      <Card
-                        key={item?.id}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          position: "relative",
-                          height: "100%",
-                          width: "100%",
-                          padding: 1,
-                        }}
-                      >
-                        <CardHeader sx={{ padding: 0, mt: 1 }} />
-                        <Stack direction="row" sx={{ gap: 1 }}>
-                          <Box
+                  ?.map(
+                    (item: any) => (
+                      console.log(item),
+                      (
+                        <>
+                          <Card
+                            key={item?.id}
                             sx={{
                               display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
+                              flexDirection: "column",
+                              position: "relative",
+                              height: "100%",
+                              width: "100%",
+                              padding: 1,
                             }}
                           >
-                            <CardMedia
-                              component="img"
-                              sx={{
-                                width: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                height: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                borderRadius: "50%",
-                              }}
-                              alt={
-                                item?.menu?.titre
-                                  ? item?.menu?.titre
-                                  : item?.titre
-                              }
-                              //   image={image?.url}
-                              image={
-                                `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
-                                  ? `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
-                                  : `${API_URL}${item?.image}`
-                              }
-                            />
-                          </Box>
-                          <Divider
-                            orientation="vertical"
-                            variant="middle"
-                            flexItem
-                          />
-                          <Box>
-                            <CardContent
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: 1,
-                                flex: 1,
-                                padding: 1,
-                              }}
-                            >
-                              <Typography
+                            <CardHeader sx={{ padding: 0, mt: 1 }} />
+                            <Stack direction="row" sx={{ gap: 1 }}>
+                              <Box
                                 sx={{
-                                  fontWeight: 800,
-                                  fontSize: "16px",
-                                  overflow: "hidden",
-                                  whiteSpace: "nowrap",
-                                  textOverflow: "ellipsis",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
                                 }}
                               >
-                                {item?.menu?.titre
-                                  ? item?.menu?.titre
-                                  : item?.titre}{" "}
-                                {""}
-                                {""}
-                                <span
-                                  style={{
-                                    fontWeight: 600,
-                                    fontSize: "14px",
-                                    marginLeft: 10,
+                                <CardMedia
+                                  component="img"
+                                  sx={{
+                                    width: { xs: 60, sm: 60, lg: 80, xl: 144 },
+                                    height: { xs: 60, sm: 60, lg: 80, xl: 144 },
+                                    borderRadius: "50%",
                                   }}
-                                ></span>
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  fontWeight: 600,
-                                  fontSize: "16px",
-                                  overflow: "hidden",
-                                  whiteSpace: "nowrap",
-                                  textOverflow: "ellipsis",
-                                }}
-                              >
-                                {item?.quantite} {""}x
-                                {item?.menu?.prix
-                                  ? item?.menu?.prix
-                                  : item?.prix}
-                              </Typography>
-                            </CardContent>
-                          </Box>
-                        </Stack>
-                      </Card>
-                    </>
-                  ))}
+                                  alt={
+                                    item?.menu?.titre
+                                      ? item?.menu?.titre
+                                      : item?.titre
+                                  }
+                                  //   image={image?.url}
+                                  image={
+                                    item?.menu?.image?.data?.attributes?.url
+                                      ? `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
+                                      : `${API_URL}${item?.image}`
+                                  }
+                                />
+                              </Box>
+                              <Divider
+                                orientation="vertical"
+                                variant="middle"
+                                flexItem
+                              />
+                              <Box>
+                                <CardContent
+                                  sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 1,
+                                    flex: 1,
+                                    padding: 1,
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 800,
+                                      fontSize: "16px",
+                                      overflow: "hidden",
+                                      whiteSpace: "nowrap",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    {item?.menu?.titre
+                                      ? item?.menu?.titre
+                                      : item?.titre}{" "}
+                                    <span
+                                      style={{
+                                        fontWeight: 600,
+                                        fontSize: "14px",
+                                        marginLeft: 10,
+                                      }}
+                                    ></span>
+                                  </Typography>
+                                  <Box>
+                                    {item?.ingredients?.flatMap((item) => (
+                                      <Typography key={item?.id}>
+                                        ({item?.count} x {item?.nom}){" "}
+                                        {item?.prix}
+                                      </Typography>
+                                    ))}
+                                  </Box>
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 600,
+                                      fontSize: "16px",
+                                      overflow: "hidden",
+                                      whiteSpace: "nowrap",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    {item?.quantite} {""}x
+                                    {item?.menu?.prix
+                                      ? item?.menu?.prix
+                                      : item?.prix}
+                                  </Typography>
+                                </CardContent>
+                              </Box>
+                            </Stack>
+                          </Card>
+                        </>
+                      )
+                    )
+                  )}
                 <Stack
                   direction="row"
                   justifyContent="space-between"
