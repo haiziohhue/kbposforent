@@ -23,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { HttpError } from "@refinedev/core";
-import { Create, SaveButton } from "@refinedev/mui";
+import { Create } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
 import dayjs from "dayjs";
@@ -105,6 +105,12 @@ export const CreateAchat: React.FC<
     }
     return total;
   };
+  //
+  const formattedNumber = new Intl.NumberFormat("en-DZ", {
+    style: "currency",
+    currency: "DZD",
+    minimumFractionDigits: 2,
+  }).format(calculateTotal());
   //delete row by index
   const deleteRow = (index: unknown) => {
     dispatch({
@@ -317,23 +323,10 @@ export const CreateAchat: React.FC<
         );
       },
     },
-    // {
-    //   field: "total",
-    //   headerName: "Total",
-    //   width: 120,
-    //   headerAlign: "center",
-    //   align: "center",
-    //   valueGetter: (params) => {
-    //     const row = params.row;
-    //     return row.prix * row.quantite;
-    //   },
-    //   renderCell: (params) => (
-    //     <Typography variant="body1">{params.value}</Typography>
-    //   ),
-    // },
+
     {
       field: "total",
-      headerName: "Total",
+      headerName: "Totale",
       width: 120,
       headerAlign: "center",
       align: "center",
@@ -554,7 +547,21 @@ export const CreateAchat: React.FC<
               >
                 Ajouter un article
               </Button>
-              <Typography>Total: {calculateTotal()}</Typography>
+              <TextField
+                label="Totale"
+                value={formattedNumber}
+                disabled
+                fullWidth
+              />
+              {/* <Typography
+                sx={{
+                  fontWeight: 800,
+                  fontSize: "16px",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                Totale: {calculateTotal()}
+              </Typography> */}
             </Box>
           </Box>
         </DialogContent>

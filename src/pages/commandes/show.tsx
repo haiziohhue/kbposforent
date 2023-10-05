@@ -101,7 +101,6 @@ export const ShowOrder: React.FC<
         >
           <Stack>
             <Box
-              py={4}
               justifyContent="center"
               alignItems="center"
               sx={{
@@ -111,7 +110,7 @@ export const ShowOrder: React.FC<
                 },
               }}
             >
-              <Stack direction="row" justifyContent="space-between" py={5}>
+              <Stack direction="row" justifyContent="space-between" py={3}>
                 <Typography
                   sx={{
                     fontWeight: 600,
@@ -135,118 +134,138 @@ export const ShowOrder: React.FC<
               </Stack>
               <Divider />
               <Stack gap={3}>
-                {(record?.menu as any)
-                  ?.map((k: any) => ({ ...k, menu: k?.menu?.data?.attributes }))
-                  ?.map(
-                    (item: any) => (
-                      console.log(item),
-                      (
-                        <>
-                          <Card
-                            key={item?.id}
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              position: "relative",
-                              height: "100%",
-                              width: "100%",
-                              padding: 1,
-                            }}
-                          >
-                            <CardHeader sx={{ padding: 0, mt: 1 }} />
-                            <Stack direction="row" sx={{ gap: 1 }}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <CardMedia
-                                  component="img"
-                                  sx={{
-                                    width: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                    height: { xs: 60, sm: 60, lg: 80, xl: 144 },
-                                    borderRadius: "50%",
-                                  }}
-                                  alt={
-                                    item?.menu?.titre
-                                      ? item?.menu?.titre
-                                      : item?.titre
-                                  }
-                                  //   image={image?.url}
-                                  image={
-                                    item?.menu?.image?.data?.attributes?.url
-                                      ? `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
-                                      : `${API_URL}${item?.image}`
-                                  }
-                                />
-                              </Box>
-                              <Divider
-                                orientation="vertical"
-                                variant="middle"
-                                flexItem
-                              />
-                              <Box>
-                                <CardContent
+                <div
+                  style={{
+                    maxHeight: "550px", // Set the maximum height you desire
+                    overflowY: "scroll", // Enable vertical scrollbar when content overflows
+                  }}
+                >
+                  {(record?.menu as any)
+                    ?.map((k: any) => ({
+                      ...k,
+                      menu: k?.menu?.data?.attributes,
+                    }))
+                    ?.map(
+                      (item: any) => (
+                        console.log(item),
+                        (
+                          <>
+                            <Card
+                              key={item?.id}
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                position: "relative",
+                                height: "100%",
+                                width: "100%",
+                                padding: 1,
+                              }}
+                            >
+                              <CardHeader sx={{ padding: 0, mt: 1 }} />
+                              <Stack direction="row" sx={{ gap: 1 }}>
+                                <Box
                                   sx={{
                                     display: "flex",
-                                    flexDirection: "column",
-                                    gap: 1,
-                                    flex: 1,
-                                    padding: 1,
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                   }}
                                 >
-                                  <Typography
+                                  <CardMedia
+                                    component="img"
                                     sx={{
-                                      fontWeight: 800,
-                                      fontSize: "16px",
-                                      overflow: "hidden",
-                                      whiteSpace: "nowrap",
-                                      textOverflow: "ellipsis",
+                                      width: {
+                                        xs: 60,
+                                        sm: 60,
+                                        lg: 80,
+                                        xl: 144,
+                                      },
+                                      height: {
+                                        xs: 60,
+                                        sm: 60,
+                                        lg: 80,
+                                        xl: 144,
+                                      },
+                                      borderRadius: "50%",
+                                    }}
+                                    alt={
+                                      item?.menu?.titre
+                                        ? item?.menu?.titre
+                                        : item?.titre
+                                    }
+                                    //   image={image?.url}
+                                    image={
+                                      item?.menu?.image?.data?.attributes?.url
+                                        ? `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
+                                        : `${API_URL}${item?.image}`
+                                    }
+                                  />
+                                </Box>
+                                <Divider
+                                  orientation="vertical"
+                                  variant="middle"
+                                  flexItem
+                                />
+                                <Box>
+                                  <CardContent
+                                    sx={{
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: 1,
+                                      flex: 1,
+                                      padding: 1,
                                     }}
                                   >
-                                    {item?.menu?.titre
-                                      ? item?.menu?.titre
-                                      : item?.titre}{" "}
-                                    <span
-                                      style={{
-                                        fontWeight: 600,
-                                        fontSize: "14px",
-                                        marginLeft: 10,
+                                    <Typography
+                                      sx={{
+                                        fontWeight: 800,
+                                        fontSize: "16px",
+                                        overflow: "hidden",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
                                       }}
-                                    ></span>
-                                  </Typography>
-                                  <Box>
-                                    {item?.ingredients?.flatMap((item) => (
-                                      <Typography key={item?.id}>
-                                        ({item?.count} x {item?.nom}){" "}
-                                        {item?.prix}
-                                      </Typography>
-                                    ))}
-                                  </Box>
-                                  <Typography
-                                    sx={{
-                                      fontWeight: 600,
-                                      fontSize: "16px",
-                                      overflow: "hidden",
-                                      whiteSpace: "nowrap",
-                                      textOverflow: "ellipsis",
-                                    }}
-                                  >
-                                    {item?.quantite} {""}x
-                                    {item?.menu?.prix
-                                      ? item?.menu?.prix
-                                      : item?.prix}
-                                  </Typography>
-                                </CardContent>
-                              </Box>
-                            </Stack>
-                          </Card>
-                        </>
+                                    >
+                                      {item?.menu?.titre
+                                        ? item?.menu?.titre
+                                        : item?.titre}{" "}
+                                      <span
+                                        style={{
+                                          fontWeight: 600,
+                                          fontSize: "14px",
+                                          marginLeft: 10,
+                                        }}
+                                      ></span>
+                                    </Typography>
+                                    <Box>
+                                      {item?.ingredients?.flatMap((item) => (
+                                        <Typography key={item?.id}>
+                                          ({item?.count} x {item?.nom}){" "}
+                                          {item?.prix}
+                                        </Typography>
+                                      ))}
+                                    </Box>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: 600,
+                                        fontSize: "16px",
+                                        overflow: "hidden",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                      }}
+                                    >
+                                      {item?.quantite} {""}x
+                                      {item?.menu?.prix
+                                        ? item?.menu?.prix
+                                        : item?.prix}
+                                    </Typography>
+                                  </CardContent>
+                                </Box>
+                              </Stack>
+                            </Card>
+                          </>
+                        )
                       )
-                    )
-                  )}
+                    )}
+                </div>
                 <Stack
                   direction="row"
                   justifyContent="space-between"

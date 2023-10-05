@@ -313,10 +313,10 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
         </table>
       </Box>
 
-      <Box sx={{ width: 400, margin: "auto", mb: 3 }}>
+      <Box sx={{ width: 400, margin: "auto", my: 3 }}>
         {/* Money given input */}
         <TextField
-          label="Money Given"
+          label="Argent donné"
           variant="outlined"
           value={moneyGiven}
           onChange={(e) => setMoneyGiven(e.target.value)}
@@ -324,32 +324,17 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
           type="number"
           sx={{ marginBottom: 3 }}
         />
-        {/* Number of copies select */}
-        <TextField
-          label="Number of Copies"
-          variant="outlined"
-          value={numCopies}
-          onChange={(e) => {
-            // Ensure input is numeric and non-negative
-            const inputNumCopies = parseInt(e.target.value, 10);
-            if (!isNaN(inputNumCopies) && inputNumCopies >= 1) {
-              setNumCopies(inputNumCopies);
-            }
-          }}
-          fullWidth
-          type="number"
-          sx={{ marginBottom: 3 }}
-        />
+
         {/* Change (rest) calculation */}
         <Typography
           sx={{
             textAlign: "center",
             fontWeight: 400,
-            fontSize: 14,
+            fontSize: 16,
             marginBottom: 3,
           }}
         >
-          Change (Rest): {calculateChange()}
+          Le Reste: {calculateChange()}
         </Typography>
         <Button
           onClick={handlePrint}

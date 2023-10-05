@@ -32,20 +32,19 @@ import { ICaisse, IRole, IUser } from "../../../interfaces";
 import { API_URL, TOKEN_KEY } from "../../../constants";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
 
 export const EditUser: React.FC<IResourceComponentsProps> = () => {
   const stepTitles = ["Données Generales", "Données Professionnelles"];
   const apiUrl = useApiUrl();
 
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { onFinish, formLoading, queryResult },
     control,
-    watch,
+
     register,
     handleSubmit,
     setValue,
@@ -62,10 +61,10 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
 
   // const imageInput = watch("photo");
   const [date, setDate] = React.useState<Date | null>(null);
-
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [imageURL, setImageURL] = useState("");
-  console.log(imageURL);
+  const userData = queryResult?.data?.data;
+
   const onChangeHandler = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -153,7 +152,11 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                           lg: "200px",
                         },
                       }}
-                      src={imageURL}
+                      src={
+                        imageURL
+                          ? imageURL
+                          : `${API_URL}${userData?.photo?.url}`
+                      }
                       alt="User Picture"
                     />
                   </label>
@@ -168,6 +171,7 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                   {/* <Typography sx={{ fontSize: '12px' }}>
                     
                   </Typography> */}
+                  {isUploadLoading && <CircularProgress />}
                 </Stack>
               </Grid>
               <Grid item xs={12} md={8}>

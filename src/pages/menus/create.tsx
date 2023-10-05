@@ -6,6 +6,7 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -158,7 +159,9 @@ export const CreateMenu: React.FC<
                       }}
                       src={imageURL}
                       alt="Menu Image"
-                    />
+                    >
+                      {isUploadLoading && <CircularProgress />}
+                    </Avatar>
                   </label>
                   <Typography
                     variant="body2"
@@ -169,11 +172,9 @@ export const CreateMenu: React.FC<
                   >
                     Ajouter une Image
                   </Typography>
-                  {/* <Typography style={{ fontSize: '12px' }}>
-                    must be 1080x1080 px
-                  </Typography> */}
                 </Stack>
-                {errors.image && (
+
+                {errors.image && !isUploadLoading && (
                   <FormHelperText error>{errors.image.message}</FormHelperText>
                 )}
               </FormControl>

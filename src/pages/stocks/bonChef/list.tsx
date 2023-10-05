@@ -5,7 +5,13 @@ import {
   useDelete,
   CrudFilters,
 } from "@refinedev/core";
-import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
+import {
+  useDataGrid,
+  List,
+  CreateButton,
+  DateField,
+  RefreshButton,
+} from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import { DateRangePicker } from "react-date-range";
@@ -26,6 +32,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
   const [selectedRowId, setSelectedRowId] = React.useState<number>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [filteredData, setFilteredData] = React.useState<any[]>([]);
+  const [refresh, setRefresh] = React.useState(false);
   //
   const [periode, setPeriode] = React.useState([
     {
@@ -37,6 +44,16 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
   //
   const { dataGridProps, search } = useDataGrid<IBC, HttpError>({
     initialPageSize: 10,
+    syncWithLocation: true,
+    liveMode: "auto",
+    sorters: {
+      permanent: [
+        {
+          field: "id",
+          order: "desc",
+        },
+      ],
+    },
     meta: { populate: "deep" },
     onSearch: () => {
       const filters: CrudFilters = [];
@@ -54,29 +71,49 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-
+  console.log(dataGridProps.rows);
   //
   const updateData = (newData) => {
     const updatedData = [...responseData, newData];
     setResponseData(updatedData);
   };
-  React.useEffect(() => {
+
+  // React.useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/api/bon-chefs?populate=*`)
+  //     .then((response) => {
+  //       const responseData = response?.data?.data;
+  //       const filteredData = responseData?.map((item) => ({
+  //         id: item?.id,
+  //         ...item?.attributes,
+  //         chef: item?.attributes?.chef?.data?.attributes?.chef,
+  //       }));
+
+  //       setResponseData(filteredData);
+  //       setFilteredData(filteredData);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching data from API", error);
+  //     });
+  // }, []);
+  const fetchData = () => {
     axios
-      .get(`${API_URL}/api/bon-chefs?populate=*`)
+      .get(
+        `${API_URL}/api/bon-chefs??pagination[page]=1&pagination[pageSize]=10&populate=deep&sort=id%3Adesc&`
+      )
       .then((response) => {
         const responseData = response?.data?.data;
-        const filteredData = responseData?.map((item) => ({
-          id: item?.id,
-          ...item?.attributes,
-          chef: item?.attributes?.chef?.data?.attributes?.chef,
-        }));
-        setResponseData(filteredData);
-        setFilteredData(filteredData);
+        setRefresh(true);
+        console.log("Request succeeded:", responseData);
       })
       .catch((error) => {
         console.error("Error fetching data from API", error);
       });
-  }, []);
+  };
+
+  // React.useEffect(() => {
+  //   fetchData();
+  // }, []);
   console.log(responseData);
   //
   const columns = React.useMemo<GridColDef<IBC>[]>(
@@ -95,7 +132,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
         headerName: "Chef",
         headerAlign: "center",
         align: "center",
-        // valueGetter: ({ row }) => row?.chef?.chef,
+        valueGetter: ({ row }) => row?.chef?.chef,
         flex: 1,
         minWidth: 90,
       },
@@ -212,13 +249,16 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
             headerButtons={
-              <CreateButton
-                onClick={() => showCreateModal()}
-                variant="contained"
-                sx={{ marginBottom: "5px" }}
-              >
-                Ajouter
-              </CreateButton>
+              <>
+                <CreateButton
+                  onClick={() => showCreateModal()}
+                  variant="contained"
+                  sx={{ marginBottom: "5px" }}
+                >
+                  Ajouter
+                </CreateButton>
+                <RefreshButton onClick={() => window.location.reload()} />
+              </>
             }
           >
             <Button
@@ -279,10 +319,10 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
             <DataGrid
               {...dataGridProps}
               columns={columns}
-              rows={filteredData}
+              // rows={filteredData}
               filterModel={undefined}
               autoHeight
-              pageSizeOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[5, 10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {

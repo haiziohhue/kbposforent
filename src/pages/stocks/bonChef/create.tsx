@@ -332,16 +332,14 @@ export const CreateBC: React.FC<
         })),
       etat: "Validé",
     };
-    console.log(payload);
+
     try {
       const response = await axios.post(`${API_URL}/api/bon-chefs`, {
         data: payload,
       });
-      console.log("Current articles state:", articles);
       const newBonChefData = response?.data?.data;
       updateData(newBonChefData);
-      console.log(newBonChefData);
-      console.log("Updated articles state:", articles);
+      console.log("Request succeeded:", response.data);
       close();
       dispatch({ type: "RESET" });
     } catch (error) {

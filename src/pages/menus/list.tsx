@@ -1,7 +1,6 @@
 import {
   HttpError,
   IResourceComponentsProps,
-  useApiUrl,
   useTable,
   getDefaultFilter,
 } from "@refinedev/core";

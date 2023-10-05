@@ -4,7 +4,6 @@ import {
   BaseRecord,
   CrudFilters,
   HttpError,
-  useNavigation,
   getDefaultFilter,
   useDelete,
 } from "@refinedev/core";
@@ -383,7 +382,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
           </Card>
           <Box sx={{ mt: 10 }}>
             <TextField
-              label="Total"
+              label="Totale"
               value={formattedNumber}
               disabled
               fullWidth

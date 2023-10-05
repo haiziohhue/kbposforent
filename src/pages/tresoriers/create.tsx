@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { HttpError, useGetIdentity, useList } from "@refinedev/core";
 import {
@@ -274,8 +274,7 @@ export const CreateDepense: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
-          {/* <Button onClick={close}>Annuler</Button> */}
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Create>
     </Dialog>

@@ -34,7 +34,12 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
+import {
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const CreateUser: React.FC<IResourceComponentsProps> = () => {
@@ -173,6 +178,7 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                   {/* <Typography sx={{ fontSize: '12px' }}>
                     
                   </Typography> */}
+                  {isUploadLoading && <CircularProgress />}
                 </Stack>
               </Grid>
               <Grid item xs={12} md={8}>

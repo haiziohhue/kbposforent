@@ -196,7 +196,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     >
       <form onSubmit={handleSubmit(onFinishHandler)}>
         <Box sx={{ gap: 2 }}>
-          <Stack gap={1} marginY={1.5}>
+          <Stack gap={1} marginY={1}>
             {/* Caisse */}
             <Stack>
               <List
@@ -316,7 +316,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
           {/* Cart */}
           <Box
             sx={{
-              height: "50vh",
+              maxHeight: "400px",
               width: "100%",
               overflowY: "scroll",
               gap: 1.5,
