@@ -1,33 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   IResourceComponentsProps,
   HttpError,
   useDelete,
+  CrudFilters,
 } from "@refinedev/core";
 import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
-
 import Grid from "@mui/material/Grid";
-
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
-
-import { Delete, Edit } from "@mui/icons-material";
+import { DateRangePicker } from "react-date-range";
+import { CalendarToday, Delete, Edit } from "@mui/icons-material";
 import { IBC } from "../../../interfaces";
-import { useModalForm } from "@refinedev/react-hook-form";
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateBC } from "./create";
 import { EditBC } from "./edit";
-
 import axios from "axios";
 import { API_URL } from "../../../constants";
+import moment from "moment";
+import { Button, Popover } from "@mui/material";
 
 export const ListBC: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
-
-  const [responseData, setResponseData] = useState<any[]>([]);
+  const { handleSubmit } = useForm();
+  const [responseData, setResponseData] = React.useState<any[]>([]);
   const [selectedRowId, setSelectedRowId] = React.useState<number>();
-
-  const { dataGridProps } = useDataGrid<IBC, HttpError>({
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [filteredData, setFilteredData] = React.useState<any[]>([]);
+  //
+  const [periode, setPeriode] = React.useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+  //
+  const { dataGridProps, search } = useDataGrid<IBC, HttpError>({
     initialPageSize: 10,
     meta: { populate: "deep" },
+    onSearch: () => {
+      const filters: CrudFilters = [];
+      const startDate = moment(periode[0].startDate)
+        .startOf("day")
+        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+      const endDate = moment(periode[0].endDate)
+        .endOf("day")
+        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+      filters.push({
+        field: "createdAt",
+        operator: "between",
+        value: [startDate, endDate],
+      });
+      return filters;
+    },
   });
 
   //
@@ -35,18 +60,18 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
     const updatedData = [...responseData, newData];
     setResponseData(updatedData);
   };
-  useEffect(() => {
+  React.useEffect(() => {
     axios
       .get(`${API_URL}/api/bon-chefs?populate=*`)
       .then((response) => {
         const responseData = response?.data?.data;
-        setResponseData(
-          responseData.map((item) => ({
-            id: item?.id,
-            ...item.attributes,
-            chef: item.attributes.chef.data.attributes.chef,
-          }))
-        );
+        const filteredData = responseData?.map((item) => ({
+          id: item?.id,
+          ...item?.attributes,
+          chef: item?.attributes?.chef?.data?.attributes?.chef,
+        }));
+        setResponseData(filteredData);
+        setFilteredData(filteredData);
       })
       .catch((error) => {
         console.error("Error fetching data from API", error);
@@ -146,6 +171,37 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showEditModal },
   } = editDrawerFormProps;
   //
+  //
+  const openDatePicker = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeDatePicker = () => {
+    setAnchorEl(null);
+  };
+
+  const applyDateRange = () => {
+    closeDatePicker();
+    const filtered = responseData.filter((item) => {
+      const createdAt = moment(item.createdAt);
+      return createdAt.isBetween(
+        moment(periode[0].startDate).startOf("day"),
+        moment(periode[0].endDate).endOf("day")
+      );
+    });
+    setFilteredData(filtered);
+    handleSubmit(search)();
+  };
+  const clearDateSelection = () => {
+    setPeriode([
+      {
+        startDate: new Date(),
+        endDate: new Date(),
+        key: "selection",
+      },
+    ]);
+  };
+  //
   return (
     <>
       <CreateBC {...createDrawerFormProps} updateData={updateData} />
@@ -155,13 +211,6 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
         <Grid item xs={12} lg={12}>
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-            headerProps={
-              {
-                // action: (
-                //   <ExportButton onClick={triggerExport} loading={isLoading} />
-                // ),
-              }
-            }
             headerButtons={
               <CreateButton
                 onClick={() => showCreateModal()}
@@ -171,18 +220,66 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
                 Ajouter
               </CreateButton>
             }
-            createButtonProps={
-              {
-                // sx: {
-                //   display: 'none',
-                // },
-              }
-            }
           >
+            <Button
+              size="large"
+              onClick={openDatePicker}
+              startIcon={<CalendarToday />}
+              variant="outlined"
+              sx={{ marginBottom: 2 }}
+            >
+              {`${moment(periode[0].startDate).format("DD/MM/YYYY")} → ${moment(
+                periode[0].endDate
+              ).format("DD/MM/YYYY")}`}
+            </Button>
+
+            <Popover
+              open={Boolean(anchorEl)}
+              anchorEl={anchorEl}
+              onClose={closeDatePicker}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <div
+                style={{
+                  padding: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <DateRangePicker
+                  onChange={(item) => setPeriode([item.selection])}
+                  ranges={periode}
+                  showSelectionPreview={false}
+                  showPreview={false}
+                />
+                <Button
+                  onClick={applyDateRange}
+                  variant="contained"
+                  style={{ marginTop: "16px" }}
+                >
+                  Appliquer
+                </Button>
+
+                <Button
+                  onClick={clearDateSelection}
+                  variant="contained"
+                  style={{ marginTop: "16px" }}
+                >
+                  Effacer la sélection
+                </Button>
+              </div>
+            </Popover>
             <DataGrid
               {...dataGridProps}
               columns={columns}
-              rows={responseData}
+              rows={filteredData}
               filterModel={undefined}
               autoHeight
               pageSizeOptions={[10, 20, 50, 100]}

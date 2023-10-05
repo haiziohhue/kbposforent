@@ -156,10 +156,7 @@ function App() {
                           </Authenticated>
                         }
                       >
-                        <Route
-                          index
-                          element={<NavigateToResource resource="menus" />}
-                        />
+                        <Route index element={<MenusList />} />
 
                         <>
                           {/* Menus */}
@@ -174,6 +171,96 @@ function App() {
                             <Route path="newEdit/:id" element={<NewEdit />} />
                             <Route path="show/:id" element={<ShowOrder />} />
                           </Route>
+                        </>
+
+                        <Route path="*" element={<ErrorComponent />} />
+                      </Route>
+                      <Route
+                        element={
+                          <Authenticated fallback={<Outlet />}>
+                            <NavigateToResource />
+                          </Authenticated>
+                        }
+                      >
+                        <Route
+                          path="/login"
+                          element={<AuthPage type="login" />}
+                        />
+                      </Route>
+                    </>
+                  </Routes>
+
+                  <RefineKbar />
+                  <UnsavedChangesNotifier />
+                </Refine>
+              )}
+              {user?.role?.name === "Serveur" && (
+                <Refine
+                  authProvider={authProvider}
+                  dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+                  notificationProvider={notificationProvider}
+                  routerProvider={routerBindings}
+                  resources={[
+                    {
+                      name: "",
+                      list: "/caisse",
+                      create: "/commandes/create",
+                      edit: "",
+                      show: "",
+                      meta: {
+                        label: "Caisse",
+                        canDelete: true,
+                        icon: <AccountBalance />,
+                      },
+                    },
+                    // {
+                    //   name: "commandes",
+                    //   list: "/commandes",
+                    //   create: "/commandes/create",
+                    //   edit: "/commandes/newEdit/:id",
+                    //   show: "/commandes/show/:id",
+                    //   meta: {
+                    //     canDelete: true,
+                    //     icon: <AddShoppingCart />,
+                    //   },
+                    // },
+                  ]}
+                  options={{
+                    syncWithLocation: true,
+                    warnWhenUnsavedChanges: true,
+                  }}
+                >
+                  <Routes>
+                    <>
+                      <Route
+                        element={
+                          <Authenticated
+                            fallback={<CatchAllNavigate to="/login" />}
+                          >
+                            <ThemedLayoutV2
+                              Header={() => <Header sticky />}
+                              Sider={() => <ThemedSiderV2 Title={Title} />}
+                            >
+                              <Outlet />
+                            </ThemedLayoutV2>
+                          </Authenticated>
+                        }
+                      >
+                        <Route index element={<MenusList />} />
+
+                        <>
+                          {/* Menus */}
+                          <Route path="/caisse">
+                            <Route index element={<MenusList />} />
+                            <Route path="create" element={<CreateOrder />} />
+                          </Route>
+                          {/* Orders */}
+                          {/* <Route path="/commandes">
+                            <Route index element={<ListOrdes />} />
+                            <Route path="create" element={<CreateOrder />} />
+                            <Route path="newEdit/:id" element={<NewEdit />} />
+                            <Route path="show/:id" element={<ShowOrder />} />
+                          </Route> */}
                         </>
 
                         <Route path="*" element={<ErrorComponent />} />
@@ -432,10 +519,7 @@ function App() {
                           </Authenticated>
                         }
                       >
-                        <Route
-                          index
-                          element={<NavigateToResource resource="menus" />}
-                        />
+                        <Route index element={<MenusList />} />
 
                         <>
                           {/* Menus */}
@@ -613,10 +697,7 @@ function App() {
                         </Authenticated>
                       }
                     >
-                      <Route
-                        index
-                        element={<NavigateToResource resource="menus" />}
-                      />
+                      <Route index element={<MenusList />} />
 
                       <Route path="*" element={<ErrorComponent />} />
                     </Route>

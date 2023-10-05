@@ -85,6 +85,7 @@ export const EditBC: React.FC<
       quantite: 1,
       stock: 0,
       state: true,
+      old: false,
     };
 
     dispatch({ type: "SET_ARTICLES", payload: [...articles, newArticle] });
@@ -99,6 +100,28 @@ export const EditBC: React.FC<
   };
   //
 
+  const handleArticleChange = (
+    field: string,
+    value: any,
+    index: number,
+    old: boolean
+  ) => {
+    if (old) {
+      dispatch({
+        type: "SET_ARTICLES",
+        payload: articles?.map((row) =>
+          index === row.id ? { ...row, [field]: value } : row
+        ),
+      });
+    } else {
+      const article = articles[index];
+      article[field] = value;
+      dispatch({
+        type: "SET_ARTICLES",
+        payload: articles?.map((row, i) => (i === index ? article : row)),
+      });
+    }
+  };
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
@@ -135,7 +158,7 @@ export const EditBC: React.FC<
         quantite: e?.quantite || 0,
         stock: e.stock?.data?.attributes?.quantite || 0,
         state: false,
-        // old: true,
+        old: true,
       }));
 
       dispatch({
@@ -196,35 +219,85 @@ export const EditBC: React.FC<
                 id="tags-filled"
                 value={params.row.article}
                 options={produits
-                  .filter(
-                    (k) => !articles.map((e) => e.article.id).includes(k.id)
+                  ?.filter(
+                    (k) => !articles?.map((e) => e.article.id)?.includes(k.id)
                   )
-                  .map((option) => {
+                  ?.map((option) => {
                     return {
                       label: option.ingredient?.data?.attributes?.nom,
                       id: option.id,
+                      stock: option?.quantite,
                       value: option,
                     };
                   })}
                 sx={{
                   flex: 1,
                 }}
-                freeSolo
+                // onChange={(event, newValue) => {
+                //   if (newValue.value) {
+                //     if (params.row.old) {
+                //       dispatch({
+                //         type: "SET_ARTICLES",
+                //         payload: articles.map((e) => {
+                //           if (e.id === params.row.id) {
+                //             return {
+                //               ...e,
+                //               article: newValue,
+                //               prix: newValue.value.prix,
+                //               tva: newValue.value.tva,
+                //             };
+                //           }
+                //           return e;
+                //         }),
+                //       });
+                //     } else
+                //       dispatch({
+                //         type: "SET_ARTICLES",
+                //         payload: articles.map((e, i) => {
+                //           if (i === params.row.id) {
+                //             return {
+                //               ...e,
+                //               article: newValue,
+                //               prix: newValue.value.prix,
+                //               tva: newValue.value.tva,
+                //             };
+                //           }
+                //           return e;
+                //         }),
+                //       });
+                //   }
+                // }}
                 onChange={(event, newValue) => {
                   if (!newValue.value) return;
-                  const products = articles.map((e, i) => {
-                    if (i === params.row.id) {
-                      return {
-                        ...e,
-                        article: newValue,
-                        prix: newValue.value.prix,
-                      };
-                    }
-
-                    return e;
-                  });
-
-                  dispatch({ type: "SET_ARTICLES", payload: products });
+                  if (params.row.old) {
+                    dispatch({
+                      type: "SET_ARTICLES",
+                      payload: articles.map((e) => {
+                        if (e.id === params.row.id) {
+                          return {
+                            ...e,
+                            article: newValue,
+                            stock: newValue.stock,
+                          };
+                        }
+                        return e;
+                      }),
+                    });
+                  } else {
+                    dispatch({
+                      type: "SET_ARTICLES",
+                      payload: articles.map((e, i) => {
+                        if (i === params.row.id) {
+                          return {
+                            ...e,
+                            article: newValue,
+                            stock: newValue.stock,
+                          };
+                        }
+                        return e;
+                      }),
+                    });
+                  }
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -255,16 +328,14 @@ export const EditBC: React.FC<
             <TextField
               value={params.row.quantite}
               fullWidth
-              onChange={(e) => {
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i
-                      ? { ...row, quantite: +e.target.value || 0 }
-                      : row
-                  ),
-                });
-              }}
+              onChange={(e) =>
+                handleArticleChange(
+                  params.field,
+                  e.target.value,
+                  params.row.id,
+                  params.row.old
+                )
+              }
             />
           );
         return <Typography variant="body1">{params.row.quantite}</Typography>;
@@ -287,7 +358,7 @@ export const EditBC: React.FC<
     {
       field: "state",
       headerName: "",
-      width: 120,
+      width: 100,
       resizable: true,
       type: "boolean",
       headerAlign: "left",
@@ -304,23 +375,44 @@ export const EditBC: React.FC<
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
-                    if (params.row.article.value)
-                      dispatch({
-                        type: "SET_ARTICLES",
-                        payload: articles.map((row, i) =>
-                          params.row.id === i ? { ...row, state: false } : row
-                        ),
-                      });
+                    if (params.row.article.value) {
+                      if (params.row.old) {
+                        dispatch({
+                          type: "SET_ARTICLES",
+                          payload: articles.map((row) =>
+                            params.row.id === row.id
+                              ? { ...row, state: false }
+                              : row
+                          ),
+                        });
+                      } else {
+                        dispatch({
+                          type: "SET_ARTICLES",
+                          payload: articles.map((row, i) =>
+                            params.row.id === i ? { ...row, state: false } : row
+                          ),
+                        });
+                      }
+                    }
                   }}
                 />
               )}
               {/* Render your desired icon or component for cancelling state */}
-              <Delete
+              <Close
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
                 color="error"
-                onClick={() => deleteRow(params.row.id)}
+                onClick={() => {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles.map((row) => {
+                      if (row.id === params.row.id) {
+                        return { ...row, state: false };
+                      }
+                      return row;
+                    }),
+                  });
+                }}
               />
             </Box>
           );
@@ -331,21 +423,38 @@ export const EditBC: React.FC<
               sx={{ cursor: "pointer" }}
               fontSize="small"
               onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
+                if (params.row.old) {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles?.map((row) =>
+                      params.row.id === row.id ? { ...row, state: true } : row
+                    ),
+                  });
+                } else {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles?.map((row, i) =>
+                      params.row.id === i ? { ...row, state: true } : row
+                    ),
+                  });
+                }
               }}
             />
             {/* Render your desired icon or component for deleting a row */}
-            <Close
+            <Delete
               sx={{ cursor: "pointer" }}
               fontSize="small"
               color="error"
-              onClick={() => deleteRow(params.row.id)}
+              onClick={() => {
+                if (params.row.old) {
+                  dispatch({
+                    type: "SET_ARTICLES",
+                    payload: articles.filter((r) => r.id !== params.row.id),
+                  });
+                } else {
+                  deleteRow(params.row.id);
+                }
+              }}
             />
           </Box>
         );
@@ -366,11 +475,10 @@ export const EditBC: React.FC<
     };
     console.log(payload);
     try {
-      const response = await axios.put(`${API_URL}/api/bon-chefs/${id}`, {
+      const response = await axios.post(`${API_URL}/api/bon-chefs`, {
         data: payload,
       });
       console.log("Request succeeded:", response.data);
-      close();
     } catch (error) {
       console.error("Request failed:", error);
     }
@@ -476,8 +584,8 @@ export const EditBC: React.FC<
                   hideFooter
                   columns={columns}
                   onRowDoubleClick={(params) => {
-                    const products = articles.map((row, i) =>
-                      params.row.id === i ? { ...row, state: true } : row
+                    const products = articles?.map((e) =>
+                      Number(params.row.id) === e.id ? { ...e, state: true } : e
                     );
 
                     dispatch({ type: "SET_ARTICLES", payload: products });

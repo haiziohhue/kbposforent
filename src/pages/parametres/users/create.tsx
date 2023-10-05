@@ -477,6 +477,7 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                           options={[
                             { label: "Admin", id: 4 },
                             { label: "Caissier", id: 3 },
+                            { label: "Serveur", id: 5 },
                           ]}
                           renderInput={(params) => (
                             <TextField
