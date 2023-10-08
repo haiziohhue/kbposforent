@@ -64,7 +64,7 @@ const reducer = (state, action) => {
 interface EditBC {
   id: number | undefined;
 }
-export const EditBC: React.FC<
+export const RestBC: React.FC<
   UseModalFormReturnType<IBC, HttpError, IBC> & EditBC
 > = ({
   saveButtonProps,
@@ -84,6 +84,7 @@ export const EditBC: React.FC<
       article: { id: 0, label: "" },
       quantite: 1,
       stock: 0,
+      reste: 0,
       state: true,
     };
 
@@ -120,7 +121,6 @@ export const EditBC: React.FC<
       const res = await fetch(`${API_URL}/api/bon-chefs/${id}?populate=deep`);
       const data = await res.json();
       const deepData = data?.data?.attributes;
-      console.log(deepData);
       const ingredientsArray = deepData?.ingredients || [];
       dispatch({ type: "SET_BC", payload: deepData });
       const articlesArray = ingredientsArray?.map((e) => ({
@@ -134,7 +134,8 @@ export const EditBC: React.FC<
           },
         },
         quantite: e?.quantite || 0,
-        stock: e.stock?.data?.attributes?.quantite || 0,
+        stock: e?.stock?.data?.attributes?.quantite || 0,
+        reste: e?.reste || 0,
         state: false,
         // old: true,
       }));
@@ -272,19 +273,49 @@ export const EditBC: React.FC<
       },
     },
     {
-      field: "stock",
-      headerName: "Stock",
+      field: "reste",
+      headerName: "Reste",
       width: 200,
       resizable: true,
       type: "number",
+
       headerAlign: "left",
       align: "left",
       renderCell: (params) => {
         if (params.row.state)
-          return <TextField value={params.row.stock} fullWidth />;
-        return <Typography variant="body1">{params.row.stock}</Typography>;
+          return (
+            <TextField
+              value={params.row.reste}
+              fullWidth
+              onChange={(e) => {
+                dispatch({
+                  type: "SET_ARTICLES",
+                  payload: articles.map((row, i) =>
+                    params.row.id === i
+                      ? { ...row, reste: +e.target.value || 0 }
+                      : row
+                  ),
+                });
+              }}
+            />
+          );
+        return <Typography variant="body1">{params.row.reste}</Typography>;
       },
     },
+    // {
+    //   field: "stock",
+    //   headerName: "Stock",
+    //   width: 200,
+    //   resizable: true,
+    //   type: "number",
+    //   headerAlign: "left",
+    //   align: "left",
+    //   renderCell: (params) => {
+    //     if (params.row.state)
+    //       return <TextField value={params.row.stock} fullWidth />;
+    //     return <Typography variant="body1">{params.row.stock}</Typography>;
+    //   },
+    // },
     {
       field: "state",
       headerName: "",
@@ -356,18 +387,18 @@ export const EditBC: React.FC<
   //
   const onFinishHandler = async () => {
     const payload = {
-      chef: bc?.chef?.data?.id ? bc?.chef?.data?.id : bc.chef.id,
+      id: id,
       ingredients: articles
         ?.filter((k) => !k.state)
         ?.map((article) => ({
-          stock: article.article.id,
-          quantite: article.quantite,
+          stock: article?.article?.id,
+          quantite: article?.quantite,
+          reste: article?.reste,
         })),
-      etat: "Validé",
     };
     console.log(payload);
     try {
-      const response = await axios.put(`${API_URL}/api/bon-chefs/${id}`, {
+      const response = await axios.put(`${API_URL}/api/reste`, {
         data: payload,
       });
       console.log("Request succeeded:", response.data);
@@ -391,7 +422,7 @@ export const EditBC: React.FC<
     >
       <Edit
         saveButtonProps={saveButtonProps}
-        title={<Typography fontSize={24}>Modifier Bon Chef</Typography>}
+        title={<Typography fontSize={24}>Retour Bon Chef</Typography>}
         breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (

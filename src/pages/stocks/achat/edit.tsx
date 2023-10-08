@@ -84,7 +84,7 @@ export const EditAchat: React.FC<
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
-      quantite: 1,
+      quantite: 0,
       prix: 1,
       date_expiration: dayjs(),
       total: 1,

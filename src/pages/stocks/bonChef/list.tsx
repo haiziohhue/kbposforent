@@ -2,8 +2,8 @@ import React from "react";
 import {
   IResourceComponentsProps,
   HttpError,
-  useDelete,
   CrudFilters,
+  useUpdate,
 } from "@refinedev/core";
 import {
   useDataGrid,
@@ -13,9 +13,14 @@ import {
   RefreshButton,
 } from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
-import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridActionsCellItem,
+  GridCellParams,
+} from "@mui/x-data-grid";
 import { DateRangePicker } from "react-date-range";
-import { CalendarToday, Delete, Edit } from "@mui/icons-material";
+import { CalendarToday, Cancel, Close, Edit, Reply } from "@mui/icons-material";
 import { IBC } from "../../../interfaces";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateBC } from "./create";
@@ -24,9 +29,12 @@ import axios from "axios";
 import { API_URL } from "../../../constants";
 import moment from "moment";
 import { Button, Popover } from "@mui/material";
+import { BonChefAchatStatus } from "../../../components/order/BonChefAchatStatus";
+import { RestBC } from "./reste";
 
 export const ListBC: React.FC<IResourceComponentsProps> = () => {
-  const { mutate: mutateDelete } = useDelete();
+  // const { mutate: mutateDelete } = useDelete();
+  const { mutate } = useUpdate();
   const { handleSubmit } = useForm();
   const [responseData, setResponseData] = React.useState<any[]>([]);
   const [selectedRowId, setSelectedRowId] = React.useState<number>();
@@ -126,7 +134,17 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-
+      {
+        field: "etat",
+        headerName: "Etat",
+        headerAlign: "center",
+        align: "center",
+        renderCell: function render({ row }) {
+          return <BonChefAchatStatus status={row?.etat} />;
+        },
+        flex: 1,
+        minWidth: 90,
+      },
       {
         field: "chef",
         headerName: "Chef",
@@ -152,7 +170,6 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
           );
         },
       },
-
       {
         field: "actions",
         type: "actions",
@@ -160,33 +177,106 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
         sortable: false,
-        getActions: ({ row }) => [
-          <GridActionsCellItem
-            key={1}
-            label=""
-            icon={<Edit color="success" />}
-            onClick={() => {
-              showEditModal(row.id), setSelectedRowId(row.id);
-            }}
-          />,
-
-          <GridActionsCellItem
-            key={2}
-            // icon={<CloseOutlinedIcon color="error" />}
-            sx={{ padding: "2px 6px" }}
-            label=""
-            icon={<Delete color="error" />}
-            onClick={() => {
-              mutateDelete({
-                resource: "bon-chefs",
-                id: row.id,
-                mutationMode: "undoable",
-                undoableTimeout: 10000,
-              });
-            }}
-          />,
-        ],
+        renderCell: (params: GridCellParams) => {
+          const { row, id } = params;
+          if (row.etat === "Validé") {
+            return (
+              <>
+                <GridActionsCellItem
+                  key={1}
+                  label=""
+                  icon={<Edit color="success" />}
+                  onClick={() => {
+                    showEditModal(row.id), setSelectedRowId(row.id);
+                  }}
+                />
+                <GridActionsCellItem
+                  key={2}
+                  label=""
+                  icon={<Reply color="warning" />}
+                  onClick={() => {
+                    showRestModal(row.id), setSelectedRowId(row.id);
+                  }}
+                />
+                <GridActionsCellItem
+                  key={3}
+                  // icon={<CloseOutlinedIcon color="error" />}
+                  sx={{ padding: "2px 6px" }}
+                  label=""
+                  icon={<Cancel color="error" />}
+                  onClick={() => {
+                    mutate({
+                      resource: "bon-chefs",
+                      id,
+                      mutationMode: "undoable",
+                      undoableTimeout: 10000,
+                      values: {
+                        etat: "Annulé",
+                      },
+                    });
+                  }}
+                />
+              </>
+            );
+          } else if (row.etat === "Annulé") {
+            return (
+              <GridActionsCellItem
+                key={1}
+                label=""
+                icon={<Edit color="success" />}
+                onClick={() => {
+                  showEditModal(row.id), setSelectedRowId(row.id);
+                }}
+              />
+            );
+          }
+        },
       },
+      // {
+      //   field: "actions",
+      //   type: "actions",
+      //   headerName: "Actions",
+      //   flex: 1,
+      //   minWidth: 100,
+      //   sortable: false,
+      //   getActions: ({ row, id }) => [
+      //     <GridActionsCellItem
+      //       key={1}
+      //       label=""
+      //       icon={<Edit color="success" />}
+      //       onClick={() => {
+      //         showEditModal(row.id), setSelectedRowId(row.id);
+      //       }}
+      //     />,
+      //     <GridActionsCellItem
+      //       key={1}
+      //       label=""
+      //       icon={<KeyboardReturn color="warning" />}
+      //       onClick={() => {
+      //         showRestModal(row.id), setSelectedRowId(row.id);
+      //       }}
+      //     />,
+
+      //     <GridActionsCellItem
+      //       key={2}
+      //       // icon={<CloseOutlinedIcon color="error" />}
+      //       sx={{ padding: "2px 6px" }}
+      //       label=""
+      //       icon={<Close color="error" />}
+      //       onClick={() => {
+      //         mutate({
+      //           resource: "bon-chefs",
+      //           id,
+      //           mutationMode: "undoable",
+      //           undoableTimeout: 10000,
+      //           values: {
+      //             etat: "Annulé",
+      //           },
+      //         });
+      //       }}
+      //     />,
+      //   ],
+      // },
     ],
     []
   );
@@ -201,12 +291,20 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
   } = createDrawerFormProps;
 
   const editDrawerFormProps = useModalForm<IBC, HttpError, IBC>({
-    refineCoreProps: { action: "edit", meta: { populate: "*" } },
+    refineCoreProps: { action: "edit", meta: { populate: "deep" } },
   });
 
   const {
     modal: { show: showEditModal },
   } = editDrawerFormProps;
+
+  const restDrawerFormProps = useModalForm<IBC, HttpError, IBC>({
+    refineCoreProps: { action: "edit", meta: { populate: "deep" } },
+  });
+
+  const {
+    modal: { show: showRestModal },
+  } = restDrawerFormProps;
   //
   //
   const openDatePicker = (event: React.MouseEvent<HTMLElement>) => {
@@ -243,6 +341,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
     <>
       <CreateBC {...createDrawerFormProps} updateData={updateData} />
       <EditBC id={selectedRowId} {...editDrawerFormProps} />
+      <RestBC id={selectedRowId} {...restDrawerFormProps} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>

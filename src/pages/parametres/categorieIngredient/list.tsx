@@ -15,6 +15,7 @@ import { EditCatIngredients } from "./edit";
 
 export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
+  const [selectedRowId, setSelectedRowId] = React.useState<number>();
   const { dataGridProps } = useDataGrid<ICatIngredients, HttpError>({
     initialPageSize: 10,
     meta: { populate: "deep" },
@@ -62,7 +63,9 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
             key={1}
             label=""
             icon={<Edit color="success" />}
-            onClick={() => showEditModal(row.id)}
+            onClick={() => {
+              showEditModal(row.id), setSelectedRowId(row.id);
+            }}
           />,
 
           <GridActionsCellItem
@@ -114,7 +117,7 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <CreateCatIngredients {...createDrawerFormProps} />
-      {/* <EditCatIngredients {...editDrawerFormProps} /> */}
+      <EditCatIngredients {...editDrawerFormProps} id={selectedRowId} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>
