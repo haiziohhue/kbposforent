@@ -23,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { HttpError } from "@refinedev/core";
-import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
+import { Create, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL } from "../../../constants";
 import { ICatIngredients, ICategory } from "interfaces";
@@ -70,8 +70,6 @@ export const CreateCatIngredients: React.FC<
   control,
   modal: { visible, close },
   register,
-  refineCore: { onFinish },
-  handleSubmit,
   formState: { errors },
 }) => {
   //
@@ -110,7 +108,6 @@ export const CreateCatIngredients: React.FC<
     try {
       const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
       const data = await res.json();
-      console.log(data);
       const produitsData = data.data.map((e) => ({
         id: e.id,
         ...e.attributes,
@@ -237,14 +234,12 @@ export const CreateCatIngredients: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -255,7 +250,7 @@ export const CreateCatIngredients: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -266,21 +261,6 @@ export const CreateCatIngredients: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -304,7 +284,7 @@ export const CreateCatIngredients: React.FC<
         })),
       // etat: "Validé",
     };
-    console.log(payload);
+
     try {
       const response = await axios.post(
         `${API_URL}/api/categorie-ingredients`,
@@ -312,7 +292,7 @@ export const CreateCatIngredients: React.FC<
           data: payload,
         }
       );
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
       dispatch({ type: "RESET" });
     } catch (error) {
@@ -320,7 +300,6 @@ export const CreateCatIngredients: React.FC<
     }
   };
   //
-  console.log(articles);
   return (
     <Dialog
       open={visible}

@@ -152,7 +152,6 @@ export const CreateChef: React.FC<
         </DialogContent>
         <DialogActions>
           <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
-          {/* <Button onClick={close}>Annuler</Button> */}
         </DialogActions>
       </Create>
     </Dialog>

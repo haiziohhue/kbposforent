@@ -116,7 +116,6 @@ export const EditCatIngredients: React.FC<
     try {
       const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
       const data = await res.json();
-      console.log(data);
       const produitsData = data.data.map((e) => ({
         id: e.id,
         ...e.attributes,
@@ -132,7 +131,6 @@ export const EditCatIngredients: React.FC<
       const res = await fetch(`${API_URL}/api/categories?populate=deep`);
       const data = await res.json();
       const categorieData = data?.data;
-      console.log(categorieData);
       dispatch({
         type: "SET_CATEGORIES",
         payload: categorieData?.map((c) => ({
@@ -152,9 +150,7 @@ export const EditCatIngredients: React.FC<
       );
       const data = await res.json();
       const deepData = data?.data?.attributes;
-      console.log(deepData);
       const ingredientsArray = deepData?.ingredients || [];
-      console.log(ingredientsArray);
       dispatch({ type: "SET_CI", payload: deepData });
       const articlesArray = ingredientsArray?.map((e) => ({
         article: {
@@ -185,7 +181,6 @@ export const EditCatIngredients: React.FC<
     fetchCategories();
   }, [fetchBIByID, fetchCategories, fetchProduits]);
   //
-  console.log(categories);
   //
   const columns: GridColDef[] = [
     {
@@ -299,14 +294,12 @@ export const EditCatIngredients: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -317,7 +310,7 @@ export const EditCatIngredients: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -328,21 +321,6 @@ export const EditCatIngredients: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -366,7 +344,6 @@ export const EditCatIngredients: React.FC<
         })),
       // etat: "Validé",
     };
-    console.log(payload);
     try {
       const response = await axios.put(
         `${API_URL}/api/categorie-ingredients/${id}`,
@@ -374,14 +351,14 @@ export const EditCatIngredients: React.FC<
           data: payload,
         }
       );
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
     } catch (error) {
       console.error("Request failed:", error);
     }
   };
   //
-  console.log(articles);
+
   return (
     <Dialog
       open={visible}
@@ -453,7 +430,6 @@ export const EditCatIngredients: React.FC<
                       })}
                       {...field}
                       onChange={(_, value) => {
-                        console.log("value:", value);
                         field.onChange(value);
                         dispatch({
                           type: "SET_CI",
@@ -468,7 +444,6 @@ export const EditCatIngredients: React.FC<
                       //   });
                       // }}
                       getOptionLabel={(item) => {
-                        console.log(item);
                         return item.nom ? item.nom : "";
                       }}
                       isOptionEqualToValue={(option, value) =>

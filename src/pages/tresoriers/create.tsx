@@ -215,13 +215,10 @@ export const CreateDepense: React.FC<
                   </FormControl>
                 </Stack>
                 <FormControl>
-                  <FormLabel required>Bénéficiaire</FormLabel>
+                  <FormLabel>Bénéficiaire</FormLabel>
                   <Controller
                     control={control}
                     name="beneficier"
-                    rules={{
-                      required: "This field is required",
-                    }}
                     render={({ field }) => (
                       <Autocomplete
                         disablePortal
@@ -239,12 +236,7 @@ export const CreateDepense: React.FC<
                             (value?.id ?? value)?.toString()
                         }
                         renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            error={!!errors.beneficier?.message}
-                            required
-                          />
+                          <TextField {...params} variant="outlined" />
                         )}
                       />
                     )}

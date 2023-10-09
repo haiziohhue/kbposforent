@@ -20,7 +20,7 @@ import {
   GridCellParams,
 } from "@mui/x-data-grid";
 import { DateRangePicker } from "react-date-range";
-import { CalendarToday, Cancel, Close, Edit, Reply } from "@mui/icons-material";
+import { CalendarToday, Cancel, Edit, Reply } from "@mui/icons-material";
 import { IBC } from "../../../interfaces";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateBC } from "./create";
@@ -79,7 +79,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
+
   //
   const updateData = (newData) => {
     const updatedData = [...responseData, newData];
@@ -122,7 +122,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
   // React.useEffect(() => {
   //   fetchData();
   // }, []);
-  console.log(responseData);
+
   //
   const columns = React.useMemo<GridColDef<IBC>[]>(
     () => [
@@ -141,6 +141,18 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
         align: "center",
         renderCell: function render({ row }) {
           return <BonChefAchatStatus status={row?.etat} />;
+        },
+        flex: 1,
+        minWidth: 90,
+      },
+      {
+        field: "traite",
+        headerName: "Traite",
+        headerAlign: "center",
+        align: "center",
+        renderCell: function render({ row }) {
+          const traiteText = row.traite ? "Oui" : "Non";
+          return <span>{traiteText}</span>;
         },
         flex: 1,
         minWidth: 90,
@@ -179,7 +191,31 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
         sortable: false,
         renderCell: (params: GridCellParams) => {
           const { row, id } = params;
-          if (row.etat === "Validé") {
+          if (row.etat === "Validé" && row.traite === true) {
+            return (
+              <>
+                <GridActionsCellItem
+                  key={2}
+                  label=""
+                  icon={<Reply color="warning" />}
+                  onClick={() => {
+                    showRestModal(row.id), setSelectedRowId(row.id);
+                  }}
+                />
+              </>
+            );
+          } else if (row.etat === "Annulé") {
+            return (
+              <GridActionsCellItem
+                key={1}
+                label=""
+                icon={<Edit color="success" />}
+                onClick={() => {
+                  showEditModal(row.id), setSelectedRowId(row.id);
+                }}
+              />
+            );
+          } else if (row.etat === "Validé") {
             return (
               <>
                 <GridActionsCellItem
@@ -217,17 +253,6 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
                   }}
                 />
               </>
-            );
-          } else if (row.etat === "Annulé") {
-            return (
-              <GridActionsCellItem
-                key={1}
-                label=""
-                icon={<Edit color="success" />}
-                onClick={() => {
-                  showEditModal(row.id), setSelectedRowId(row.id);
-                }}
-              />
             );
           }
         },

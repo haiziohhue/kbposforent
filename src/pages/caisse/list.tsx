@@ -34,10 +34,9 @@ import { CreateMenuCompose } from "./compose";
 
 export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
-  const [cartItems, setCartItems] = useState<ICartMenu[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedOrder = searchParams.get("selectedOrder");
-  const { mode } = useContext(ColorModeContext);
+
   //
   const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
     refineCoreProps: { action: "create", meta: { populate: ["image"] } },

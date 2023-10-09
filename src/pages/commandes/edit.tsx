@@ -17,13 +17,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  HttpError,
-  IResourceComponentsProps,
-  useGetIdentity,
-  useList,
-  useUpdate,
-} from "@refinedev/core";
+import { HttpError, useGetIdentity, useList, useUpdate } from "@refinedev/core";
 import { Edit, useAutocomplete } from "@refinedev/mui";
 import React, { useContext, useEffect, useState } from "react";
 import { ICaisse, ICartMenu, IOrder, ITable, IUser } from "../../interfaces";
@@ -153,7 +147,7 @@ export const EditOrder = () => {
       const response = await axios.post(`${API_URL}/api/commandes`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       handleClearCart();
       navigate(`/commandes`);
     } catch (error) {

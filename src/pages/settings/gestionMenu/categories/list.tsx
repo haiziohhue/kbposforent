@@ -89,7 +89,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                   <IconButton
                     onClick={() => {
                       setId(getValue() as string);
-                      console.log(setId(getValue() as string));
                     }}
                   >
                     <Edit fontSize="small" />
@@ -102,7 +101,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                         mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
-                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />
@@ -137,7 +135,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
     setId(editId);
   };
   const categories = tableQueryResult?.data;
-  console.log(categories);
 
   // Edit Functionality
   const renderEditRow = useCallback((row: Row<ICategory>) => {

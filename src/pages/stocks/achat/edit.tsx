@@ -32,7 +32,7 @@ import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
 //
 const initialState = {
   articles: [],
@@ -106,6 +106,12 @@ export const EditAchat: React.FC<
     }
     return total;
   };
+  //
+  const formattedNumber = new Intl.NumberFormat("en-DZ", {
+    style: "currency",
+    currency: "DZD",
+    minimumFractionDigits: 2,
+  })?.format(calculateTotal());
   //delete row by index
   const deleteRow = (index: unknown) => {
     dispatch({
@@ -118,7 +124,7 @@ export const EditAchat: React.FC<
     try {
       const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
       const data = await res.json();
-      console.log(data);
+
       const produitsData = data.data.map((e) => ({
         id: e.id,
         ...e.attributes,
@@ -134,7 +140,6 @@ export const EditAchat: React.FC<
       const res = await fetch(`${API_URL}/api/achats/${id}?populate=deep`);
       const data = await res.json();
       const deepData = data?.data?.attributes;
-      console.log(deepData);
       const ingredientsArray = deepData?.ingredients || [];
       dispatch({ type: "SET_BR", payload: deepData });
       const articlesArray = ingredientsArray?.map((e) => ({
@@ -153,7 +158,6 @@ export const EditAchat: React.FC<
         state: false,
         // old: true,
       }));
-      console.log(articlesArray);
       dispatch({
         type: "SET_ARTICLES",
         payload: articlesArray,
@@ -381,14 +385,12 @@ export const EditAchat: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -399,7 +401,7 @@ export const EditAchat: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -410,21 +412,6 @@ export const EditAchat: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -453,12 +440,11 @@ export const EditAchat: React.FC<
       total: calculateTotal(),
       etat: "Validé",
     };
-    console.log(payload);
     try {
       const response = await axios.put(`${API_URL}/api/achats/${id}`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
     } catch (error) {
       console.error("Request failed:", error);
@@ -479,7 +465,7 @@ export const EditAchat: React.FC<
     >
       <Edit
         saveButtonProps={saveButtonProps}
-        title={<Typography fontSize={24}>Nouveau Achat</Typography>}
+        title={<Typography fontSize={24}>Modifier Achat</Typography>}
         breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (
@@ -540,7 +526,7 @@ export const EditAchat: React.FC<
             <Box sx={{ mt: 4 }}>
               <Box
                 sx={{
-                  height: 150 + 53 * articles.length,
+                  height: 150 + 50 * articles.length,
                   maxHeight: 350,
                   width: "100%",
                   overflow: `auto `,
@@ -579,7 +565,12 @@ export const EditAchat: React.FC<
               >
                 Ajouter un article
               </Button>
-              <Typography>Total: {calculateTotal()}</Typography>
+              <TextField
+                label="Totale"
+                value={formattedNumber}
+                disabled
+                fullWidth
+              />
             </Box>
           </Box>
         </DialogContent>

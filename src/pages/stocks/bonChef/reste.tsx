@@ -154,7 +154,6 @@ export const RestBC: React.FC<
       const res = await fetch(`${API_URL}/api/chefs?populate=deep`);
       const data = await res.json();
       const chefData = data?.data;
-      console.log(chefData);
       dispatch({
         type: "SET_CHEF",
         payload: chefData?.map((c) => ({
@@ -302,20 +301,7 @@ export const RestBC: React.FC<
         return <Typography variant="body1">{params.row.reste}</Typography>;
       },
     },
-    // {
-    //   field: "stock",
-    //   headerName: "Stock",
-    //   width: 200,
-    //   resizable: true,
-    //   type: "number",
-    //   headerAlign: "left",
-    //   align: "left",
-    //   renderCell: (params) => {
-    //     if (params.row.state)
-    //       return <TextField value={params.row.stock} fullWidth />;
-    //     return <Typography variant="body1">{params.row.stock}</Typography>;
-    //   },
-    // },
+
     {
       field: "state",
       headerName: "",
@@ -329,14 +315,12 @@ export const RestBC: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -347,7 +331,7 @@ export const RestBC: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -356,31 +340,7 @@ export const RestBC: React.FC<
               />
             </Box>
           );
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
-            <Close
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              color="error"
-              onClick={() => deleteRow(params.row.id)}
-            />
-          </Box>
-        );
+        return <Box sx={{ display: "flex", alignItems: "center" }}></Box>;
       },
     },
   ];
@@ -396,12 +356,12 @@ export const RestBC: React.FC<
           reste: article?.reste,
         })),
     };
-    console.log(payload);
+
     try {
       const response = await axios.put(`${API_URL}/api/reste`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
     } catch (error) {
       console.error("Request failed:", error);
@@ -520,7 +480,7 @@ export const RestBC: React.FC<
                   }))}
                 />
               </Box>
-              <Button
+              {/* <Button
                 sx={{
                   my: 4,
                   alignSelf: "start",
@@ -530,7 +490,7 @@ export const RestBC: React.FC<
                 startIcon={<Add />}
               >
                 Ajouter un article
-              </Button>
+              </Button> */}
             </Box>
           </Box>
         </DialogContent>

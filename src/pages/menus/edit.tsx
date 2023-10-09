@@ -53,7 +53,6 @@ export const EditMenu: React.FC<
     resource: "categories",
   });
   const menuData = queryResult?.data?.data;
-  console.log(menuData);
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [imageURL, setImageURL] = useState("");
 

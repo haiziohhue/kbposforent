@@ -263,6 +263,8 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                             control={control}
                             render={({ field }) => (
                               <DatePicker
+                                selectedSections={undefined}
+                                onSelectedSectionsChange={undefined}
                                 {...field}
                                 value={field.value ? dayjs(field.value) : null}
                                 onChange={(newValue) =>

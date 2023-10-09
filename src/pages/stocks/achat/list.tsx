@@ -14,7 +14,7 @@ import {
 } from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { CalendarToday, Cancel, Delete, Edit } from "@mui/icons-material";
+import { CalendarToday, Cancel, Edit } from "@mui/icons-material";
 import { IAchat } from "../../../interfaces";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateAchat } from "./create";
@@ -66,7 +66,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColDef<IAchat>[]>(
     () => [
       {

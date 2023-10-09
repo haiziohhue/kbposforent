@@ -2,12 +2,12 @@ import {
   HttpError,
   IResourceComponentsProps,
   useDelete,
-} from '@refinedev/core';
-import React, { useCallback } from 'react';
-import { ICaisse } from '../../../../interfaces';
-import { useForm, useModalForm } from '@refinedev/react-hook-form';
-import { ColumnDef, flexRender, Row } from '@tanstack/react-table';
-import { useTable } from '@refinedev/react-table';
+} from "@refinedev/core";
+import React, { useCallback } from "react";
+import { ICaisse } from "../../../../interfaces";
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
+import { ColumnDef, flexRender, Row } from "@tanstack/react-table";
+import { useTable } from "@refinedev/react-table";
 import {
   Button,
   IconButton,
@@ -21,10 +21,10 @@ import {
   TableRow,
   TextField,
   Typography,
-} from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import { EditButton, List, SaveButton } from '@refinedev/mui';
-import { CreateCaisse } from './create';
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import { EditButton, List, SaveButton } from "@refinedev/mui";
+import { CreateCaisse } from "./create";
 
 export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
@@ -35,12 +35,12 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
   } = useForm<ICaisse>({
     refineCoreProps: {
       redirect: false,
-      action: 'edit',
+      action: "edit",
     },
   });
   // Modal
   const createModalFormProps = useModalForm<ICaisse, HttpError, ICaisse>({
-    refineCoreProps: { action: 'create' },
+    refineCoreProps: { action: "create" },
   });
   const {
     modal: { show: showCreateModal },
@@ -48,9 +48,9 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<ICaisse>[]>(
     () => [
       {
-        id: 'nom',
-        accessorKey: 'nom',
-        header: 'Title',
+        id: "nom",
+        accessorKey: "nom",
+        header: "Title",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row" alignItems="center" spacing={3}>
@@ -61,9 +61,9 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
       },
 
       {
-        id: 'actions',
-        header: 'Actions',
-        accessorKey: 'id',
+        id: "actions",
+        header: "Actions",
+        accessorKey: "id",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row">
@@ -90,12 +90,11 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
                   <IconButton
                     onClick={() => {
                       mutateDelete({
-                        resource: 'caisses',
+                        resource: "caisses",
                         id: row.original.id,
-                        mutationMode: 'undoable',
+                        mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
-                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />
@@ -130,7 +129,6 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
     setId(editId);
   };
   const caisses = tableQueryResult?.data;
-  console.log(caisses);
 
   // Edit Functionality
   const renderEditRow = useCallback((row: Row<ICaisse>) => {
@@ -140,7 +138,7 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
       <TableRow key={`edit-${id}-inputs`}>
         <TableCell
           sx={{
-            flex: '1',
+            flex: "1",
           }}
         >
           <Stack
@@ -155,12 +153,12 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
               type="text"
               size="small"
               defaultValue={nom}
-              {...register('nom', {
-                required: 'This field is required',
+              {...register("nom", {
+                required: "This field is required",
               })}
               InputProps={{
                 inputProps: {
-                  style: { textTransform: 'capitalize' },
+                  style: { textTransform: "capitalize" },
                   maxLength: 50,
                   onChange: (event) => {
                     const target = event.target as HTMLInputElement;
@@ -176,7 +174,7 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
 
         <TableCell
           sx={{
-            maxWidth: '150px',
+            maxWidth: "150px",
           }}
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
@@ -243,7 +241,7 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
               10,
               25,
               {
-                label: 'All',
+                label: "All",
                 value: tableQueryResult.data?.total ?? 100,
               },
             ]}

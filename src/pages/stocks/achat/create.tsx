@@ -123,7 +123,6 @@ export const CreateAchat: React.FC<
     try {
       const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
       const data = await res.json();
-      console.log(data);
       const produitsData = data.data.map((e) => ({
         id: e.id,
         ...e.attributes,
@@ -137,19 +136,7 @@ export const CreateAchat: React.FC<
     fetchProduits();
   }, []);
   //
-  console.log(produits);
-  //   console.log(articles);
-  console.log(
-    produits
-      .filter((k) => !articles.map((e) => e.article.id).includes(k.id))
-      .map((option) => {
-        return {
-          label: option.ingredient?.data?.attributes?.nom,
-          id: option.id,
-          value: option,
-        };
-      })
-  );
+
   //
 
   //
@@ -330,9 +317,11 @@ export const CreateAchat: React.FC<
       width: 120,
       headerAlign: "center",
       align: "center",
-      valueGetter: (params) => calculateSubtotal(params.row),
+      valueGetter: (params) => calculateSubtotal(params?.row),
       renderCell: (params) => (
-        <Typography variant="body1">{calculateSubtotal(params.row)}</Typography>
+        <Typography variant="body1">
+          {calculateSubtotal(params?.row)}
+        </Typography>
       ),
     },
     {
@@ -348,14 +337,12 @@ export const CreateAchat: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -366,7 +353,7 @@ export const CreateAchat: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -377,8 +364,7 @@ export const CreateAchat: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
+            {/* <Mode
               sx={{ cursor: "pointer" }}
               fontSize="small"
               onClick={() => {
@@ -390,8 +376,8 @@ export const CreateAchat: React.FC<
                   ),
                 });
               }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
+            /> */}
+
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -425,7 +411,7 @@ export const CreateAchat: React.FC<
       const response = await axios.post(`${API_URL}/api/achats`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
       dispatch({ type: "RESET" });
     } catch (error) {
@@ -508,7 +494,7 @@ export const CreateAchat: React.FC<
             <Box sx={{ mt: 4 }}>
               <Box
                 sx={{
-                  height: 150 + 53 * articles.length,
+                  height: 150 + 50 * articles.length,
                   maxHeight: 350,
                   width: "100%",
                   overflow: `auto `,
@@ -566,7 +552,6 @@ export const CreateAchat: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          {/* <SaveButton {...saveButtonProps} /> */}
           <Button
             {...saveButtonProps}
             variant="contained"

@@ -269,7 +269,16 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                             name="date_naissance"
                             control={control}
                             render={({ field }) => (
+                              // <DatePicker
+                              //   {...field}
+                              //   value={field.value ? dayjs(field.value) : null}
+                              //   onChange={(newValue) =>
+                              //     field.onChange(dayjs(newValue))
+                              //   }
+                              // />
                               <DatePicker
+                                selectedSections={undefined}
+                                onSelectedSectionsChange={undefined}
                                 {...field}
                                 value={field.value ? dayjs(field.value) : null}
                                 onChange={(newValue) =>

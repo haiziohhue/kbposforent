@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { CartContext } from '../../contexts/cart/CartProvider';
-import { ICartMenu } from '../../interfaces';
+import React, { useContext } from "react";
+import { CartContext } from "../../contexts/cart/CartProvider";
+import { ICartMenu } from "../../interfaces";
 import {
   Box,
   Button,
@@ -9,31 +9,30 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
-  Divider,
   IconButton,
   Stack,
   Typography,
-} from '@mui/material';
-import { API_URL } from '../../constants';
-import { Add, CloseOutlined, Remove } from '@mui/icons-material';
+} from "@mui/material";
+import { API_URL } from "../../constants";
+import { Add, CloseOutlined, Remove } from "@mui/icons-material";
 
 export const Cart: React.FC = () => {
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
 
   const handleRemoveItem = (itemId: number) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: itemId });
+    dispatch({ type: "REMOVE_ITEM", payload: itemId });
   };
 
   const handleQuantityChange = (itemId: number, newQuantity: number) => {
     dispatch({
-      type: 'UPDATE_QUANTITY',
+      type: "UPDATE_QUANTITY",
       payload: { id: itemId, quantity: newQuantity },
     });
   };
 
   const handleClearCart = () => {
-    dispatch({ type: 'CLEAR_CART' });
+    dispatch({ type: "CLEAR_CART" });
   };
   // Calculate the subtotal for each item
   const calculateSubtotal = (item: ICartMenu) => {
@@ -51,7 +50,7 @@ export const Cart: React.FC = () => {
   return (
     <Stack
       sx={{
-        width: '100%',
+        width: "100%",
       }}
     >
       {cartItems.length === 0 ? (
@@ -63,11 +62,11 @@ export const Cart: React.FC = () => {
               <Card
                 key={item.id}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative',
-                  height: '100%',
-                  width: '100%',
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "relative",
+                  height: "100%",
+                  width: "100%",
                   padding: 1,
                 }}
               >
@@ -77,9 +76,9 @@ export const Cart: React.FC = () => {
                     <IconButton
                       onClick={() => handleRemoveItem(item.id)}
                       sx={{
-                        width: '30px',
-                        height: '30px',
-                        mb: '5px',
+                        width: "30px",
+                        height: "30px",
+                        mb: "5px",
                       }}
                     >
                       <CloseOutlined />
@@ -89,9 +88,9 @@ export const Cart: React.FC = () => {
                 <Stack direction="row">
                   <Box
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
                     <CardMedia
@@ -99,7 +98,7 @@ export const Cart: React.FC = () => {
                       sx={{
                         width: { xs: 60, sm: 84, lg: 108, xl: 144 },
                         height: { xs: 60, sm: 84, lg: 108, xl: 144 },
-                        borderRadius: '50%',
+                        borderRadius: "50%",
                       }}
                       alt={item.menus.titre}
                       //   image={image?.url}
@@ -109,8 +108,8 @@ export const Cart: React.FC = () => {
                   <Box>
                     <CardContent
                       sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
+                        display: "flex",
+                        flexDirection: "column",
                         gap: 1,
                         flex: 1,
                         padding: 1,
@@ -119,10 +118,10 @@ export const Cart: React.FC = () => {
                       <Typography
                         sx={{
                           fontWeight: 800,
-                          fontSize: '18px',
-                          overflow: 'hidden',
-                          whiteSpace: 'nowrap',
-                          textOverflow: 'ellipsis',
+                          fontSize: "18px",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         {item.menus.titre}
@@ -130,10 +129,10 @@ export const Cart: React.FC = () => {
                       <Typography
                         sx={{
                           fontWeight: 600,
-                          fontSize: '18px',
-                          overflow: 'hidden',
-                          whiteSpace: 'nowrap',
-                          textOverflow: 'ellipsis',
+                          fontSize: "18px",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         {item?.quantity}x {calculateSubtotal(item)}
@@ -151,15 +150,15 @@ export const Cart: React.FC = () => {
                     </CardContent>
                     <CardActions
                       sx={{
-                        display: 'flex',
+                        display: "flex",
                       }}
                     >
                       <Box
                         sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          gap: '8px',
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gap: "8px",
                         }}
                       >
                         <Button
@@ -174,10 +173,10 @@ export const Cart: React.FC = () => {
                         <Typography
                           sx={{
                             fontWeight: 600,
-                            fontSize: '18px',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                            textOverflow: 'ellipsis',
+                            fontSize: "18px",
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
                           }}
                         >
                           {item?.quantity}

@@ -1,12 +1,9 @@
-import { Settings, SettingsOutlined } from "@mui/icons-material";
-import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Settings } from "@mui/icons-material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { ColorModeContext } from "../../contexts/color-mode";
 import LaunchOutlinedIcon from "@mui/icons-material/LaunchOutlined";
 import React, { useContext, useState } from "react";
-import { ListCategories } from "./categories";
-import { ListTables } from "./tables";
-import { ListCaisses } from "./caisses";
-import { ListTresor } from "../../pages/tresoriers";
+
 import { useNavigate } from "react-router-dom";
 
 export const SettingsList = () => {

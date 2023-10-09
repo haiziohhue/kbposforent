@@ -153,8 +153,7 @@ export const EditChef: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
-          {/* <Button onClick={close}>Annuler</Button> */}
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Edit>
     </Dialog>

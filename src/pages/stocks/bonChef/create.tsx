@@ -108,7 +108,6 @@ export const CreateBC: React.FC<
     try {
       const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
       const data = await res.json();
-      console.log(data);
       const produitsData = data.data.map((e) => ({
         id: e.id,
         ...e.attributes,
@@ -122,9 +121,7 @@ export const CreateBC: React.FC<
     fetchProduits();
   }, []);
   //
-  console.log(produits);
-  //   console.log(articles);
-  console.log(autocompleteProps.options);
+
   //
 
   //
@@ -240,16 +237,8 @@ export const CreateBC: React.FC<
       align: "left",
       renderCell: (params) => {
         if (params.row.state)
-          return (
-            <TextField
-              sx={{ fontSize: "10px" }}
-              value={params.row.stock}
-              fullWidth
-            />
-          );
-        return (
-          <Typography sx={{ fontSize: "10px" }}>{params.row.stock}</Typography>
-        );
+          return <TextField value={params.row.stock} fullWidth />;
+        return <Typography variant="body1">{params.row.stock}</Typography>;
       },
     },
     {
@@ -265,14 +254,12 @@ export const CreateBC: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -283,7 +270,7 @@ export const CreateBC: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -294,21 +281,6 @@ export const CreateBC: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -339,7 +311,7 @@ export const CreateBC: React.FC<
       });
       const newBonChefData = response?.data?.data;
       updateData(newBonChefData);
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
       dispatch({ type: "RESET" });
     } catch (error) {
@@ -393,48 +365,6 @@ export const CreateBC: React.FC<
             sx={{ display: "flex", flexDirection: "column" }}
           >
             <Stack gap="10px" flexDirection="row">
-              {/* <FormControl fullWidth>
-                  <FormLabel required>Chef</FormLabel>
-                  <Controller
-                    control={control}
-                    name="chef"
-                    rules={{
-                      required: "This field is required",
-                    }}
-                    render={({ field }) => (
-                      <Autocomplete
-                        disablePortal
-                        {...field}
-                        {...autocompleteProps}
-                        value={bc.chef}
-                        onChange={(_, value) => {
-                          field.onChange(value?.id);
-                        }}
-                        getOptionLabel={(item) => {
-                          console.log(item);
-                          return item?.chef ? item?.chef : "";
-                        }}
-                        isOptionEqualToValue={(option, value) =>
-                          value === undefined ||
-                          option?.id?.toString() ===
-                            (value?.id ?? value)?.toString()
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            error={!!errors.chef?.message}
-                            required
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                  {errors.chef && (
-                    <FormHelperText error>{errors.chef.message}</FormHelperText>
-                  )}
-                </FormControl> */}
-
               <FormControl fullWidth required>
                 <FormLabel>Chef</FormLabel>
                 <Autocomplete
@@ -480,8 +410,8 @@ export const CreateBC: React.FC<
               <Box
                 sx={{
                   // height: 150 + 53 * articles.length,
-                  height: 250,
-                  maxHeight: 250,
+                  height: 150 + 50 * articles?.length,
+                  maxHeight: 350,
                   width: "100%",
                   overflow: `auto `,
                 }}
