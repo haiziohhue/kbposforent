@@ -190,68 +190,61 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
             <tbody>
               {(record?.menu as any)
                 ?.map((k: any) => ({ ...k, menu: k?.menu?.data?.attributes }))
-                ?.map(
-                  (item: any) => (
-                    console.log(item),
-                    (
-                      <>
-                        <tr key={item?.menu?.id}>
-                          <td
-                            style={{
-                              border: "solid",
-                              borderColor: "#000",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                textAlign: "center",
-                                fontWeight: 400,
-                                fontSize: 14,
-                              }}
-                            >
-                              {item?.quantite}
+                ?.map((item: any) => (
+                  <>
+                    <tr key={item?.menu?.id}>
+                      <td
+                        style={{
+                          border: "solid",
+                          borderColor: "#000",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            textAlign: "center",
+                            fontWeight: 400,
+                            fontSize: 14,
+                          }}
+                        >
+                          {item?.quantite}
+                        </Typography>
+                      </td>
+                      <td
+                        style={{
+                          border: "solid",
+                          borderColor: "#000",
+                        }}
+                      >
+                        <Typography sx={{ fontWeight: 400, fontSize: 14 }}>
+                          {item?.menu?.titre ? item?.menu?.titre : item?.titre}
+                        </Typography>
+                        <Box>
+                          {item?.ingredients?.flatMap((item) => (
+                            <Typography key={item?.id}>
+                              ({item?.count} x {item?.nom}) {item?.prix}
                             </Typography>
-                          </td>
-                          <td
-                            style={{
-                              border: "solid",
-                              borderColor: "#000",
-                            }}
-                          >
-                            <Typography sx={{ fontWeight: 400, fontSize: 14 }}>
-                              {item?.menu?.titre
-                                ? item?.menu?.titre
-                                : item?.titre}
-                            </Typography>
-                            <Box>
-                              {item?.ingredients?.flatMap((item) => (
-                                <Typography key={item?.id}>
-                                  ({item?.count} x {item?.nom}) {item?.prix}
-                                </Typography>
-                              ))}
-                            </Box>
-                          </td>
-                          <td
-                            style={{
-                              border: "solid",
-                              borderColor: "#000",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                textAlign: "center",
-                                fontWeight: 400,
-                                fontSize: 14,
-                              }}
-                            >
-                              {item?.menu?.prix ? item?.menu?.prix : item?.prix}
-                            </Typography>
-                          </td>
-                        </tr>
-                      </>
-                    )
-                  )
-                )}
+                          ))}
+                        </Box>
+                      </td>
+                      <td
+                        style={{
+                          border: "solid",
+                          borderColor: "#000",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            textAlign: "center",
+                            fontWeight: 400,
+                            fontSize: 14,
+                          }}
+                        >
+                          {item?.menu?.prix ? item?.menu?.prix : item?.prix}
+                        </Typography>
+                      </td>
+                    </tr>
+                  </>
+                ))}
             </tbody>
           </table>
         )}
@@ -313,10 +306,10 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
         </table>
       </Box>
 
-      <Box sx={{ width: 400, margin: "auto", mb: 3 }}>
+      <Box sx={{ width: 400, margin: "auto", my: 3 }}>
         {/* Money given input */}
         <TextField
-          label="Money Given"
+          label="Argent donné"
           variant="outlined"
           value={moneyGiven}
           onChange={(e) => setMoneyGiven(e.target.value)}
@@ -324,32 +317,17 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
           type="number"
           sx={{ marginBottom: 3 }}
         />
-        {/* Number of copies select */}
-        <TextField
-          label="Number of Copies"
-          variant="outlined"
-          value={numCopies}
-          onChange={(e) => {
-            // Ensure input is numeric and non-negative
-            const inputNumCopies = parseInt(e.target.value, 10);
-            if (!isNaN(inputNumCopies) && inputNumCopies >= 1) {
-              setNumCopies(inputNumCopies);
-            }
-          }}
-          fullWidth
-          type="number"
-          sx={{ marginBottom: 3 }}
-        />
+
         {/* Change (rest) calculation */}
         <Typography
           sx={{
             textAlign: "center",
             fontWeight: 400,
-            fontSize: 14,
+            fontSize: 16,
             marginBottom: 3,
           }}
         >
-          Change (Rest): {calculateChange()}
+          Le Reste: {calculateChange()}
         </Typography>
         <Button
           onClick={handlePrint}

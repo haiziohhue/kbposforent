@@ -197,6 +197,7 @@ export interface IBC {
   etat: "Validé" | "Annulé";
   note: string;
   chef: IChef;
+  traite: boolean;
 }
 
 export interface IStock {

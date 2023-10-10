@@ -144,7 +144,7 @@ export default function CustomDataGrid({
 
   const getData = () => {
     setLoading(true);
-    // console.log(`${fetchurl}&filters[${query[0]?.field}]{${fieldModifier}[${query[0]?.operator}]=${query[0]?.value}&pagination[page]=${Number(state.page) + 1}&pagination[pageSize]=${state.pageSize}&sort[0]=${state.sort.field}:${state.sort.sort}`);
+
     axiosInstance
       .get(
         `${fetchurl}&filters[${query[0]?.field}]{${fieldModifier}[${

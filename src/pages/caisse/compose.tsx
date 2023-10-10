@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
@@ -42,8 +42,6 @@ export const CreateMenuCompose: React.FC<
       });
   }, []);
 
-  console.log(responseData);
-
   //
   const getIngredientsForCategory = (
     categoriesData: any[],
@@ -56,7 +54,6 @@ export const CreateMenuCompose: React.FC<
     const selectedCategoryData = categoriesData?.find(
       (category) => category?.attributes?.nom === selectedCategory
     );
-    console.log(selectedCategoryData);
 
     if (!selectedCategoryData) {
       return [];
@@ -64,7 +61,6 @@ export const CreateMenuCompose: React.FC<
 
     const ingredientsData =
       selectedCategoryData?.attributes?.categorie_ingredients?.data;
-    console.log(ingredientsData);
     const ingredients = ingredientsData?.map((ingredient) => ({
       nom: ingredient?.attributes?.nom,
       ingredients: ingredient?.attributes?.ingredients?.map((item) => ({
@@ -90,11 +86,7 @@ export const CreateMenuCompose: React.FC<
 
   //
   const ingredients = getIngredientsForCategory(responseData, selectedCategory);
-  console.log(categories);
-  console.log(ingredients);
-  console.log(
-    ingredients.map((item) => item?.ingredients.map((ing) => ing?.nom))
-  );
+
   //
 
   const calculateTotalPrice = () => {
@@ -111,7 +103,7 @@ export const CreateMenuCompose: React.FC<
     return totalPrice; // Format the total price with two decimal places
   };
   const totalPrice = calculateTotalPrice();
-  console.log(selectedIngredients);
+
   //
 
   const handleAddToCart = () => {

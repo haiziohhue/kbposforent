@@ -1,11 +1,12 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ICategory, IMenu } from "../../interfaces";
 import { HttpError } from "@refinedev/core";
 import {
   Autocomplete,
   Avatar,
   Box,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -23,11 +24,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
+import {
+  Edit,
+  RefreshButton,
+  SaveButton,
+  useAutocomplete,
+} from "@refinedev/mui";
 import { Controller } from "react-hook-form";
-import { API_URL } from "../../constants";
+import { API_URL, TOKEN_KEY } from "../../constants";
 import axios from "axios";
-import { CloseOutlined } from "@mui/icons-material";
+import { CloseOutlined, FileUpload } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 
 export const EditMenu: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
@@ -37,7 +44,7 @@ export const EditMenu: React.FC<
   setValue,
   modal: { visible, close },
   register,
-  refineCore: { onFinish },
+  refineCore: { onFinish, queryResult },
   handleSubmit,
   setError,
   formState: { errors },
@@ -45,6 +52,7 @@ export const EditMenu: React.FC<
   const { autocompleteProps } = useAutocomplete<ICategory>({
     resource: "categories",
   });
+  const menuData = queryResult?.data?.data;
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [imageURL, setImageURL] = useState("");
 
@@ -62,9 +70,9 @@ export const EditMenu: React.FC<
       formData.append("files", file);
 
       const res = await axios.post(`${API_URL}/api/upload`, formData, {
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
       });
 
       setImageURL(`${API_URL}${res.data[0].url}`);
@@ -142,14 +150,14 @@ export const EditMenu: React.FC<
                       type="hidden"
                     />
                     {/* <LoadingButton
-                    loading={isUploadLoading}
-                    loadingPosition="end"
-                    endIcon={<FileUpload />}
-                    variant="contained"
-                    component="span"
-                  >
-                    Upload
-                  </LoadingButton> */}
+                      loading={isUploadLoading}
+                      loadingPosition="end"
+                      endIcon={<FileUpload />}
+                      variant="contained"
+                      component="span"
+                    >
+                      Upload
+                    </LoadingButton> */}
 
                     <Avatar
                       sx={{
@@ -163,9 +171,15 @@ export const EditMenu: React.FC<
                           md: 180,
                         },
                       }}
-                      src={imageURL}
+                      src={
+                        imageURL
+                          ? imageURL
+                          : `${API_URL}${menuData?.image?.url}`
+                      }
                       alt="Menu Image"
-                    />
+                    >
+                      {isUploadLoading && <CircularProgress />}
+                    </Avatar>
                   </label>
                   <Typography
                     variant="body2"
@@ -176,11 +190,9 @@ export const EditMenu: React.FC<
                   >
                     Ajouter une Image
                   </Typography>
-                  {/* <Typography style={{ fontSize: "12px" }}>
-                    must be 1080x1080 px
-                  </Typography> */}
                 </Stack>
-                {errors.image && (
+
+                {errors.image && !isUploadLoading && (
                   <FormHelperText error>{errors.image.message}</FormHelperText>
                 )}
               </FormControl>
@@ -323,8 +335,7 @@ export const EditMenu: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
-          {/* <Button onClick={close}>Annuler</Button> */}
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Edit>
     </Dialog>

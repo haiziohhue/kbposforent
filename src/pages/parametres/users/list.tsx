@@ -29,7 +29,7 @@ export const ListUsers: React.FC<IResourceComponentsProps> = () => {
     initialPageSize: 10,
     meta: { populate: "*" },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColumns<IUser>>(
     () => [
       {

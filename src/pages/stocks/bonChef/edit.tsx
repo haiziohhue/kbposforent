@@ -152,7 +152,6 @@ export const EditBC: React.FC<
       const res = await fetch(`${API_URL}/api/chefs?populate=deep`);
       const data = await res.json();
       const chefData = data?.data;
-      console.log(chefData);
       dispatch({
         type: "SET_CHEF",
         payload: chefData?.map((c) => ({
@@ -183,7 +182,7 @@ export const EditBC: React.FC<
       headerAlign: "left",
       align: "left",
       renderCell: (params: GridCellParams) => {
-        if (params.row.state && !params.row.old)
+        if (params.row.state)
           return (
             <Box
               sx={{
@@ -297,14 +296,12 @@ export const EditBC: React.FC<
         if (params.row.state)
           return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              {/* Render your desired icon or component for editing state */}
               {params.row.article.value && (
                 <Done
                   sx={{ cursor: "pointer" }}
                   fontSize="small"
                   color="primary"
                   onClick={() => {
-                    // Add your logic when the edit state is confirmed
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
@@ -315,7 +312,7 @@ export const EditBC: React.FC<
                   }}
                 />
               )}
-              {/* Render your desired icon or component for cancelling state */}
+
               <Delete
                 sx={{ cursor: "pointer" }}
                 fontSize="small"
@@ -326,21 +323,6 @@ export const EditBC: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Render your desired icon or component for entering edit state */}
-            <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            />
-            {/* Render your desired icon or component for deleting a row */}
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -355,7 +337,7 @@ export const EditBC: React.FC<
   //
   const onFinishHandler = async () => {
     const payload = {
-      chef: bc.chef.id,
+      chef: bc?.chef?.data?.id ? bc?.chef?.data?.id : bc.chef.id,
       ingredients: articles
         ?.filter((k) => !k.state)
         ?.map((article) => ({
@@ -364,12 +346,11 @@ export const EditBC: React.FC<
         })),
       etat: "Validé",
     };
-    console.log(payload);
     try {
       const response = await axios.put(`${API_URL}/api/bon-chefs/${id}`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       close();
     } catch (error) {
       console.error("Request failed:", error);
@@ -460,8 +441,10 @@ export const EditBC: React.FC<
               <Box
                 sx={{
                   // height: 150 + 53 * articles.length,
-                  height: 250,
-                  maxHeight: 250,
+                  // height: 250,
+                  // maxHeight: 250,
+                  height: 150 + 50 * articles?.length,
+                  maxHeight: 350,
                   width: "100%",
                   overflow: `auto `,
                 }}

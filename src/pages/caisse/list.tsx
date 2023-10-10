@@ -34,10 +34,9 @@ import { CreateMenuCompose } from "./compose";
 
 export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
-  const [cartItems, setCartItems] = useState<ICartMenu[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedOrder = searchParams.get("selectedOrder");
-  const { mode } = useContext(ColorModeContext);
+
   //
   const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
     refineCoreProps: { action: "create", meta: { populate: ["image"] } },
@@ -68,7 +67,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     <>
       <CreateMenuCompose {...createDrawerFormProps} />
       <Grid container columns={16} spacing={2}>
-        <Grid item xs={16} md={12}>
+        <Grid item xs={16} md={12} maxHeight="90vh" height="80vh">
           <Paper
             sx={{
               paddingX: { xs: 3, md: 2 },
@@ -226,8 +225,10 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
         </Grid>
         <Grid
           item
-          sm={0}
+          sm={2}
           md={4}
+          maxHeight="80vh"
+          height="80vh"
           sx={{
             display: {
               xs: "none",
@@ -235,16 +236,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
             },
           }}
         >
-          {/* <Paper
-            sx={{
-              paddingX: { xs: 3, md: 2 },
-              paddingY: { xs: 2, md: 3 },
-              my: 0.5,
-            }}
-          > */}
-
           {selectedOrder ? <NewEdit /> : <CreateOrder />}
-          {/* </Paper> */}
         </Grid>
       </Grid>
     </>

@@ -4,22 +4,23 @@ import {
   HttpError,
   useDelete,
 } from "@refinedev/core";
-import { useDataGrid, List, CreateButton } from "@refinedev/mui";
+import { useDataGrid, List, CreateButton, RefreshButton } from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { Delete, Edit } from "@mui/icons-material";
-import { ICatIngredients, ICategory, IIngredients } from "../../../interfaces";
+import { ICatIngredients, ICategory } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateCatIngredients } from "./create";
 import { EditCatIngredients } from "./edit";
 
 export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
+  const [selectedRowId, setSelectedRowId] = React.useState<number>();
   const { dataGridProps } = useDataGrid<ICatIngredients, HttpError>({
     initialPageSize: 10,
     meta: { populate: "deep" },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColDef<ICatIngredients>[]>(
     () => [
       {
@@ -62,7 +63,9 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
             key={1}
             label=""
             icon={<Edit color="success" />}
-            onClick={() => showEditModal(row.id)}
+            onClick={() => {
+              showEditModal(row.id), setSelectedRowId(row.id);
+            }}
           />,
 
           <GridActionsCellItem
@@ -114,7 +117,7 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
   return (
     <>
       <CreateCatIngredients {...createDrawerFormProps} />
-      {/* <EditCatIngredients {...editDrawerFormProps} /> */}
+      <EditCatIngredients {...editDrawerFormProps} id={selectedRowId} />
       <Grid container spacing={2}>
         {/* <Grid item xs={12} lg={3}></Grid> */}
         <Grid item xs={12} lg={12}>
@@ -128,13 +131,16 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
               }
             }
             headerButtons={
-              <CreateButton
-                onClick={() => showCreateModal()}
-                variant="contained"
-                sx={{ marginBottom: "5px" }}
-              >
-                Ajouter
-              </CreateButton>
+              <>
+                <CreateButton
+                  onClick={() => showCreateModal()}
+                  variant="contained"
+                  sx={{ marginBottom: "5px" }}
+                >
+                  Ajouter
+                </CreateButton>
+                <RefreshButton onClick={() => window.location.reload()} />
+              </>
             }
             createButtonProps={
               {

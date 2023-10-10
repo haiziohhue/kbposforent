@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { HttpError, useGetIdentity, useList } from "@refinedev/core";
 import {
@@ -18,7 +18,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {  Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
+import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
 import { CloseOutlined } from "@mui/icons-material";
 import { ICatDepense, ITresor, IUser } from "../../interfaces";
@@ -274,8 +274,7 @@ export const EditDepense: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
-          {/* <Button onClick={close}>Annuler</Button> */}
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Edit>
     </Dialog>

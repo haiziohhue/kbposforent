@@ -2,13 +2,19 @@ import React from "react";
 import {
   IResourceComponentsProps,
   HttpError,
-  useDelete,
   CrudFilters,
+  useUpdate,
 } from "@refinedev/core";
-import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
+import {
+  useDataGrid,
+  List,
+  CreateButton,
+  DateField,
+  RefreshButton,
+} from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { CalendarToday, Delete, Edit } from "@mui/icons-material";
+import { CalendarToday, Cancel, Edit } from "@mui/icons-material";
 import { IAchat } from "../../../interfaces";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateAchat } from "./create";
@@ -16,9 +22,10 @@ import { EditAchat } from "./edit";
 import moment from "moment";
 import { Button, Popover } from "@mui/material";
 import { DateRangePicker } from "react-date-range";
+import { BonChefAchatStatus } from "../../../components/order/BonChefAchatStatus";
 
 export const ListAchat: React.FC<IResourceComponentsProps> = () => {
-  const { mutate: mutateDelete } = useDelete();
+  const { mutate } = useUpdate();
   const { handleSubmit } = useForm();
   const [selectedRowId, setSelectedRowId] = React.useState<number>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -70,7 +77,17 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 90,
       },
-
+      {
+        field: "etat",
+        headerName: "Etat",
+        headerAlign: "center",
+        align: "center",
+        renderCell: function render({ row }) {
+          return <BonChefAchatStatus status={row?.etat} />;
+        },
+        flex: 1,
+        minWidth: 90,
+      },
       {
         field: "source",
         headerName: "Source",
@@ -118,7 +135,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
         sortable: false,
-        getActions: ({ row }) => [
+        getActions: ({ row, id }) => [
           <GridActionsCellItem
             key={1}
             label=""
@@ -133,13 +150,16 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
             // icon={<CloseOutlinedIcon color="error" />}
             sx={{ padding: "2px 6px" }}
             label=""
-            icon={<Delete color="error" />}
+            icon={<Cancel color="error" />}
             onClick={() => {
-              mutateDelete({
+              mutate({
                 resource: "achats",
-                id: row.id,
+                id,
                 mutationMode: "undoable",
                 undoableTimeout: 10000,
+                values: {
+                  etat: "Annulé",
+                },
               });
             }}
           />,
@@ -199,13 +219,16 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
             headerButtons={
-              <CreateButton
-                onClick={() => showCreateModal()}
-                variant="contained"
-                sx={{ marginBottom: "5px" }}
-              >
-                Ajouter
-              </CreateButton>
+              <>
+                <CreateButton
+                  onClick={() => showCreateModal()}
+                  variant="contained"
+                  sx={{ marginBottom: "5px" }}
+                >
+                  Ajouter
+                </CreateButton>
+                <RefreshButton onClick={() => window.location.reload()} />
+              </>
             }
           >
             <Button

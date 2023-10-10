@@ -89,7 +89,6 @@ export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
                     mutationMode: "undoable",
                     undoableTimeout: 10000,
                   });
-                  console.log(id);
                 }}
                 size="small"
                 startIcon={<Delete />}

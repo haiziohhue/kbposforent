@@ -94,7 +94,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                         mutationMode: "undoable",
                         undoableTimeout: 10000,
                       });
-                      console.log(id);
                     }}
                   >
                     <Delete fontSize="small" />

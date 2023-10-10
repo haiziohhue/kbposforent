@@ -127,7 +127,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColDef<IOrder>[]>(
     () => [
       {
@@ -273,8 +273,6 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   label=""
                   showInMenu
                   onClick={() => {
-                    console.log(id);
-                    console.log(row);
                     mutate({
                       resource: "commandes",
                       id,

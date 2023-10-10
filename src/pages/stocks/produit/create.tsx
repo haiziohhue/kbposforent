@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useReducer } from "react";
+import React from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
@@ -11,7 +11,6 @@ import {
   FormHelperText,
   FormLabel,
   IconButton,
-  OutlinedInput,
   Stack,
   TextField,
   Typography,
@@ -36,7 +35,9 @@ export const CreateIngredient: React.FC<
     >
       <Create
         saveButtonProps={saveButtonProps}
-        title={<Typography fontSize={24}>Ajouter Ingredient</Typography>}
+        title={
+          <Typography fontSize={24}>Ajouter Ingredient / Article</Typography>
+        }
         breadcrumb={<div style={{ display: "none" }} />}
         headerProps={{
           avatar: (
@@ -68,7 +69,7 @@ export const CreateIngredient: React.FC<
           >
             <Stack gap="10px" marginTop="10px">
               <FormControl>
-                <FormLabel required>Nom d'Ingredient</FormLabel>
+                <FormLabel required>Nom d'Ingredient / Article</FormLabel>
                 <TextField
                   id="nom"
                   {...register("nom", {

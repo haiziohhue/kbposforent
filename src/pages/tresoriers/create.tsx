@@ -1,5 +1,5 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { HttpError, useGetIdentity, useList } from "@refinedev/core";
 import {
@@ -215,13 +215,10 @@ export const CreateDepense: React.FC<
                   </FormControl>
                 </Stack>
                 <FormControl>
-                  <FormLabel required>Bénéficiaire</FormLabel>
+                  <FormLabel>Bénéficiaire</FormLabel>
                   <Controller
                     control={control}
                     name="beneficier"
-                    rules={{
-                      required: "This field is required",
-                    }}
                     render={({ field }) => (
                       <Autocomplete
                         disablePortal
@@ -239,12 +236,7 @@ export const CreateDepense: React.FC<
                             (value?.id ?? value)?.toString()
                         }
                         renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            error={!!errors.beneficier?.message}
-                            required
-                          />
+                          <TextField {...params} variant="outlined" />
                         )}
                       />
                     )}
@@ -274,8 +266,7 @@ export const CreateDepense: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <SaveButton {...saveButtonProps} />
-          {/* <Button onClick={close}>Annuler</Button> */}
+          <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Create>
     </Dialog>

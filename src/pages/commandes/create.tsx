@@ -132,7 +132,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     }
     return total;
   };
-  console.log(cartItems);
+
   const onFinishHandler = async (data: IOrder) => {
     const payload = {
       ...data,
@@ -142,7 +142,6 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       // })),
 
       menu: cartItems.map((item) => {
-        console.log(item);
         const componentType = item?.component;
         if (componentType === "menus.commande-menu") {
           return {
@@ -175,7 +174,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       const response = await axios.post(`${API_URL}/api/commandes`, {
         data: payload,
       });
-      console.log("Request succeeded:", response.data);
+      console.log("Request succeeded:", response.status);
       handleClearCart();
       navigate(`/commandes`);
     } catch (error) {
@@ -196,7 +195,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     >
       <form onSubmit={handleSubmit(onFinishHandler)}>
         <Box sx={{ gap: 2 }}>
-          <Stack gap={1} marginY={1.5}>
+          <Stack gap={1} marginY={1}>
             {/* Caisse */}
             <Stack>
               <List
@@ -316,7 +315,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
           {/* Cart */}
           <Box
             sx={{
-              height: "50vh",
+              maxHeight: "400px",
               width: "100%",
               overflowY: "scroll",
               gap: 1.5,

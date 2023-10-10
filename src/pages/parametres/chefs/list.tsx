@@ -1,6 +1,6 @@
 import { Delete, Edit } from "@mui/icons-material";
 import { Grid } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridColumns } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import {
   HttpError,
   IResourceComponentsProps,
@@ -20,7 +20,7 @@ export const ListChefs: React.FC<IResourceComponentsProps> = () => {
     meta: { populate: "*" },
   });
 
-  const columns = React.useMemo<GridColumns<IChef>>(
+  const columns = React.useMemo<GridColDef<IChef>[]>(
     () => [
       {
         field: "chef",
@@ -133,7 +133,7 @@ export const ListChefs: React.FC<IResourceComponentsProps> = () => {
               columns={columns}
               filterModel={undefined}
               autoHeight
-              rowsPerPageOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[5, 10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,
                 "& .MuiDataGrid-row": {

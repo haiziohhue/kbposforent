@@ -1,7 +1,6 @@
 import {
   HttpError,
   IResourceComponentsProps,
-  useApiUrl,
   useTable,
   getDefaultFilter,
 } from "@refinedev/core";
@@ -47,7 +46,6 @@ export const ListMenus: React.FC<IResourceComponentsProps> = () => {
     modal: { show: showEditModal },
   } = editDrawerFormProps;
   const menus: IMenu[] = tableQueryResult.data?.data || [];
-  console.log(menus);
   return (
     <>
       <CreateMenu {...createDrawerFormProps} />

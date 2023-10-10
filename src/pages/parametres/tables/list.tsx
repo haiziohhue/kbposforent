@@ -51,7 +51,7 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
         id: "nom",
         accessorKey: "nom",
         header: "Title",
-        cell: function render({ row, getValue }) {
+        cell: function render({ getValue }) {
           return (
             <Stack direction="row" alignItems="center" spacing={3}>
               <Typography>{getValue() as string}</Typography>
@@ -59,7 +59,18 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
           );
         },
       },
-
+      {
+        id: "etat",
+        accessorKey: "etat",
+        header: "Etat",
+        cell: function render({ getValue }) {
+          return (
+            <Stack direction="row" alignItems="center" spacing={3}>
+              <Typography>{getValue() as string}</Typography>
+            </Stack>
+          );
+        },
+      },
       {
         id: "actions",
         header: "Actions",
@@ -172,6 +183,7 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
             />
           </Stack>
         </TableCell>
+
         {/* <TableCell>
           <Checkbox
             id="isActive"
