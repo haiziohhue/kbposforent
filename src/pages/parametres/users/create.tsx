@@ -554,6 +554,13 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                         {errors.password.message}
                       </FormHelperText>
                     )}
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                      }}
+                    >
+                      min. 6 caractères
+                    </Typography>
                   </FormControl>
                 </Grid>
               </Grid>
@@ -584,6 +591,13 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                       {errors.username.message}
                     </FormHelperText>
                   )}
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                    }}
+                  >
+                    min. 3 caractères
+                  </Typography>
                 </FormControl>
               </Grid>
             </Grid>

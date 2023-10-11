@@ -227,7 +227,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
           item
           sm={2}
           md={4}
-          maxHeight="80vh"
+          maxHeight="100vh"
           height="80vh"
           sx={{
             display: {
