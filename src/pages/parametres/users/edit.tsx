@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 import InputMask from "react-input-mask";
@@ -35,7 +35,14 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { CircularProgress } from "@mui/material";
+import {
+  CircularProgress,
+  Divider,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const EditUser: React.FC<IResourceComponentsProps> = () => {
   const stepTitles = ["Données Generales", "Données Professionnelles"];
@@ -63,6 +70,10 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
   const [date, setDate] = React.useState<Date | null>(null);
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [imageURL, setImageURL] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const userData = queryResult?.data?.data;
 
   const onChangeHandler = async (
@@ -93,7 +104,36 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
       setIsUploadLoading(false);
     }
   };
+  //
+  const handleChangePassword = async () => {
+    if (password !== passwordConfirmation) {
+      setError("passwordConfirmation", {
+        type: "manual",
+        message: "Passwords do not match",
+      });
+      return;
+    }
 
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/auth/change-password`,
+        {
+          currentPassword,
+          password,
+          passwordConfirmation,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
+      );
+
+      console.log("Password changed successfully", response.status);
+    } catch (error) {
+      console.error("Password change failed", error);
+    }
+  };
   //
 
   const { autocompleteProps: caissesAutocompleteProps } =
@@ -108,12 +148,16 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
     method: "get",
   });
   const roles = data?.data?.roles ?? [];
-  console.log(roles);
-  console.log(
-    roles
-      .filter((role: IRole) => role?.id === 3 || role?.id === 4)
-      .map((r: IRole) => ({ id: r?.id, name: r?.name }))
-  );
+
+  //
+  const [showPassword, setshowPassword] = useState<boolean>(false);
+  const handleClickShowPassword = () => setshowPassword((show) => !show);
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+  //
   const renderFormByStep = (step: number) => {
     switch (step) {
       case 0:
@@ -475,7 +519,10 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                           {...field}
                           options={roles
                             .filter(
-                              (role: IRole) => role?.id === 3 || role?.id === 4
+                              (role: IRole) =>
+                                role?.id === 3 ||
+                                role?.id === 4 ||
+                                role?.id === 5
                             )
                             .map((r: IRole) => ({ ...r }))}
                           onChange={(_, value) => {
@@ -483,7 +530,8 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                             field.onChange(value?.id);
                           }}
                           value={roles.filter(
-                            (role: IRole) => role?.id === 3 || role?.id === 4
+                            (role: IRole) =>
+                              role?.id === 3 || role?.id === 4 || role?.id === 5
                           )}
                           // options={[
                           //   { label: "Admin", id: 4 },
@@ -548,9 +596,142 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                       {errors.username.message}
                     </FormHelperText>
                   )}
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                    }}
+                  >
+                    min. 3 caractères
+                  </Typography>
                 </FormControl>
               </Grid>
             </Grid>
+            <Divider
+              sx={{
+                marginY: 3,
+              }}
+            />
+            <Box
+              sx={{
+                marginY: 3,
+              }}
+            >
+              {isChangingPassword ? (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <Typography color="primary">
+                    Modifier Mot de passe ( min. 6 caractères )
+                  </Typography>
+                  <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+                    <FormControl fullWidth>
+                      <OutlinedInput
+                        id=""
+                        placeholder="Mot de passe actuel"
+                        type={showPassword ? "text" : "password"}
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              color="primary"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <OutlinedInput
+                        placeholder="Nouveau Mot de passe"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              color="primary"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                      }}
+                    ></Typography>
+                    <FormControl fullWidth>
+                      <OutlinedInput
+                        placeholder="Confirmez le Mot de passe"
+                        type={showPassword ? "text" : "password"}
+                        value={passwordConfirmation}
+                        onChange={(e) =>
+                          setPasswordConfirmation(e.target.value)
+                        }
+                        error={!!errors.passwordConfirmation}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              color="primary"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+
+                      {errors.passwordConfirmation && (
+                        <FormHelperText error>
+                          {errors.passwordConfirmation.message}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                    <Button
+                      variant="contained"
+                      onClick={handleChangePassword}
+                      sx={{ width: "300px", px: 4 }}
+                    >
+                      Confirmer
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Button onClick={() => setIsChangingPassword(true)}>
+                  Modifier Mot de passe
+                </Button>
+              )}
+            </Box>
+            <Divider
+              sx={{
+                marginY: 3,
+              }}
+            />
           </>
         );
     }
@@ -575,7 +756,9 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
             <Button onClick={() => gotoStep(currentStep + 1)}>Suivant</Button>
           )}
           {currentStep === stepTitles.length - 1 && (
-            <SaveButton onClick={handleSubmit(onFinish)} />
+            <SaveButton onClick={handleSubmit(onFinish)}>
+              Enregistrer
+            </SaveButton>
           )}
         </>
       }

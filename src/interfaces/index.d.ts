@@ -103,6 +103,7 @@ export interface IUser {
   photo?: null | { url: string };
   email?: string;
   password?: string;
+  passwordConfirmation?: string;
   username?: string;
   date_naissance?: Date;
   adresse?: string;

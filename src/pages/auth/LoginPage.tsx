@@ -37,7 +37,6 @@ import { layoutStyles, titleStyles } from "./styles";
 import { FormPropsType } from "./AuthPage";
 
 import { Stack } from "@mui/system";
-import { ThemedTitle } from "@refinedev/mui";
 import { LoginFormTypes } from "../../interfaces";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -50,9 +49,6 @@ type LoginProps = LoginPageProps<BoxProps, CardContentProps, FormPropsType>;
  */
 export const LoginPage: React.FC<LoginProps> = ({
   providers,
-  registerLink,
-  forgotPasswordLink,
-  rememberMe,
   contentProps,
   wrapperProps,
   renderContent,
@@ -295,7 +291,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             disabled={isLoading}
             sx={{ mt: "24px" }}
           >
-            {translate("pages.login.signin", "Sign in")}
+            {translate("pages.login.signin", "S’identifier")}
           </Button>
           {/* {registerLink ?? (
             <Box
