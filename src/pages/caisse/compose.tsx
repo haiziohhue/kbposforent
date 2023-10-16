@@ -135,19 +135,13 @@ export const CreateMenuCompose: React.FC<
         })),
         titre: `${selectedCategory} Personalisé`,
         image: {
-          url: url
-            ? "/uploads/menu_Compose_cb43bf60d1.png"
-            : "/uploads/menu_Compose_23d91e7ae5.png",
+          url: "/uploads/menu_Compose_23d91e7ae5.png",
         },
       },
       titre: `${selectedCategory} Personalisé`,
       quantity: 1,
       prix: totalPrice,
-      image: {
-        url: url
-          ? "/uploads/menu_Compose_cb43bf60d1.png"
-          : "/uploads/menu_Compose_23d91e7ae5.png",
-      },
+      image: "/uploads/menu_Compose_23d91e7ae5.png",
       component: "menus.menu-compose",
       categorie: selectedCategory,
     };
