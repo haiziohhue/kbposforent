@@ -36,6 +36,7 @@ import axios from "axios";
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const { data: user } = useGetIdentity<IUser>();
+  console.log(user);
   const navigate = useNavigate();
   const {
     saveButtonProps,
@@ -176,7 +177,9 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       });
       console.log("Request succeeded:", response.status);
       handleClearCart();
-      navigate(`/commandes`);
+      user?.role?.name === "Serveur"
+        ? navigate(`/caisse`)
+        : navigate(`/commandes`);
     } catch (error) {
       console.error("Request failed:", error);
     }

@@ -29,6 +29,7 @@ export const CreateMenuCompose: React.FC<
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedIngredients, setSelectedIngredients] = useState<any[]>([]);
   const [responseData, setResponseData] = useState<any[]>([]);
+  const url = "/uploads/menu_Compose_cb43bf60d1.png";
   useEffect(() => {
     axios
       .get(
@@ -134,14 +135,19 @@ export const CreateMenuCompose: React.FC<
         })),
         titre: `${selectedCategory} Personalisé`,
         image: {
-          url: "/uploads/menu_Compose_cb43bf60d1.png",
+          url: url
+            ? "/uploads/menu_Compose_cb43bf60d1.png"
+            : "/uploads/menu_Compose_23d91e7ae5.png",
         },
       },
       titre: `${selectedCategory} Personalisé`,
       quantity: 1,
       prix: totalPrice,
-      image: "/uploads/menu_Compose_cb43bf60d1.png",
-
+      image: {
+        url: url
+          ? "/uploads/menu_Compose_cb43bf60d1.png"
+          : "/uploads/menu_Compose_23d91e7ae5.png",
+      },
       component: "menus.menu-compose",
       categorie: selectedCategory,
     };
