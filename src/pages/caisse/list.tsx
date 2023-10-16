@@ -12,7 +12,9 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
+  Drawer,
   Grid,
+  Hidden,
   IconButton,
   InputBase,
   Pagination,
@@ -20,15 +22,15 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Add, Search } from "@mui/icons-material";
+import { Add, Search, ShoppingCart } from "@mui/icons-material";
 
 import { CategoryFilter } from "../menus/CategoryFilter";
-import { ICartMenu, IMenu } from "../../interfaces";
+import { IMenu } from "../../interfaces";
 import { MenuCard } from "./card";
 import { CreateOrder } from "../commandes";
 import { useSearchParams } from "react-router-dom";
 import { NewEdit } from "../commandes/newEdit";
-import { ColorModeContext } from "../../contexts/color-mode";
+
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateMenuCompose } from "./compose";
 
@@ -36,7 +38,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedOrder = searchParams.get("selectedOrder");
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //
   const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
     refineCoreProps: { action: "create", meta: { populate: ["image"] } },
@@ -53,7 +55,11 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     });
 
   const menus: IMenu[] = tableQueryResult.data?.data || [];
-
+  //
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+  //
   // const addToCart = (menu: IMenu) => {
   //   const newItem: ICartMenu = {
   //     id: menu.id,
@@ -67,7 +73,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     <>
       <CreateMenuCompose {...createDrawerFormProps} />
       <Grid container columns={16} spacing={2}>
-        <Grid item xs={16} md={12} maxHeight="90vh" height="80vh">
+        <Grid item xs={16} md={12}>
           <Paper
             sx={{
               paddingX: { xs: 3, md: 2 },
@@ -118,8 +124,22 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                 </IconButton>
               </Paper>
             </Stack>
-            <Stack padding="8px">
+            <Stack
+              padding="8px"
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <CategoryFilter setFilters={setFilters} filters={filters} />
+              <Hidden mdUp>
+                <IconButton
+                  onClick={toggleDrawer}
+                  color="primary"
+                  aria-label="Open Drawer"
+                >
+                  <ShoppingCart />
+                </IconButton>
+              </Hidden>
             </Stack>
             <Grid container>
               <Card
@@ -227,8 +247,6 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
           item
           sm={2}
           md={4}
-          maxHeight="100vh"
-          height="80vh"
           sx={{
             display: {
               xs: "none",
@@ -238,6 +256,19 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
         >
           {selectedOrder ? <NewEdit /> : <CreateOrder />}
         </Grid>
+
+        <Hidden smDown>
+          <Grid item sm={2} md={4}>
+            <Drawer
+              anchor="right"
+              open={isDrawerOpen}
+              onClose={toggleDrawer}
+              sx={{ height: "100vh" }}
+            >
+              {selectedOrder ? <NewEdit /> : <CreateOrder />}
+            </Drawer>
+          </Grid>
+        </Hidden>
       </Grid>
     </>
   );

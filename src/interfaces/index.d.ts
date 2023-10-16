@@ -108,7 +108,7 @@ export interface IUser {
   date_naissance?: Date;
   adresse?: string;
   caisse?: ICaisse;
-  role?: { label?: string; id?: number };
+  role?: { label?: string; id?: number; name?: string };
   // role: IRole;
 }
 export interface IUserMe {
