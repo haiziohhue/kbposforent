@@ -1,11 +1,4 @@
-import {
-  Add,
-  Close,
-  CloseOutlined,
-  Delete,
-  Done,
-  Mode,
-} from "@mui/icons-material";
+import { Add, Close, CloseOutlined, Delete, Done } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -25,7 +18,7 @@ import {
 import { HttpError } from "@refinedev/core";
 import { Create } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import { API_URL } from "../../../constants";
+import { API_URL, TOKEN_KEY } from "../../../constants";
 import dayjs from "dayjs";
 import { IAchat } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
@@ -121,7 +114,11 @@ export const CreateAchat: React.FC<
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
+      const res = await fetch(`${API_URL}/api/stocks?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
       const produitsData = data.data.map((e) => ({
         id: e.id,
@@ -364,20 +361,6 @@ export const CreateAchat: React.FC<
           );
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* <Mode
-              sx={{ cursor: "pointer" }}
-              fontSize="small"
-              onClick={() => {
-                // Add your logic when entering edit state
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i ? { ...row, state: false } : row
-                  ),
-                });
-              }}
-            /> */}
-
             <Close
               sx={{ cursor: "pointer" }}
               fontSize="small"
@@ -408,9 +391,17 @@ export const CreateAchat: React.FC<
     };
 
     try {
-      const response = await axios.post(`${API_URL}/api/achats`, {
-        data: payload,
-      });
+      const response = await axios.post(
+        `${API_URL}/api/achats`,
+        {
+          data: payload,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
+      );
       console.log("Request succeeded:", response.status);
       close();
       dispatch({ type: "RESET" });

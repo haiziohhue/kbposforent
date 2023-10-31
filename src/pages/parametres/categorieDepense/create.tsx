@@ -4,7 +4,6 @@ import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { HttpError } from "@refinedev/core";
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -66,7 +65,6 @@ export const CreateCategoryDepense: React.FC<
         </Box>
       </DialogContent>
       <DialogActions>
-        {/* <SaveButton {...saveButtonProps} /> */}
         <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
       </DialogActions>
     </Dialog>

@@ -86,43 +86,6 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
     setResponseData(updatedData);
   };
 
-  // React.useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}/api/bon-chefs?populate=*`)
-  //     .then((response) => {
-  //       const responseData = response?.data?.data;
-  //       const filteredData = responseData?.map((item) => ({
-  //         id: item?.id,
-  //         ...item?.attributes,
-  //         chef: item?.attributes?.chef?.data?.attributes?.chef,
-  //       }));
-
-  //       setResponseData(filteredData);
-  //       setFilteredData(filteredData);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data from API", error);
-  //     });
-  // }, []);
-  const fetchData = () => {
-    axios
-      .get(
-        `${API_URL}/api/bon-chefs??pagination[page]=1&pagination[pageSize]=10&populate=deep&sort=id%3Adesc&`
-      )
-      .then((response) => {
-        const responseData = response?.data?.data;
-        setRefresh(true);
-        console.log("Request succeeded:", responseData);
-      })
-      .catch((error) => {
-        console.error("Error fetching data from API", error);
-      });
-  };
-
-  // React.useEffect(() => {
-  //   fetchData();
-  // }, []);
-
   //
   const columns = React.useMemo<GridColDef<IBC>[]>(
     () => [

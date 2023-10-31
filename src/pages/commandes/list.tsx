@@ -54,8 +54,8 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   //
   const [periode, setPeriode] = useState([
     {
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: null,
+      endDate: null,
       key: "selection",
     },
   ]);
@@ -113,21 +113,23 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
         operator: "in",
         value: (type ?? []).length > 0 ? type : undefined,
       });
-      const startDate = moment(periode[0].startDate)
-        .startOf("day")
-        .format("YYYY-MM-DDTHH:mm:ss[Z]");
-      const endDate = moment(periode[0].endDate)
-        .endOf("day")
-        .format("YYYY-MM-DDTHH:mm:ss[Z]");
-      filters.push({
-        field: "createdAt",
-        operator: "between",
-        value: [startDate, endDate],
-      });
+      if (periode[0].startDate && periode[0].endDate) {
+        const startDate = moment(periode[0].startDate)
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss[Z]");
+        const endDate = moment(periode[0].endDate)
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss[Z]");
+
+        filters.push({
+          field: "createdAt",
+          operator: "between",
+          value: [startDate, endDate],
+        });
+      }
       return filters;
     },
   });
-
   const columns = React.useMemo<GridColDef<IOrder>[]>(
     () => [
       {
@@ -250,6 +252,7 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                         titre: "Vente",
                         user: row?.users_permissions_user?.id,
                         montant: row?.total,
+                        caisse: row?.caisse?.id,
                       },
                     });
                   }}
@@ -366,8 +369,8 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
   const clearDateSelection = () => {
     setPeriode([
       {
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: null,
+        endDate: null,
         key: "selection",
       },
     ]);
@@ -565,9 +568,11 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
               variant="outlined"
               sx={{ marginBottom: 2 }}
             >
-              {`${moment(periode[0].startDate).format("DD/MM/YYYY")} → ${moment(
-                periode[0].endDate
-              ).format("DD/MM/YYYY")}`}
+              {periode[0].startDate && periode[0].endDate
+                ? `${moment(periode[0].startDate).format(
+                    "DD/MM/YYYY"
+                  )} → ${moment(periode[0].endDate).format("DD/MM/YYYY")}`
+                : "date de début → date de fin"}
             </Button>
 
             <Popover

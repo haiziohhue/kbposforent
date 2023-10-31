@@ -1,11 +1,4 @@
-import {
-  Add,
-  Close,
-  CloseOutlined,
-  Delete,
-  Done,
-  Mode,
-} from "@mui/icons-material";
+import { Add, Close, CloseOutlined, Delete, Done } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -24,7 +17,7 @@ import {
 import { HttpError } from "@refinedev/core";
 import { Edit } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import { API_URL } from "../../../constants";
+import { API_URL, TOKEN_KEY } from "../../../constants";
 import { IBC } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
@@ -102,7 +95,11 @@ export const EditBC: React.FC<
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
+      const res = await fetch(`${API_URL}/api/stocks?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
 
       const produitsData = data?.data?.map((e) => ({
@@ -117,7 +114,11 @@ export const EditBC: React.FC<
   //Get BC By id
   const fetchBCByID = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/bon-chefs/${id}?populate=deep`);
+      const res = await fetch(`${API_URL}/api/bon-chefs/${id}?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
       const deepData = data?.data?.attributes;
       const ingredientsArray = deepData?.ingredients || [];
@@ -149,7 +150,11 @@ export const EditBC: React.FC<
   // Get Chefs
   const fetchChefs = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/chefs?populate=deep`);
+      const res = await fetch(`${API_URL}/api/chefs?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
       const chefData = data?.data;
       dispatch({
@@ -347,9 +352,17 @@ export const EditBC: React.FC<
       etat: "Validé",
     };
     try {
-      const response = await axios.put(`${API_URL}/api/bon-chefs/${id}`, {
-        data: payload,
-      });
+      const response = await axios.put(
+        `${API_URL}/api/bon-chefs/${id}`,
+        {
+          data: payload,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
+      );
       console.log("Request succeeded:", response.status);
       close();
     } catch (error) {
@@ -440,9 +453,6 @@ export const EditBC: React.FC<
             <Box sx={{ mt: 4 }}>
               <Box
                 sx={{
-                  // height: 150 + 53 * articles.length,
-                  // height: 250,
-                  // maxHeight: 250,
                   height: 150 + 50 * articles?.length,
                   maxHeight: 350,
                   width: "100%",

@@ -5,13 +5,11 @@ import { DateRangePicker } from "react-date-range";
 import { DateField, List, useDataGrid } from "@refinedev/mui";
 import { CrudFilters, HttpError } from "@refinedev/core";
 import { IStock } from "interfaces";
-import { useNavigate } from "react-router-dom";
 import { useForm } from "@refinedev/react-hook-form";
 import moment from "moment";
 import { CalendarToday } from "@mui/icons-material";
 
 export const StockList = () => {
-  const navigate = useNavigate();
   const { handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   //
@@ -81,7 +79,7 @@ export const StockList = () => {
         type: "date",
         minWidth: 200,
         valueGetter: (params) => {
-          return new Date(params.row.publishedAt);
+          return new Date(params.row?.publishedAt);
         },
         renderCell(params) {
           return (
@@ -192,11 +190,6 @@ export const StockList = () => {
         {...dataGridProps}
         pageSizeOptions={[5, 10, 20, 50, 100]}
         columns={columns}
-        // onCellClick={(params: GridCellParams) => {
-        //   navigate(`product/${params.row?.article?.data?.id}`, {
-        //     state: { data: params.row },
-        //   });
-        // }}
         autoHeight
         sx={{
           fontSize: 14,

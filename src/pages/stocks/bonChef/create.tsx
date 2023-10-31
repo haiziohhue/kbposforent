@@ -21,11 +21,11 @@ import {
   Typography,
 } from "@mui/material";
 import { HttpError } from "@refinedev/core";
-import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
+import { Create, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import { API_URL } from "../../../constants";
+import { API_URL, TOKEN_KEY } from "../../../constants";
 import { IBC, IChef } from "interfaces";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
@@ -106,9 +106,13 @@ export const CreateBC: React.FC<
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
+      const res = await fetch(`${API_URL}/api/stocks?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
-      const produitsData = data.data.map((e) => ({
+      const produitsData = data?.data?.map((e) => ({
         id: e.id,
         ...e.attributes,
       }));
@@ -306,9 +310,17 @@ export const CreateBC: React.FC<
     };
 
     try {
-      const response = await axios.post(`${API_URL}/api/bon-chefs`, {
-        data: payload,
-      });
+      const response = await axios.post(
+        `${API_URL}/api/bon-chefs`,
+        {
+          data: payload,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
+      );
       const newBonChefData = response?.data?.data;
       updateData(newBonChefData);
       console.log("Request succeeded:", response.status);
@@ -409,7 +421,6 @@ export const CreateBC: React.FC<
             <Box sx={{ mt: 4 }}>
               <Box
                 sx={{
-                  // height: 150 + 53 * articles.length,
                   height: 150 + 50 * articles?.length,
                   maxHeight: 350,
                   width: "100%",
@@ -429,7 +440,6 @@ export const CreateBC: React.FC<
                     const products = articles.map((row, i) =>
                       params.row.id === i ? { ...row, state: true } : row
                     );
-
                     dispatch({ type: "SET_ARTICLES", payload: products });
                   }}
                   rows={articles.map((e, i) => ({

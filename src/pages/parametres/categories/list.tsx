@@ -169,14 +169,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
             />
           </Stack>
         </TableCell>
-        {/* <TableCell>
-          <Checkbox
-            id="isActive"
-            defaultChecked={isActive}
-            {...register('isActive')}
-          />
-        </TableCell> */}
-
         <TableCell
           sx={{
             maxWidth: "150px",
@@ -244,15 +236,6 @@ export const ListCategories: React.FC<IResourceComponentsProps> = () => {
                           })}
                         </TableRow>
                       )}
-                      {/* {row.getIsExpanded() ? (
-                      <TableRow>
-                        <TableCell colSpan={row.getVisibleCells().length}>
-                          {renderRowSubComponent({
-                            row,
-                          })}
-                        </TableCell>
-                      </TableRow>
-                    ) : null} */}
                     </React.Fragment>
                   );
                 })}

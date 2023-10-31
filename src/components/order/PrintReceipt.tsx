@@ -3,15 +3,13 @@ import {
   Button,
   Dialog,
   DialogTitle,
-  MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import React, { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { IGeneraleDta, IMenu } from "../../interfaces";
+import { IGeneraleDta } from "../../interfaces";
 import moment from "moment";
 import PrintIcon from "@mui/icons-material/Print";
 import { useApiUrl, useCustom } from "@refinedev/core";
@@ -25,8 +23,6 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
 }) => {
   const componentRef = useRef(null);
   const [moneyGiven, setMoneyGiven] = useState("");
-  const [numCopies, setNumCopies] = useState(1);
-  // Function to trigger printing
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -84,6 +80,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
         <table
           style={{
             border: "solid",
+            borderWidth: "2px",
             borderCollapse: "collapse",
             borderColor: "#000",
             width: "100%",
@@ -96,6 +93,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               <td
                 style={{
                   border: "solid",
+                  borderWidth: "2px",
                   borderColor: "#000",
                 }}
               >
@@ -108,6 +106,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               <td
                 style={{
                   border: "solid",
+                  borderWidth: "2px",
                   borderColor: "#000",
                 }}
               >
@@ -122,6 +121,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               <td
                 style={{
                   border: "solid",
+                  borderWidth: "2px",
                   borderColor: "#000",
                 }}
               >
@@ -134,6 +134,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               <td
                 style={{
                   border: "solid",
+                  borderWidth: "2px",
                   borderColor: "#000",
                 }}
               >
@@ -152,6 +153,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
           <table
             style={{
               border: "solid",
+              borderWidth: "2px",
               borderCollapse: "collapse",
               borderColor: "#000",
               width: "100%",
@@ -164,6 +166,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                 <th
                   style={{
                     border: "solid",
+                    borderWidth: "2px",
                     borderColor: "#000",
                   }}
                 >
@@ -172,6 +175,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                 <th
                   style={{
                     border: "solid",
+                    borderWidth: "2px",
                     borderColor: "#000",
                   }}
                 >
@@ -180,6 +184,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                 <th
                   style={{
                     border: "solid",
+                    borderWidth: "2px",
                     borderColor: "#000",
                   }}
                 >
@@ -196,6 +201,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                       <td
                         style={{
                           border: "solid",
+                          borderWidth: "2px",
                           borderColor: "#000",
                         }}
                       >
@@ -212,6 +218,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                       <td
                         style={{
                           border: "solid",
+                          borderWidth: "2px",
                           borderColor: "#000",
                         }}
                       >
@@ -229,6 +236,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
                       <td
                         style={{
                           border: "solid",
+                          borderWidth: "2px",
                           borderColor: "#000",
                         }}
                       >
@@ -250,7 +258,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
         )}
         <div
           style={{
-            border: "dashed 2px",
+            border: "dashed 1px",
             borderColor: "#000",
             width: "100%",
             marginBottom: 6,
@@ -260,6 +268,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
         <table
           style={{
             border: "solid",
+            borderWidth: "2px",
             borderCollapse: "collapse",
             borderColor: "#000",
             width: "100%",
@@ -272,6 +281,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               <td
                 style={{
                   border: "solid",
+                  borderWidth: "2px",
                   borderColor: "#000",
                 }}
               >
@@ -288,6 +298,7 @@ export const PrintReceipt: React.FC<PrintReceiptProps> = ({
               <td
                 style={{
                   border: "solid",
+                  borderWidth: "2px",
                   borderColor: "#000",
                 }}
               >

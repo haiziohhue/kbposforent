@@ -6,7 +6,7 @@ import {
 } from "@refinedev/core";
 import React from "react";
 import { IMenu } from "../../interfaces";
-import { CreateButton, useDataGrid } from "@refinedev/mui";
+import { CreateButton } from "@refinedev/mui";
 import {
   Grid,
   IconButton,

@@ -155,7 +155,6 @@ export const ListCatIngredients: React.FC<IResourceComponentsProps> = () => {
               columns={columns}
               filterModel={undefined}
               autoHeight
-              // rowsPerPageOptions={[10, 20, 50, 100]}
               pageSizeOptions={[10, 20, 50, 100]}
               sx={{
                 ...dataGridProps.sx,

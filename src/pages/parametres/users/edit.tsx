@@ -412,54 +412,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
             <Grid container spacing={2}>
               <Grid container item xs={12} md={12} gap={5}>
                 <Grid item xs={8} md={6}>
-                  {/* Caisse */}
-                  <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                    <FormLabel
-                      sx={{
-                        marginBottom: "8px",
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        color: "text.primary",
-                      }}
-                    >
-                      Caisse
-                    </FormLabel>
-                    <Controller
-                      control={control}
-                      name="caisse"
-                      defaultValue={null as any}
-                      render={({ field }) => (
-                        <Autocomplete
-                          size="small"
-                          {...caissesAutocompleteProps}
-                          {...field}
-                          onChange={(_, value) => {
-                            field.onChange(value?.id);
-                          }}
-                          getOptionLabel={(item) => {
-                            return item.nom ? item.nom : "";
-                          }}
-                          isOptionEqualToValue={(option, value) =>
-                            value === undefined ||
-                            option?.id?.toString() ===
-                              (value?.id ?? value)?.toString()
-                          }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              variant="outlined"
-                              error={!!errors.caisse?.message}
-                            />
-                          )}
-                        />
-                      )}
-                    />
-                    {errors.caisse && (
-                      <FormHelperText error>
-                        {errors.caisse.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
                   {/* Email */}
                   <FormControl fullWidth>
                     <FormLabel
@@ -526,7 +478,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                             )
                             .map((r: IRole) => ({ ...r }))}
                           onChange={(_, value) => {
-                            console.log(value);
                             field.onChange(value?.id);
                           }}
                           value={roles.filter(
@@ -539,7 +490,6 @@ export const EditUser: React.FC<IResourceComponentsProps> = () => {
                           // ]}
 
                           getOptionLabel={(option) => {
-                            console.log(option);
                             return option?.name ? option?.name : "";
                           }}
                           isOptionEqualToValue={(option, value) =>

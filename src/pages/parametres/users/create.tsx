@@ -9,7 +9,6 @@ import {
   useCustom,
 } from "@refinedev/core";
 import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
-
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -105,12 +104,6 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
 
   //
 
-  const { autocompleteProps: caissesAutocompleteProps } =
-    useAutocomplete<ICaisse>({
-      resource: "caisses",
-    });
-
-  //
   const [showPassword, setshowPassword] = useState<boolean>(false);
   const handleClickShowPassword = () => setshowPassword((show) => !show);
   const handleMouseDownPassword = (
@@ -382,55 +375,8 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
             <Grid container spacing={2}>
               <Grid container item xs={12} md={12} gap={5}>
                 <Grid item xs={8} md={6}>
-                  {/* Caisse */}
-                  <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                    <FormLabel
-                      sx={{
-                        marginBottom: "8px",
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        color: "text.primary",
-                      }}
-                    >
-                      Caisse
-                    </FormLabel>
-                    <Controller
-                      control={control}
-                      name="caisse"
-                      render={({ field }) => (
-                        <Autocomplete
-                          size="small"
-                          {...caissesAutocompleteProps}
-                          {...field}
-                          onChange={(_, value) => {
-                            field.onChange(value?.id);
-                          }}
-                          getOptionLabel={(item) => {
-                            return item.nom ? item.nom : "";
-                          }}
-                          isOptionEqualToValue={(option, value) =>
-                            value === undefined ||
-                            option?.id?.toString() ===
-                              (value?.id ?? value)?.toString()
-                          }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              variant="outlined"
-                              error={!!errors.caisse?.message}
-                            />
-                          )}
-                        />
-                      )}
-                    />
-                    {errors.caisse && (
-                      <FormHelperText error>
-                        {errors.caisse.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
                   {/* Email */}
-                  <FormControl fullWidth>
+                  <FormControl fullWidth sx={{ marginBottom: 2 }}>
                     <FormLabel
                       required
                       sx={{
@@ -460,6 +406,40 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                         {errors.email.message}
                       </FormHelperText>
                     )}
+                  </FormControl>
+                  {/* UserName */}
+                  <FormControl fullWidth>
+                    <FormLabel
+                      required
+                      sx={{
+                        marginBottom: "8px",
+                        fontWeight: "700",
+                        fontSize: "14px",
+                        color: "text.primary",
+                      }}
+                    >
+                      Username
+                    </FormLabel>
+                    <TextField
+                      {...register("username", {
+                        required: "This field is required",
+                      })}
+                      size="small"
+                      margin="none"
+                      variant="outlined"
+                    />
+                    {errors.username && (
+                      <FormHelperText error>
+                        {errors.username.message}
+                      </FormHelperText>
+                    )}
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                      }}
+                    >
+                      min. 3 caractères
+                    </Typography>
                   </FormControl>
                 </Grid>
                 <Grid item xs={4} md={5}>
@@ -564,42 +544,7 @@ export const CreateUser: React.FC<IResourceComponentsProps> = () => {
                   </FormControl>
                 </Grid>
               </Grid>
-              <Grid item xs={4} md={6}>
-                {/* UserName */}
-                <FormControl fullWidth>
-                  <FormLabel
-                    required
-                    sx={{
-                      marginBottom: "8px",
-                      fontWeight: "700",
-                      fontSize: "14px",
-                      color: "text.primary",
-                    }}
-                  >
-                    Username
-                  </FormLabel>
-                  <TextField
-                    {...register("username", {
-                      required: "This field is required",
-                    })}
-                    size="small"
-                    margin="none"
-                    variant="outlined"
-                  />
-                  {errors.username && (
-                    <FormHelperText error>
-                      {errors.username.message}
-                    </FormHelperText>
-                  )}
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                    }}
-                  >
-                    min. 3 caractères
-                  </Typography>
-                </FormControl>
-              </Grid>
+              <Grid item xs={4} md={6}></Grid>
             </Grid>
           </>
         );
