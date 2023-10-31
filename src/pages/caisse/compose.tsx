@@ -14,13 +14,12 @@ import {
   Typography,
 } from "@mui/material";
 import { Create } from "@refinedev/mui";
-
 import { CartContext } from "../../contexts/cart/CartProvider";
 import axios from "axios";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CloseOutlined } from "@mui/icons-material";
 import { IMenu } from "interfaces";
-import { API_URL } from "../../constants";
+import { API_URL, TOKEN_KEY } from "../../constants";
 
 export const CreateMenuCompose: React.FC<
   UseModalFormReturnType<IMenu, HttpError, IMenu>
@@ -33,7 +32,12 @@ export const CreateMenuCompose: React.FC<
   useEffect(() => {
     axios
       .get(
-        `${API_URL}/api/categories?populate=categorie_ingredients,categorie_ingredients.ingredients,categorie_ingredients.ingredients.ingredient`
+        `${API_URL}/api/categories?populate=categorie_ingredients,categorie_ingredients.ingredients,categorie_ingredients.ingredients.ingredient`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
       )
       .then((response) => {
         setResponseData(response.data.data);
@@ -134,14 +138,15 @@ export const CreateMenuCompose: React.FC<
           count: (item as { count?: number }).count,
         })),
         titre: `${selectedCategory} Personalisé`,
-        image: {
-          url: "/uploads/menu_Compose_23d91e7ae5.png",
-        },
+        image:
+          "https://res.cloudinary.com/dbryh9xlh/image/upload/v1698673152/menuCompose_wctyxs.png",
       },
       titre: `${selectedCategory} Personalisé`,
       quantity: 1,
       prix: totalPrice,
-      image: "/uploads/menu_Compose_23d91e7ae5.png",
+      image:
+        "https://res.cloudinary.com/dbryh9xlh/image/upload/v1698673152/menuCompose_wctyxs.png",
+
       component: "menus.menu-compose",
       categorie: selectedCategory,
     };

@@ -26,7 +26,7 @@ import { Controller } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CartContext } from "../../contexts/cart/CartProvider";
 import { Add, CloseOutlined, Remove } from "@mui/icons-material";
-import { API_URL } from "../../constants";
+import { API_URL, TOKEN_KEY } from "../../constants";
 import axios from "axios";
 
 export const EditOrder = () => {
@@ -144,9 +144,17 @@ export const EditOrder = () => {
     };
 
     try {
-      const response = await axios.post(`${API_URL}/api/commandes`, {
-        data: payload,
-      });
+      const response = await axios.post(
+        `${API_URL}/api/commandes`,
+        {
+          data: payload,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
+      );
       console.log("Request succeeded:", response.status);
       handleClearCart();
       navigate(`/commandes`);

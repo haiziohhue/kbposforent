@@ -1,11 +1,4 @@
-import {
-  Add,
-  Close,
-  CloseOutlined,
-  Delete,
-  Done,
-  Mode,
-} from "@mui/icons-material";
+import { Add, Close, CloseOutlined, Delete, Done } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -25,7 +18,7 @@ import {
 import { HttpError } from "@refinedev/core";
 import { Edit, useAutocomplete } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import { API_URL } from "../../../constants";
+import { API_URL, TOKEN_KEY } from "../../../constants";
 import { ICatIngredients, ICategory } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
 import { Controller } from "react-hook-form";
@@ -85,7 +78,7 @@ export const EditCatIngredients: React.FC<
     resource: "categories",
   });
   //
-  const [{ articles, ci, produits, categories }, dispatch] = useReducer(
+  const [{ articles, ci, produits }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -114,7 +107,11 @@ export const EditCatIngredients: React.FC<
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
+      const res = await fetch(`${API_URL}/api/stocks?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
       const produitsData = data.data.map((e) => ({
         id: e.id,
@@ -128,7 +125,11 @@ export const EditCatIngredients: React.FC<
   //get Categories
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/categories?populate=deep`);
+      const res = await fetch(`${API_URL}/api/categories?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
       const categorieData = data?.data;
       dispatch({
@@ -146,7 +147,12 @@ export const EditCatIngredients: React.FC<
   const fetchBIByID = useCallback(async () => {
     try {
       const res = await fetch(
-        `${API_URL}/api/categorie-ingredients/${id}?populate=deep`
+        `${API_URL}/api/categorie-ingredients/${id}?populate=deep`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
       );
       const data = await res.json();
       const deepData = data?.data?.attributes;
@@ -349,6 +355,11 @@ export const EditCatIngredients: React.FC<
         `${API_URL}/api/categorie-ingredients/${id}`,
         {
           data: payload,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
         }
       );
       console.log("Request succeeded:", response.status);

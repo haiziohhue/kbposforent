@@ -143,7 +143,6 @@ export const CreateIngredient: React.FC<
           `${API_URL}/api/categories?filters[type][$eq]=Menu composé`
         );
         const data = await response.json();
-        console.log(data);
         setRecord(data?.data);
       } catch (error) {
         console.error(error);
@@ -153,7 +152,6 @@ export const CreateIngredient: React.FC<
     fetchRecord();
   }, []);
   //
-  console.log(record);
   return (
     <Dialog
       open={visible}
@@ -386,11 +384,7 @@ export const CreateIngredient: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => console.log(ingredient)}
-          >
+          <Button variant="contained" color="primary">
             Create Menu
           </Button>
           <SaveButton {...saveButtonProps} />

@@ -10,12 +10,7 @@ import { useDataGrid, List, CreateButton } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 
-import {
-  DataGrid,
-  GridColumns,
-  GridActionsCellItem,
-  GridColDef,
-} from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 
 import { IUser } from "../../../interfaces";
 import { API_URL } from "../../../constants";
@@ -30,7 +25,7 @@ export const ListUsers: React.FC<IResourceComponentsProps> = () => {
     meta: { populate: "*" },
   });
 
-  const columns = React.useMemo<GridColumns<IUser>>(
+  const columns = React.useMemo<GridColDef<IUser>[]>(
     () => [
       {
         field: "username",
@@ -177,7 +172,7 @@ export const ListUsers: React.FC<IResourceComponentsProps> = () => {
             onRowClick={({ id }) => {
               show("users", id);
             }}
-            rowsPerPageOptions={[10, 20, 50, 100]}
+            pageSizeOptions={[10, 20, 50, 100]}
             sx={{
               ...dataGridProps.sx,
               "& .MuiDataGrid-row": {

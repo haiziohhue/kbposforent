@@ -4,7 +4,6 @@ import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { HttpError } from "@refinedev/core";
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,

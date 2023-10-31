@@ -20,7 +20,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import PrintIcon from "@mui/icons-material/Print";
 import { IOrder } from "../../interfaces";
-import { API_URL } from "../../constants";
+import { API_URL, TOKEN_KEY } from "../../constants";
 import {
   Button,
   Card,
@@ -50,11 +50,14 @@ export const ShowOrder: React.FC<
     const fetchRecord = async () => {
       try {
         const response = await fetch(
-          // `${API_URL}/api/commandes/${id}?populate=caisse&populate=table&populate=menus.menu.image&populate=users_permissions_user`
-          `${API_URL}/api/commandes/${id}?populate=deep`
+          `${API_URL}/api/commandes/${id}?populate=deep`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+            },
+          }
         );
-        const data = await response.json();
-
+        const data = await response?.json();
         setRecord(data?.data?.attributes);
       } catch (error) {
         console.error(error);
@@ -63,7 +66,6 @@ export const ShowOrder: React.FC<
 
     fetchRecord();
   }, [id]);
-
   //
   // Modal
   const createModalFormProps = useModalForm<IOrder, HttpError, IOrder>({});
@@ -192,7 +194,7 @@ export const ShowOrder: React.FC<
                                 image={
                                   item?.menu?.image?.data?.attributes?.url
                                     ? `${API_URL}${item?.menu?.image?.data?.attributes?.url}`
-                                    : `${API_URL}${item?.image}`
+                                    : "https://res.cloudinary.com/dbryh9xlh/image/upload/v1698673152/menuCompose_wctyxs.png"
                                 }
                               />
                             </Box>
@@ -315,8 +317,9 @@ export const ShowOrder: React.FC<
                           values: {
                             type: "Vente",
                             titre: "Vente",
-                            user: record?.users_permissions_user?.id,
+                            user: record?.users_permissions_user?.data?.id,
                             montant: record?.total,
+                            caisse: record?.caisse?.data?.id,
                           },
                         });
                       }}

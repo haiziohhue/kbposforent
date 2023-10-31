@@ -159,7 +159,6 @@ export const CreateIngredient: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          {/* <SaveButton {...saveButtonProps} /> */}
           <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Create>

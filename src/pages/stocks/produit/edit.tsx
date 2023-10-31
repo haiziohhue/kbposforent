@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Edit, SaveButton } from "@refinedev/mui";
-
 import { CloseOutlined } from "@mui/icons-material";
 import { IIngredients } from "../../../interfaces";
 

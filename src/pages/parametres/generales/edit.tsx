@@ -134,7 +134,6 @@ export const EditRestaurantData: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          {/* <SaveButton {...saveButtonProps} /> */}
           <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
         </DialogActions>
       </Edit>

@@ -49,6 +49,19 @@ export interface ICaisse {
   id: number;
   nom?: string;
   balance?: number;
+  password?: string;
+}
+export interface ICaisseLogs {
+  id: number;
+  caisse: ICaisse;
+  etat?: "Ouverte" | "Fermé";
+  createdAt?: Date;
+  date_cloture?: Date;
+  solde_ouverture: number;
+  solde_cloture: number;
+  depenses: number;
+  ventes: number;
+  user?: IUser;
 }
 export interface ITable {
   id: number;
@@ -93,6 +106,7 @@ export interface ITresor {
   user?: IUser;
   beneficier?: IUser;
   note?: string;
+  caisse?: ICaisse;
 }
 
 export interface IUser {
@@ -129,6 +143,12 @@ export interface ITresorFilterVariables {
   titre?: string;
   type?: string;
   user?: string;
+  caisse?: string;
+}
+export interface ICaisseLogsFilterVariables {
+  etat?: string;
+  user?: string;
+  caisse?: string;
 }
 export interface ICatDepense {
   id: number;

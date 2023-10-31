@@ -54,6 +54,7 @@ import { ListCategories } from "./pages/parametres/categories";
 import { ListTables } from "./pages/parametres/tables";
 import { ListCaisses } from "./pages/parametres/caisses";
 import { ListCatIngredients } from "./pages/parametres/categorieIngredient";
+import { ListCaissesLogs } from "./pages/gestionCaisse/list";
 
 function App() {
   //
@@ -136,11 +137,43 @@ function App() {
                           icon: <AddShoppingCart />,
                         },
                       },
+                      {
+                        name: "tresoriers",
+                        meta: {
+                          label: "Trésorerie",
+                          icon: <Payments />,
+                        },
+                      },
+                      {
+                        name: "tresoriers",
+                        list: "/tresoriers",
+                        create: "/tresoriers/create",
+                        edit: "",
+                        show: "",
+                        meta: {
+                          label: "Trésorerie",
+                          parent: "tresoriers",
+                          canDelete: true,
+                          icon: false,
+                        },
+                      },
+                      {
+                        name: "logs-caisses",
+                        list: "/gestionCaisse",
+                        create: "/gestionCaisse/open",
+                        edit: "/gestionCaisse/close",
+                        show: "",
+                        meta: {
+                          label: "Journal",
+                          parent: "tresoriers",
+                          icon: false,
+                        },
+                      },
                     ]}
                     options={{
                       syncWithLocation: true,
                       warnWhenUnsavedChanges: true,
-                      projectId: "3RwuuB-53ClMu-OzbxuH"
+                      projectId: "3RwuuB-53ClMu-OzbxuH",
                     }}
                   >
                     <Routes>
@@ -173,6 +206,14 @@ function App() {
                               <Route path="create" element={<CreateOrder />} />
                               <Route path="newEdit/:id" element={<NewEdit />} />
                               <Route path="show/:id" element={<ShowOrder />} />
+                            </Route>
+                            {/* Tresories */}
+                            <Route path="/tresoriers">
+                              <Route index element={<ListTresor />} />
+                            </Route>
+                            {/* logs */}
+                            <Route path="/gestionCaisse">
+                              <Route index element={<ListCaissesLogs />} />
                             </Route>
                           </>
 
@@ -219,17 +260,6 @@ function App() {
                           icon: <AccountBalance />,
                         },
                       },
-                      // {
-                      //   name: "commandes",
-                      //   list: "/commandes",
-                      //   create: "/commandes/create",
-                      //   edit: "/commandes/newEdit/:id",
-                      //   show: "/commandes/show/:id",
-                      //   meta: {
-                      //     canDelete: true,
-                      //     icon: <AddShoppingCart />,
-                      //   },
-                      // },
                     ]}
                     options={{
                       syncWithLocation: true,
@@ -260,13 +290,6 @@ function App() {
                               <Route index element={<MenusList />} />
                               <Route path="create" element={<CreateOrder />} />
                             </Route>
-                            {/* Orders */}
-                            {/* <Route path="/commandes">
-                              <Route index element={<ListOrdes />} />
-                              <Route path="create" element={<CreateOrder />} />
-                              <Route path="newEdit/:id" element={<NewEdit />} />
-                              <Route path="show/:id" element={<ShowOrder />} />
-                            </Route> */}
                           </>
 
                           <Route path="*" element={<ErrorComponent />} />
@@ -325,17 +348,36 @@ function App() {
                       },
                       {
                         name: "tresoriers",
+                        meta: {
+                          label: "Trésorerie",
+                          icon: <Payments />,
+                        },
+                      },
+                      {
+                        name: "tresoriers",
                         list: "/tresoriers",
                         create: "/tresoriers/create",
                         edit: "",
                         show: "",
                         meta: {
                           label: "Trésorerie",
+                          parent: "tresoriers",
                           canDelete: true,
-                          icon: <Payments />,
+                          icon: false,
                         },
                       },
-
+                      {
+                        name: "logs-caisses",
+                        list: "/gestionCaisse",
+                        create: "/gestionCaisse/open",
+                        edit: "/gestionCaisse/close",
+                        show: "",
+                        meta: {
+                          label: "Journal",
+                          parent: "tresoriers",
+                          icon: false,
+                        },
+                      },
                       {
                         name: "menus",
                         list: "/menus",
@@ -547,7 +589,10 @@ function App() {
                             <Route path="/tresoriers">
                               <Route index element={<ListTresor />} />
                             </Route>
-
+                            {/* logs */}
+                            <Route path="/gestionCaisse">
+                              <Route index element={<ListCaissesLogs />} />
+                            </Route>
                             {/* Gestion de Menu */}
                             <Route path="/menus">
                               <Route index element={<ListMenus />} />

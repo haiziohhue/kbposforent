@@ -1,11 +1,12 @@
+import React, { useEffect, useState } from "react";
 import {
   IResourceComponentsProps,
   useTable,
   getDefaultFilter,
   HttpError,
+  useList,
+  useGetIdentity,
 } from "@refinedev/core";
-import React, { useContext, useState } from "react";
-
 import {
   Box,
   Card,
@@ -23,22 +24,24 @@ import {
   Typography,
 } from "@mui/material";
 import { Add, Search, ShoppingCart } from "@mui/icons-material";
-
 import { CategoryFilter } from "../menus/CategoryFilter";
-import { IMenu } from "../../interfaces";
+import { ICaisseLogs, IMenu, IUser } from "../../interfaces";
 import { MenuCard } from "./card";
 import { CreateOrder } from "../commandes";
 import { useSearchParams } from "react-router-dom";
 import { NewEdit } from "../commandes/newEdit";
-
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateMenuCompose } from "./compose";
+import { OpenCaisse } from "../gestionCaisse/open";
 
 export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const [selctedMenu, setSelectedMenu] = useState<IMenu[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedOrder = searchParams.get("selectedOrder");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [caisseEtat, setCaisseEtat] = useState<ICaisseLogs | undefined>(
+    undefined
+  );
   //
   const createDrawerFormProps = useModalForm<IMenu, HttpError, IMenu>({
     refineCoreProps: { action: "create", meta: { populate: ["image"] } },
@@ -46,6 +49,21 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
   const {
     modal: { show: showCreateModal },
   } = createDrawerFormProps;
+  //
+  //
+  const openDrawerFormProps = useModalForm<ICaisseLogs, HttpError, ICaisseLogs>(
+    {
+      refineCoreProps: { action: "create" },
+      modalProps: {
+        defaultVisible: true,
+      },
+    }
+  );
+
+  // const {
+  //   modal: { show: showOpenModal },
+  // } = openDrawerFormProps;
+
   //
   const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
     useTable<IMenu>({
@@ -60,17 +78,35 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
   //
-  // const addToCart = (menu: IMenu) => {
-  //   const newItem: ICartMenu = {
-  //     id: menu.id,
-  //     menus: menu,
-  //     quantity: 1,
-  //   };
-  //   setCartItems((prevCartItems) => [...prevCartItems, newItem]);
-  // };
+  //
+  const { data: caissesLogs } = useList<ICaisseLogs>({
+    resource: "logs-caisses",
+    meta: { populate: "deep" },
+  });
+  //
+  const { data: user } = useGetIdentity<IUser>();
+  //
+  useEffect(() => {
+    const caisseState = localStorage.getItem("selectedCaisseEtat");
+    if (caisseState) {
+      const foundCaisse = caissesLogs?.data?.find(
+        (caisse) => caisse?.etat === "Ouverte"
+      );
+      setCaisseEtat(foundCaisse || undefined);
+    } else {
+      setCaisseEtat(undefined);
+    }
+  }, [caissesLogs?.data]);
+
+  //
 
   return (
     <>
+      {caisseEtat?.etat !== "Ouverte" &&
+        (user?.role?.name === "Caissier" || user?.role?.name === "Admin") && (
+          <OpenCaisse {...openDrawerFormProps} />
+        )}
+
       <CreateMenuCompose {...createDrawerFormProps} />
       <Grid container columns={16} spacing={2}>
         <Grid item xs={16} md={12}>
@@ -269,6 +305,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
             </Drawer>
           </Grid>
         </Hidden>
+        {/* <Button onClick={() => showOpenModal()}>Caisse</Button> */}
       </Grid>
     </>
   );

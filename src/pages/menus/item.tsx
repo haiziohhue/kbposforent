@@ -24,9 +24,7 @@ type MenuItem = {
 export const MenuItem: React.FC<MenuItem> = ({ menu, show }) => {
   const { mutate: mutateDelete } = useDelete();
   const { id, titre, description, image, prix } = menu;
-
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };

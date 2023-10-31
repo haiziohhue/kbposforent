@@ -23,7 +23,6 @@ type MenuCard = {
   menu: IMenu;
   selectedCards: IMenu[];
   onCardSelect: (selectedCards: IMenu[]) => void;
-  // onAddToCart: (menu: IMenu) => void;
 };
 export const MenuCard: React.FC<MenuCard> = ({
   menu,

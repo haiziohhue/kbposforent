@@ -4,7 +4,6 @@ import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { HttpError } from "@refinedev/core";
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -64,16 +63,9 @@ export const CreateCategory: React.FC<
               },
             }}
           />
-
-          {/* <input
-            type="hidden"
-            value={watch("type", category.type)}
-            {...register("type")}
-          /> */}
         </Box>
       </DialogContent>
       <DialogActions>
-        {/* <SaveButton {...saveButtonProps} /> */}
         <SaveButton {...saveButtonProps}>Enregistrer</SaveButton>
       </DialogActions>
     </Dialog>

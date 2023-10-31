@@ -183,15 +183,6 @@ export const ListTables: React.FC<IResourceComponentsProps> = () => {
             />
           </Stack>
         </TableCell>
-
-        {/* <TableCell>
-          <Checkbox
-            id="isActive"
-            defaultChecked={isActive}
-            {...register('isActive')}
-          />
-        </TableCell> */}
-
         <TableCell
           sx={{
             maxWidth: "150px",

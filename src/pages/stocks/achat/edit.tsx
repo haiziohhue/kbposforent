@@ -25,7 +25,7 @@ import {
 import { HttpError } from "@refinedev/core";
 import { Edit } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import { API_URL } from "../../../constants";
+import { API_URL, TOKEN_KEY } from "../../../constants";
 import dayjs from "dayjs";
 import { IAchat } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
@@ -122,7 +122,11 @@ export const EditAchat: React.FC<
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/stocks?populate=deep`);
+      const res = await fetch(`${API_URL}/api/stocks?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
 
       const produitsData = data.data.map((e) => ({
@@ -137,7 +141,11 @@ export const EditAchat: React.FC<
   //Get BR By id
   const fetchBRByID = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/achats/${id}?populate=deep`);
+      const res = await fetch(`${API_URL}/api/achats/${id}?populate=deep`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+        },
+      });
       const data = await res.json();
       const deepData = data?.data?.attributes;
       const ingredientsArray = deepData?.ingredients || [];

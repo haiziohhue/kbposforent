@@ -2,49 +2,38 @@ import React, { useState } from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
-  CrudFilters,
   HttpError,
   getDefaultFilter,
-  useDelete,
+  CrudFilters,
 } from "@refinedev/core";
 import {
   useDataGrid,
-  NumberField,
   DateField,
   useAutocomplete,
   List,
-  CreateButton,
+  NumberField,
 } from "@refinedev/mui";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+
 import Autocomplete from "@mui/material/Autocomplete";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import { DateRangePicker } from "react-date-range";
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridCellParams,
-  GridColDef,
-} from "@mui/x-data-grid";
-import { useForm, useModalForm } from "@refinedev/react-hook-form";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
-import { ITresor, ITresorFilterVariables } from "../../interfaces";
-
-import { TresorTypes } from "../../components/tresor/TresorTypes";
-import { CreateDepense } from "./create";
-import { CalendarToday, Delete, Edit } from "@mui/icons-material";
-import { EditDepense } from "./edit";
-import { Popover } from "@mui/material";
+import { ICaisseLogs, ICaisseLogsFilterVariables } from "../../interfaces";
+import { CalendarToday } from "@mui/icons-material";
+import { Popover, Stack, Typography } from "@mui/material";
 import moment from "moment";
+import { CaisseStatus } from "../../components/order/CaisseStatus";
 
-export const ListTresor: React.FC<IResourceComponentsProps> = () => {
-  const { mutate: mutateDelete } = useDelete();
-  //
+export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
   const [periode, setPeriode] = useState([
     {
       startDate: null,
@@ -56,9 +45,9 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   //
   const { dataGridProps, search, filters } = useDataGrid<
-    ITresor,
+    ICaisseLogs,
     HttpError,
-    ITresorFilterVariables
+    ICaisseLogsFilterVariables
   >({
     initialPageSize: 10,
     sorters: {
@@ -69,21 +58,15 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         },
       ],
     },
-    meta: { populate: "*" },
+    meta: { populate: "deep" },
     onSearch: (params) => {
       const filters: CrudFilters = [];
-      const { titre, type, user, caisse } = params;
+      const { etat, user, caisse } = params;
 
       filters.push({
-        field: "titre",
-        operator: "eq",
-        value: titre !== "" ? titre : undefined,
-      });
-
-      filters.push({
-        field: "type",
+        field: "etat",
         operator: "in",
-        value: (type ?? []).length > 0 ? type : undefined,
+        value: (etat ?? []).length > 0 ? etat : undefined,
       });
       filters.push({
         field: "caisse.id",
@@ -112,8 +95,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
-  const columns = React.useMemo<GridColDef<ITresor>[]>(
+  const columns = React.useMemo<GridColDef<ICaisseLogs>[]>(
     () => [
       {
         field: "id",
@@ -121,32 +103,80 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
         headerAlign: "center",
         align: "center",
         flex: 1,
+        minWidth: 90,
+        footerClassName: "hide-from-footer",
+      },
+      {
+        field: "createdAt",
+        headerName: "Date d'ouverture",
+        flex: 1,
+        minWidth: 170,
+        footerClassName: "hide-from-footer",
+        renderCell: function render({ row }) {
+          return (
+            <DateField
+              value={row?.createdAt}
+              format="LLL"
+              sx={{ fontSize: "12px" }}
+            />
+          );
+        },
+      },
+      {
+        field: "date_cloture",
+        headerName: "Date de Clôture",
+        flex: 1,
+        minWidth: 170,
+        footerClassName: "hide-from-footer",
+        renderCell: function render({ row }) {
+          if (row?.date_cloture) {
+            return (
+              <DateField
+                value={row?.date_cloture}
+                format="LLL"
+                sx={{ fontSize: "12px" }}
+              />
+            );
+          } else {
+            return null;
+          }
+        },
+      },
+      {
+        field: "caisse",
+        headerName: "Caisse",
+        headerAlign: "center",
+        footerClassName: "hide-from-footer",
+        valueGetter: ({ row }) => row?.caisse?.nom,
+        flex: 1,
+        align: "center",
         minWidth: 100,
       },
-
       {
-        field: "type",
-        headerName: "Type",
+        field: "etat",
+        headerName: "Etat",
         headerAlign: "center",
         align: "center",
+        footerClassName: "hide-from-footer",
         renderCell: function render({ row }) {
-          return <TresorTypes status={row?.type} />;
+          return <CaisseStatus status={row?.etat} />;
         },
         flex: 1,
         minWidth: 100,
       },
       {
-        field: "titre",
-        headerName: "Objet",
-        headerAlign: "center",
-        align: "center",
+        field: "user",
+        headerName: "Utilisateur",
+        footerClassName: "hide-from-footer",
+        valueGetter: ({ row }) => row.user?.username,
         flex: 1,
-        minWidth: 150,
-      },
 
+        minWidth: 90,
+        sortable: false,
+      },
       {
-        field: "total",
-        headerName: "Total",
+        field: "solde_ouverture",
+        headerName: "Solde d'Ouverture",
         headerAlign: "center",
         align: "center",
         renderCell: function render({ row }) {
@@ -156,83 +186,73 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                 currency: "DZD",
                 style: "currency",
               }}
-              value={row?.montant}
-              sx={{ fontSize: "14px" }}
+              value={row?.solde_ouverture}
+              sx={{ fontSize: "12px" }}
+            />
+          );
+        },
+        flex: 1,
+        minWidth: 120,
+      },
+      {
+        field: "ventes",
+        headerName: "Ventes",
+        headerAlign: "center",
+        align: "center",
+        renderCell: function render({ row }) {
+          return (
+            <NumberField
+              options={{
+                currency: "DZD",
+                style: "currency",
+              }}
+              value={row?.ventes}
+              sx={{ fontSize: "12px" }}
+            />
+          );
+        },
+        flex: 1,
+        minWidth: 100,
+      },
+      {
+        field: "depenses",
+        headerName: "Depenses",
+        headerAlign: "center",
+        align: "center",
+        renderCell: function render({ row }) {
+          return (
+            <NumberField
+              options={{
+                currency: "DZD",
+                style: "currency",
+              }}
+              value={row?.depenses}
+              sx={{ fontSize: "12px" }}
+            />
+          );
+        },
+        flex: 1,
+        minWidth: 100,
+      },
+      {
+        field: "solde_cloture",
+        headerName: "Totale CA",
+        headerAlign: "center",
+        align: "center",
+        renderCell: function render({ row }) {
+          return (
+            <NumberField
+              options={{
+                currency: "DZD",
+                style: "currency",
+              }}
+              value={row?.solde_cloture}
+              sx={{ fontSize: "12px" }}
             />
           );
         },
         flex: 1,
         minWidth: 150,
-      },
-
-      {
-        field: "user",
-        headerName: "User",
-        valueGetter: ({ row }) => row?.user?.username,
-        flex: 1,
-        minWidth: 100,
-        sortable: false,
-      },
-      {
-        field: "caisse",
-        headerName: "Caisse",
-        valueGetter: ({ row }) => row?.caisse?.nom,
-        flex: 1,
-        minWidth: 100,
-        sortable: false,
-      },
-      {
-        field: "createdAt",
-        headerName: "Date",
-        flex: 1,
-        minWidth: 170,
-        renderCell: function render({ row }) {
-          return (
-            <DateField
-              value={row.createdAt}
-              format="LLL"
-              sx={{ fontSize: "14px" }}
-            />
-          );
-        },
-      },
-      {
-        field: "actions",
-        type: "actions",
-        headerName: "Actions",
-        flex: 1,
-        minWidth: 100,
-        sortable: false,
-        renderCell: (params: GridCellParams) => {
-          const { row } = params;
-          if (row.type === "Dépense") {
-            return (
-              <>
-                <GridActionsCellItem
-                  key={1}
-                  label=""
-                  icon={<Edit color="success" />}
-                  onClick={() => showEditModal(row.id)}
-                />
-
-                <GridActionsCellItem
-                  key={2}
-                  sx={{ padding: "2px 6px" }}
-                  label=""
-                  icon={<Delete color="error" />}
-                  onClick={() => {
-                    mutateDelete({
-                      resource: "tresoriers",
-                      id: row.id,
-                      mutationMode: "undoable",
-                      undoableTimeout: 10000,
-                    });
-                  }}
-                />
-              </>
-            );
-          }
-        },
       },
     ],
     []
@@ -241,11 +261,10 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
   const { register, handleSubmit, control } = useForm<
     BaseRecord,
     HttpError,
-    ITresorFilterVariables
+    ICaisseLogsFilterVariables
   >({
     defaultValues: {
-      titre: getDefaultFilter("titre", filters, "eq"),
-      type: getDefaultFilter("type", filters, "in"),
+      etat: getDefaultFilter("etat", filters, "in"),
       user: getDefaultFilter("user.id", filters, "eq"),
       caisse: getDefaultFilter("caisse.id", filters, "eq"),
     },
@@ -260,43 +279,20 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     defaultValue: getDefaultFilter("caisse.id", filters, "eq"),
   });
   //
-  const createDrawerFormProps = useModalForm<ITresor, HttpError, ITresor>({
-    refineCoreProps: { action: "create" },
-  });
 
-  const {
-    modal: { show: showCreateModal },
-  } = createDrawerFormProps;
-  const editDrawerFormProps = useModalForm<ITresor, HttpError, ITresor>({
-    refineCoreProps: { action: "edit", meta: { populate: "*" } },
-  });
-
-  const {
-    modal: { show: showEditModal },
-  } = editDrawerFormProps;
-  //
-
-  const calculateTotalSum = (rows: ITresor[], targetType: string): number => {
-    return rows.reduce((sum, row) => {
-      if (row.type === targetType) {
-        return sum + parseInt(row.montant.toString(), 10);
-      }
-      return sum;
-    }, 0);
-  };
-  const totalSumDepense = new Intl.NumberFormat("en-DZ", {
-    style: "currency",
-    currency: "DZD",
-    minimumFractionDigits: 2,
-  }).format(calculateTotalSum(dataGridProps.rows as ITresor[], "Dépense"));
-  const totalSumVente = new Intl.NumberFormat("en-DZ", {
-    style: "currency",
-    currency: "DZD",
-    minimumFractionDigits: 2,
-  }).format(calculateTotalSum(dataGridProps.rows as ITresor[], "Vente"));
+  // const calculateTotalSum = (rows: ICaisseLogs[]): number => {
+  //   return rows.reduce(
+  //     (sum, row) => sum + parseInt(row.montant?.toString(), 10),
+  //     0
+  //   );
+  // };
+  // const formattedNumber = new Intl.NumberFormat("en-DZ", {
+  //   style: "currency",
+  //   currency: "DZD",
+  //   minimumFractionDigits: 2,
+  // }).format(calculateTotalSum(dataGridProps.rows as ICaisseLogs[]));
 
   //
-
   //
   const openDatePicker = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -320,12 +316,36 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
     ]);
   };
   //
+  const formatter = new Intl.NumberFormat("en-DZ", {
+    style: "currency",
+    currency: "DZD",
+  });
+  //
+  const calculateTotalSumSO = (rows: ICaisseLogs | ICaisseLogs[]): number => {
+    if (Array.isArray(rows)) {
+      return rows.reduce((sum, row) => sum + (row.solde_ouverture || 0), 0);
+    } else {
+      return rows.solde_ouverture || 0;
+    }
+  };
+
+  //
+  function calculateColumnSum(rows, columnNames) {
+    return columnNames?.reduce((totalSums, columnName) => {
+      const columnSum = rows?.reduce(
+        (sum, row) => sum + (row[columnName] || 0),
+        0
+      );
+      totalSums[columnName] = columnSum;
+      return totalSums;
+    }, {});
+  }
+  formatter.format(calculateTotalSumSO(dataGridProps.rows as ICaisseLogs[]));
+  //
   return (
     <>
-      <CreateDepense {...createDrawerFormProps} />
-      <EditDepense {...editDrawerFormProps} />
       <Grid container spacing={2}>
-        <Grid item xs={12} lg={3}>
+        <Grid item xs={12} lg={2}>
           <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
             <CardHeader title="Filtrer" />
             <CardContent sx={{ pt: 0 }}>
@@ -335,19 +355,9 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                 autoComplete="off"
                 onSubmit={handleSubmit(search)}
               >
-                <TextField
-                  {...register("titre")}
-                  label="Recherche"
-                  placeholder="Objet"
-                  margin="normal"
-                  fullWidth
-                  autoFocus
-                  size="small"
-                />
-
                 <Controller
                   control={control}
-                  name="type"
+                  name="etat"
                   render={({ field }) => (
                     <Autocomplete
                       {...userAutocompleteProps}
@@ -355,12 +365,12 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                       onChange={(_, value) => {
                         field.onChange(value);
                       }}
-                      options={["vente", "Dépense"]}
+                      options={["Ouverte", "Fermé"]}
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label="Type"
-                          placeholder="Type"
+                          label="Etat"
+                          placeholder="Etat"
                           margin="normal"
                           variant="outlined"
                           size="small"
@@ -438,41 +448,23 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
               </Box>
             </CardContent>
           </Card>
-          <Box
-            sx={{ display: "flex", flexDirection: "column", mt: 10, gap: 3 }}
-          >
+          {/* <Box sx={{ mt: 10 }}>
             <TextField
-              label="Totale Ventes"
-              value={totalSumVente}
+              label="Totale"
+              value={formattedNumber}
               disabled
               fullWidth
             />
-            <TextField
-              label="Totale Dépenses"
-              value={totalSumDepense}
-              disabled
-              fullWidth
-            />
-            {/* <TextField
-              label="Totale Dépense"
-              value={totalSumDepense}
-              disabled
-              fullWidth
-            /> */}
-          </Box>
+          </Box> */}
         </Grid>
-        <Grid item xs={12} lg={9}>
+        <Grid item xs={12} lg={10}>
           <List
             wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-            headerButtons={
-              <CreateButton
-                onClick={() => showCreateModal()}
-                variant="contained"
-                sx={{ marginBottom: "5px" }}
-              >
-                Ajouter Dépenses
-              </CreateButton>
-            }
+            headerProps={{
+              sx: {
+                display: "none",
+              },
+            }}
           >
             <Button
               size="large"
@@ -529,19 +521,82 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                 </Button>
               </div>
             </Popover>
-            <DataGrid
-              {...dataGridProps}
-              columns={columns}
-              filterModel={undefined}
-              autoHeight
-              pageSizeOptions={[10, 20, 50, 100]}
-              sx={{
-                ...dataGridProps.sx,
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
-              }}
-            />
+            <Stack>
+              <div style={{ maxHeight: 400, width: "100%" }}>
+                <DataGrid
+                  {...dataGridProps}
+                  columns={columns}
+                  filterModel={undefined}
+                  autoHeight
+                  pageSizeOptions={[10, 20, 50, 100]}
+                  // sx={{
+                  //   display: "flex",
+                  //   flexDirection: "column-reverse",
+                  //   ...dataGridProps.sx,
+                  //   "& .MuiDataGrid-columnHeaders": {
+                  //     backgroundColor: "#121212",
+                  //   },
+                  // }}
+                  slots={{
+                    footer: function CustomFooter() {
+                      const columnsToSum = [
+                        "solde_ouverture",
+                        "ventes",
+                        "depenses",
+                        "solde_cloture",
+                      ];
+
+                      const totalSums = calculateColumnSum(
+                        dataGridProps.rows as ICaisseLogs[],
+                        columnsToSum
+                      );
+
+                      // Render the custom summary row
+                      return (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            marginTop: "12px",
+                            padding: "8px",
+                            paddingTop: "12px",
+                            paddingBottom: "12px",
+                            border: "1px solid",
+                            borderColor: "#A73A38",
+                            borderRadius: "6px",
+                          }}
+                        >
+                          <Typography>Totaux</Typography>
+                          {columns.map((column) => (
+                            <div
+                              key={column.field}
+                              style={{
+                                flex: 1,
+                                textAlign: "center",
+                                color:
+                                  column.field === "ventes" ||
+                                  column.field === "depenses" ||
+                                  column.field === "solde_ouverture" ||
+                                  column.field === "solde_cloture"
+                                    ? "#FFF"
+                                    : "#1E1E1E",
+                              }}
+                            >
+                              <Typography> {column.headerName}:</Typography>
+                              <br />
+                              <Typography>
+                                {formatter.format(totalSums[column.field])}
+                              </Typography>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    },
+                  }}
+                />
+              </div>
+            </Stack>
           </List>
         </Grid>
       </Grid>
