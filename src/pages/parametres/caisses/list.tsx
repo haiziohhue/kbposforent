@@ -11,6 +11,9 @@ import { useTable } from "@refinedev/react-table";
 import {
   Button,
   IconButton,
+  Menu,
+  MenuItem,
+  Popover,
   Stack,
   Table,
   TableBody,
@@ -22,7 +25,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import {
+  Delete,
+  Edit,
+  FileCopy,
+  MoreVert,
+  Security,
+} from "@mui/icons-material";
 import { CreateButton, EditButton, List, SaveButton } from "@refinedev/mui";
 import { CreateCaisse } from "./create";
 
@@ -45,6 +54,8 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
   const {
     modal: { show: showCreateModal },
   } = createModalFormProps;
+
+  //
   const columns = React.useMemo<ColumnDef<ICaisse>[]>(
     () => [
       {
@@ -64,6 +75,7 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
         id: "actions",
         header: "Actions",
         accessorKey: "id",
+        type: "actions",
         cell: function render({ row, getValue }) {
           return (
             <Stack direction="row">
@@ -177,6 +189,7 @@ export const ListCaisses: React.FC<IResourceComponentsProps> = () => {
           }}
         >
           <SaveButton type="submit">Enregistrer</SaveButton>
+          {/* <Button onClick={() => ""}>Modifier Mot de passe</Button> */}
           <Button onClick={() => setId(undefined)}>X</Button>
         </TableCell>
       </TableRow>

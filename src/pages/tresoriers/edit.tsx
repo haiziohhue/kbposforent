@@ -1,10 +1,11 @@
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { HttpError, useGetIdentity, useList } from "@refinedev/core";
 import {
   Autocomplete,
   Box,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,6 +14,8 @@ import {
   FormLabel,
   IconButton,
   InputAdornment,
+  List,
+  ListItemText,
   OutlinedInput,
   Stack,
   TextField,
@@ -21,7 +24,7 @@ import {
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { Controller } from "react-hook-form";
 import { CloseOutlined } from "@mui/icons-material";
-import { ICatDepense, ITresor, IUser } from "../../interfaces";
+import { ICaisse, ICatDepense, ITresor, IUser } from "../../interfaces";
 
 export const EditDepense: React.FC<
   UseModalFormReturnType<ITresor, HttpError, ITresor>
@@ -35,6 +38,9 @@ export const EditDepense: React.FC<
   formState: { errors },
   setValue,
 }) => {
+  const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
+    undefined
+  );
   const { autocompleteProps: userAutocompleteProps } = useAutocomplete<IUser>({
     resource: "users",
   });
@@ -52,14 +58,43 @@ export const EditDepense: React.FC<
   const userId = user && user?.id;
   //
   //
+  const { data: caisses, isLoading } = useList<ICaisse>({
+    resource: "caisses",
+  });
+
+  //
+  const handleListItemClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    caisseId: ICaisse
+  ) => {
+    setSelectedCaisse(caisseId);
+  };
+
+  //
+  useEffect(() => {
+    const caisseId = localStorage.getItem("selectedCaisseId");
+    if (caisseId) {
+      const parsedCaisseId = parseInt(caisseId, 10);
+      const foundCaisse = caisses?.data?.find(
+        (caisse) => caisse?.id === parsedCaisseId
+      );
+      setSelectedCaisse(foundCaisse || undefined);
+    } else {
+      setSelectedCaisse(undefined);
+    }
+  }, [caisses?.data]);
+  //
+  //
   useEffect(() => {
     setValue("type", "Dépense");
     setValue(
       "user",
       users?.data.find((user: IUser) => user.id === userId)
     );
-  }, [setValue, userId, users?.data]);
+    setValue("caisse", selectedCaisse);
+  }, [selectedCaisse, setValue, userId, users?.data]);
   //
+
   return (
     <Dialog
       open={visible}
@@ -99,6 +134,65 @@ export const EditDepense: React.FC<
           >
             <form onSubmit={handleSubmit(onFinish)}>
               <Stack gap="10px" marginTop="10px">
+                <Stack>
+                  {/* Caisse */}
+                  {user?.role?.name === "Caissier" ? (
+                    <Button
+                      variant="contained"
+                      sx={{
+                        borderRadius: "30px",
+                        marginX: 20,
+                      }}
+                      disabled={isLoading}
+                    >
+                      {selectedCaisse?.nom}
+                      <input
+                        type="hidden"
+                        {...register("caisse")}
+                        // value={caisse}
+                      />
+                    </Button>
+                  ) : (
+                    <List
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {caisses?.data?.map((caisse: ICaisse) => (
+                        <Button
+                          key={caisse.id}
+                          onClick={(
+                            event: React.MouseEvent<
+                              HTMLButtonElement,
+                              MouseEvent
+                            >
+                          ) => handleListItemClick(event, caisse)}
+                          variant={
+                            selectedCaisse?.id === caisse?.id
+                              ? "contained"
+                              : "outlined"
+                          }
+                          sx={{
+                            borderRadius: "30px",
+                          }}
+                          disabled={isLoading}
+                        >
+                          <ListItemText primary={caisse?.nom} />
+                          <input
+                            type="hidden"
+                            {...register("caisse")}
+                            // value={caisse}
+                          />
+                        </Button>
+                      ))}
+                    </List>
+                  )}
+                </Stack>
                 <FormControl>
                   <FormLabel required>Category</FormLabel>
                   <Controller
