@@ -133,41 +133,63 @@ export const CreateDepense: React.FC<
             <form onSubmit={handleSubmit(onFinish)}>
               <Stack gap="10px" marginTop="10px">
                 <Stack>
-                  <List
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      gap: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    {caisses?.data?.map((caisse: ICaisse) => (
-                      <Button
-                        key={caisse.id}
-                        onClick={(
-                          event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        ) => handleListItemClick(event, caisse)}
-                        variant={
-                          selectedCaisse?.id === caisse?.id
-                            ? "contained"
-                            : "outlined"
-                        }
-                        sx={{
-                          borderRadius: "30px",
-                        }}
-                        disabled={isLoading}
-                      >
-                        <ListItemText primary={caisse?.nom} />
-                        <input
-                          type="hidden"
-                          {...register("caisse")}
-                          // value={caisse}
-                        />
-                      </Button>
-                    ))}
-                  </List>
+                  {/* Caisse */}
+                  {user?.role?.name === "Caissier" ? (
+                    <Button
+                      variant="contained"
+                      sx={{
+                        borderRadius: "30px",
+                        marginX: 20,
+                      }}
+                      disabled={isLoading}
+                    >
+                      {selectedCaisse?.nom}
+                      <input
+                        type="hidden"
+                        {...register("caisse")}
+                        // value={caisse}
+                      />
+                    </Button>
+                  ) : (
+                    <List
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {caisses?.data?.map((caisse: ICaisse) => (
+                        <Button
+                          key={caisse.id}
+                          onClick={(
+                            event: React.MouseEvent<
+                              HTMLButtonElement,
+                              MouseEvent
+                            >
+                          ) => handleListItemClick(event, caisse)}
+                          variant={
+                            selectedCaisse?.id === caisse?.id
+                              ? "contained"
+                              : "outlined"
+                          }
+                          sx={{
+                            borderRadius: "30px",
+                          }}
+                          disabled={isLoading}
+                        >
+                          <ListItemText primary={caisse?.nom} />
+                          <input
+                            type="hidden"
+                            {...register("caisse")}
+                            // value={caisse}
+                          />
+                        </Button>
+                      ))}
+                    </List>
+                  )}
                 </Stack>
                 <FormControl>
                   <FormLabel required>Category</FormLabel>

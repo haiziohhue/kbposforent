@@ -449,9 +449,17 @@ export const EditAchat: React.FC<
       etat: "Validé",
     };
     try {
-      const response = await axios.put(`${API_URL}/api/achats/${id}`, {
-        data: payload,
-      });
+      const response = await axios.put(
+        `${API_URL}/api/achats/${id}`,
+        {
+          data: payload,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+          },
+        }
+      );
       console.log("Request succeeded:", response.status);
       close();
     } catch (error) {

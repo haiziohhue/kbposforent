@@ -86,7 +86,7 @@ export const OpenCaisse: React.FC<
       caisse: caisseId,
       password: formData.password,
       solde_ouverture: formData.solde_ouverture,
-      solde_cloture: formData.solde_ouverture,
+      // solde_cloture: formData.solde_ouverture,
       etat: "Ouverte",
     };
     console.log(payload);

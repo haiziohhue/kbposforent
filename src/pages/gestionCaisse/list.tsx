@@ -95,6 +95,16 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
+  console.log(dataGridProps.rows);
+  //
+  function calculateTotal(data) {
+    if (data && data.ventes !== undefined && data.depenses !== undefined) {
+      const total = data.ventes + data.solde_ouverture - data.depenses;
+      return total;
+    }
+    return null;
+  }
+  //
   const columns = React.useMemo<GridColDef<ICaisseLogs>[]>(
     () => [
       {
@@ -234,22 +244,56 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
         flex: 1,
         minWidth: 100,
       },
+      // {
+      //   field: "solde_cloture",
+      //   headerName: "Totale CA",
+      //   headerAlign: "center",
+      //   align: "center",
+      //   renderCell: function render({ row }) {
+      //     return (
+      //       <NumberField
+      //         options={{
+      //           currency: "DZD",
+      //           style: "currency",
+      //         }}
+      //         value={row?.solde_cloture}
+      //         sx={{ fontSize: "12px" }}
+      //       />
+      //     );
+      //   },
+      //   flex: 1,
+      //   minWidth: 150,
+      // },
       {
         field: "solde_cloture",
         headerName: "Totale CA",
         headerAlign: "center",
         align: "center",
         renderCell: function render({ row }) {
-          return (
-            <NumberField
-              options={{
-                currency: "DZD",
-                style: "currency",
-              }}
-              value={row?.solde_cloture}
-              sx={{ fontSize: "12px" }}
-            />
-          );
+          if (row?.solde_cloture === null) {
+            const total = calculateTotal(row);
+            return (
+              <NumberField
+                options={{
+                  currency: "DZD",
+                  style: "currency",
+                }}
+                value={total !== null ? total : 0}
+                sx={{ fontSize: "12px" }}
+              />
+            );
+          } else {
+            return (
+              <NumberField
+                options={{
+                  currency: "DZD",
+                  style: "currency",
+                }}
+                value={row?.solde_cloture}
+                sx={{ fontSize: "12px" }}
+              />
+            );
+          }
         },
         flex: 1,
         minWidth: 150,
@@ -529,14 +573,6 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                   filterModel={undefined}
                   autoHeight
                   pageSizeOptions={[10, 20, 50, 100]}
-                  // sx={{
-                  //   display: "flex",
-                  //   flexDirection: "column-reverse",
-                  //   ...dataGridProps.sx,
-                  //   "& .MuiDataGrid-columnHeaders": {
-                  //     backgroundColor: "#121212",
-                  //   },
-                  // }}
                   slots={{
                     footer: function CustomFooter() {
                       const columnsToSum = [
@@ -550,7 +586,17 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                         dataGridProps.rows as ICaisseLogs[],
                         columnsToSum
                       );
-
+                      // Calculate the custom total for the "Totale CA" column
+                      let customTotalCA: number | null = 0;
+                      if (totalSums["solde_cloture"] === 0) {
+                        customTotalCA = calculateTotal({
+                          ventes: totalSums["ventes"],
+                          solde_ouverture: totalSums["solde_ouverture"],
+                          depenses: totalSums["depenses"],
+                        });
+                      } else {
+                        customTotalCA = totalSums["solde_cloture"];
+                      }
                       // Render the custom summary row
                       return (
                         <div
@@ -585,9 +631,17 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                             >
                               <Typography> {column.headerName}:</Typography>
                               <br />
-                              <Typography>
-                                {formatter.format(totalSums[column.field])}
-                              </Typography>
+                              {column.field === "solde_cloture" ? (
+                                // Display the custom total for the "Totale CA" column
+                                <Typography>
+                                  {formatter.format(customTotalCA)}
+                                </Typography>
+                              ) : (
+                                // Display totals for other columns
+                                <Typography>
+                                  {formatter.format(totalSums[column.field])}
+                                </Typography>
+                              )}
                             </div>
                           ))}
                         </div>

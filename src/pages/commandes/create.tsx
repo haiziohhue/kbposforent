@@ -116,7 +116,6 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   // Cart
   const { cartState, dispatch } = useContext(CartContext);
   const { cartItems } = cartState;
-  console.log(cartItems);
 
   const handleRemoveItem = (itemId: number) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
@@ -616,28 +615,30 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
             </Button>
           </Box>
         </form>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            my: 3,
-          }}
-        >
-          <Button
-            variant="outlined"
-            onClick={() => showCloseModal()}
-            startIcon={<RemoveShoppingCartOutlined color="warning" />}
+        {(user?.role?.name === "Admin" || user?.role?.name === "Caissier") && (
+          <Box
             sx={{
-              color: "#ff9800",
-              borderColor: "#ff9800",
-              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              my: 3,
             }}
           >
-            clôturer la caisse
-          </Button>
-        </Box>
+            <Button
+              variant="outlined"
+              onClick={() => showCloseModal()}
+              startIcon={<RemoveShoppingCartOutlined color="warning" />}
+              sx={{
+                color: "#ff9800",
+                borderColor: "#ff9800",
+                width: "100%",
+              }}
+            >
+              clôturer la caisse
+            </Button>
+          </Box>
+        )}
       </Create>
     </>
   );
