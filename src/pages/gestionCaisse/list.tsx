@@ -95,7 +95,7 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
+
   //
   function calculateTotal(data) {
     if (data && data.ventes !== undefined && data.depenses !== undefined) {
@@ -381,6 +381,7 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
         0
       );
       totalSums[columnName] = columnSum;
+
       return totalSums;
     }, {});
   }
@@ -586,17 +587,27 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                         dataGridProps.rows as ICaisseLogs[],
                         columnsToSum
                       );
+
                       // Calculate the custom total for the "Totale CA" column
                       let customTotalCA: number | null = 0;
-                      if (totalSums["solde_cloture"] === 0) {
-                        customTotalCA = calculateTotal({
-                          ventes: totalSums["ventes"],
-                          solde_ouverture: totalSums["solde_ouverture"],
-                          depenses: totalSums["depenses"],
-                        });
-                      } else {
-                        customTotalCA = totalSums["solde_cloture"];
-                      }
+
+                      customTotalCA = calculateTotal({
+                        ventes: totalSums["ventes"],
+                        solde_ouverture: totalSums["solde_ouverture"],
+                        depenses: totalSums["depenses"],
+                      });
+
+                      // let customTotalCA: number | null = 0;
+                      // if (totalSums["solde_cloture"] === 0) {
+                      //   customTotalCA = calculateTotal({
+                      //     ventes: totalSums["ventes"],
+                      //     solde_ouverture: totalSums["solde_ouverture"],
+                      //     depenses: totalSums["depenses"],
+                      //   });
+                      // } else {
+                      //   customTotalCA = totalSums["solde_cloture"];
+                      // }
+
                       // Render the custom summary row
                       return (
                         <div
