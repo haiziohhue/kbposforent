@@ -22,7 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Create } from "@refinedev/mui";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+// import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { ICaisse, ICaisseLogs, IUser } from "../../interfaces";
 import { API_URL, TOKEN_KEY } from "../../constants";
 import axios from "axios";
@@ -58,13 +58,13 @@ export const OpenCaisse: React.FC<
     },
   };
   //
-  const [showPassword, setshowPassword] = React.useState<boolean>(false);
-  const handleClickShowPassword = () => setshowPassword((show) => !show);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
+  // const [showPassword, setshowPassword] = React.useState<boolean>(false);
+  // const handleClickShowPassword = () => setshowPassword((show) => !show);
+  // const handleMouseDownPassword = (
+  //   event: React.MouseEvent<HTMLButtonElement>
+  // ) => {
+  //   event.preventDefault();
+  // };
   //
 
   const [formData, setFormData] = React.useState({
@@ -177,7 +177,7 @@ export const OpenCaisse: React.FC<
                 </Select>
               </FormControl>
               {/* Password */}
-              <FormControl
+              {/* <FormControl
                 variant="outlined"
                 sx={{
                   mb: 0,
@@ -209,7 +209,7 @@ export const OpenCaisse: React.FC<
                   }
                   label="Mot de Passe"
                 />
-              </FormControl>
+              </FormControl> */}
             </Stack>
             <Stack gap={4}>
               <Typography

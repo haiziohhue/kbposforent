@@ -8,16 +8,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
   TextField,
   Typography,
 } from "@mui/material";
 import { SaveButton } from "@refinedev/mui";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+// import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const CreateCaisse: React.FC<
   UseModalFormReturnType<ICaisse, HttpError, ICaisse>
@@ -28,13 +23,13 @@ export const CreateCaisse: React.FC<
   formState: { errors },
 }) => {
   //
-  const [showPassword, setshowPassword] = React.useState<boolean>(false);
-  const handleClickShowPassword = () => setshowPassword((show) => !show);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
+  // const [showPassword, setshowPassword] = React.useState<boolean>(false);
+  // const handleClickShowPassword = () => setshowPassword((show) => !show);
+  // const handleMouseDownPassword = (
+  //   event: React.MouseEvent<HTMLButtonElement>
+  // ) => {
+  //   event.preventDefault();
+  // };
   //
   return (
     <Dialog
@@ -76,7 +71,7 @@ export const CreateCaisse: React.FC<
             }}
           />
           {/* Password */}
-          <FormControl
+          {/* <FormControl
             variant="outlined"
             sx={{
               mb: 0,
@@ -116,7 +111,7 @@ export const CreateCaisse: React.FC<
             >
               min. 6 caractères
             </Typography>
-          </FormControl>
+          </FormControl> */}
         </Box>
       </DialogContent>
       <DialogActions>
