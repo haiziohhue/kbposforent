@@ -205,6 +205,7 @@ export interface IAchat {
   etat: "Validé" | "Annulé";
   total: number;
   note: string;
+  ingredients?: IIngredients[];
 }
 
 export interface IChef {

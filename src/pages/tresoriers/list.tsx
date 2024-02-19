@@ -529,19 +529,27 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
                 </Button>
               </div>
             </Popover>
-            <DataGrid
-              {...dataGridProps}
-              columns={columns}
-              filterModel={undefined}
-              autoHeight
-              pageSizeOptions={[10, 20, 50, 100]}
+            <Box
               sx={{
-                ...dataGridProps.sx,
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
+                height: 150 + 50 * dataGridProps?.rows?.length,
+                maxHeight: 500,
+                overflow: "auto",
               }}
-            />
+            >
+              <DataGrid
+                {...dataGridProps}
+                columns={columns}
+                filterModel={undefined}
+                autoHeight
+                pageSizeOptions={[10, 20, 50, 100]}
+                sx={{
+                  ...dataGridProps.sx,
+                  "& .MuiDataGrid-row": {
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            </Box>
           </List>
         </Grid>
       </Grid>

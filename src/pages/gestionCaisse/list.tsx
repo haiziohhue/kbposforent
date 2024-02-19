@@ -567,7 +567,13 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
               </div>
             </Popover>
             <Stack>
-              <div style={{ maxHeight: 400, width: "100%" }}>
+              <Box
+                sx={{
+                  height: 150 + 80 * dataGridProps?.rows?.length,
+                  maxHeight: 500,
+                  overflow: "auto",
+                }}
+              >
                 <DataGrid
                   {...dataGridProps}
                   columns={columns}
@@ -660,7 +666,7 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                     },
                   }}
                 />
-              </div>
+              </Box>
             </Stack>
           </List>
         </Grid>

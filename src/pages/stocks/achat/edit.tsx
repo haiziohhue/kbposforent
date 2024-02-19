@@ -67,6 +67,7 @@ export const EditAchat: React.FC<
   saveButtonProps,
   modal: { visible, close },
   register,
+  setValue,
   formState: { errors },
   id,
 }) => {
@@ -175,9 +176,23 @@ export const EditAchat: React.FC<
     }
   }, [id]);
   useEffect(() => {
+    setValue(
+      "ingredients",
+      articles
+        ?.filter((k) => !k.state)
+        ?.map((article) => ({
+          stock: article.article.id,
+          quantite: article.quantite,
+          cout: article.prix,
+          total: calculateSubtotal(article),
+          // date_expiration: article.date_expiration,
+        }))
+    );
+    setValue("etat", "Validé");
+    setValue("total", calculateTotal());
     fetchProduits();
     fetchBRByID();
-  }, [fetchBRByID, fetchProduits]);
+  }, [fetchBRByID, fetchProduits, setValue]);
   //
 
   //
@@ -314,47 +329,47 @@ export const EditAchat: React.FC<
         return <Typography variant="body1">{params.row.prix}</Typography>;
       },
     },
-    {
-      field: "date_expiration",
-      headerName: "Date Expiration",
-      width: 180,
-      resizable: true,
-      type: "date",
-      headerAlign: "left",
-      align: "left",
-      valueGetter: (params) => {
-        return new Date(params.row.date_expiration);
-      },
-      renderCell: (params) => {
-        if (params.row.state) {
-          return (
-            <TextField
-              type="date"
-              value={dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
-              fullWidth
-              onChange={(e) => {
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i
-                      ? {
-                          ...row,
-                          date_expiration: dayjs(e.target.value).toISOString(),
-                        }
-                      : row
-                  ),
-                });
-              }}
-            />
-          );
-        }
-        return (
-          <Typography variant="body1">
-            {dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
-          </Typography>
-        );
-      },
-    },
+    // {
+    //   field: "date_expiration",
+    //   headerName: "Date Expiration",
+    //   width: 180,
+    //   resizable: true,
+    //   type: "date",
+    //   headerAlign: "left",
+    //   align: "left",
+    //   valueGetter: (params) => {
+    //     return new Date(params.row.date_expiration);
+    //   },
+    //   renderCell: (params) => {
+    //     if (params.row.state) {
+    //       return (
+    //         <TextField
+    //           type="date"
+    //           value={dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
+    //           fullWidth
+    //           onChange={(e) => {
+    //             dispatch({
+    //               type: "SET_ARTICLES",
+    //               payload: articles.map((row, i) =>
+    //                 params.row.id === i
+    //                   ? {
+    //                       ...row,
+    //                       date_expiration: dayjs(e.target.value).toISOString(),
+    //                     }
+    //                   : row
+    //               ),
+    //             });
+    //           }}
+    //         />
+    //       );
+    //     }
+    //     return (
+    //       <Typography variant="body1">
+    //         {dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
+    //       </Typography>
+    //     );
+    //   },
+    // },
     // {
     //   field: "total",
     //   headerName: "Total",
@@ -516,11 +531,11 @@ export const EditAchat: React.FC<
                 <FormLabel required>Source</FormLabel>
                 <OutlinedInput
                   id="Nom"
-                  value={br?.source}
+                  // value={br?.source}
                   {...register("source", {
                     required: "This field is required",
                   })}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                 />
                 {errors.source && (
                   <FormHelperText error>{errors.source.message}</FormHelperText>
@@ -530,9 +545,9 @@ export const EditAchat: React.FC<
                 <FormLabel>Note</FormLabel>
                 <OutlinedInput
                   id="Note"
-                  value={br?.note}
+                  // value={br?.note}
                   {...register("note")}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                 />
                 {errors.note && (
                   <FormHelperText error>{errors.note.message}</FormHelperText>
@@ -591,12 +606,19 @@ export const EditAchat: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button
+          {/* <Button
             {...saveButtonProps}
             variant="contained"
             onClick={() => {
               onFinishHandler();
             }}
+            sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
+          >
+            Enregistrer
+          </Button> */}
+          <Button
+            {...saveButtonProps}
+            variant="contained"
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >
             Enregistrer

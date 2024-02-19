@@ -618,7 +618,13 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                 </Button>
               </div>
             </Popover>
-            <Box sx={{ height: 450 }}>
+            <Box
+              sx={{
+                height: 150 + 50 * dataGridProps?.rows?.length,
+                maxHeight: 500,
+                overflow: "auto",
+              }}
+            >
               <DataGrid
                 {...dataGridProps}
                 columns={columns}

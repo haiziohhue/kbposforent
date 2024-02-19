@@ -14,8 +14,8 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
   setFilters,
   filters,
 }) => {
-  const [filterCategories, setFilterCategories] = useState<string[]>(
-    getDefaultFilter("categorie.id", filters, "in") ?? []
+  const [filterCategories, setFilterCategories] = useState<string>(
+    getDefaultFilter("categorie.id", filters, "in")?.[0] || ""
   );
 
   const { data: categories, isLoading } = useList<ICategory>({
@@ -33,21 +33,9 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
   }, [filterCategories]);
 
   const toggleFilterCategory = (clickedCategory: string) => {
-    const target = filterCategories.findIndex(
-      (category) => category === clickedCategory
+    setFilterCategories((category) =>
+      category === clickedCategory ? "" : clickedCategory
     );
-
-    if (target < 0) {
-      setFilterCategories((prevCategories) => {
-        return [...prevCategories, clickedCategory];
-      });
-    } else {
-      const copyFilterCategories = [...filterCategories];
-
-      copyFilterCategories.splice(target, 1);
-
-      setFilterCategories(copyFilterCategories);
-    }
   };
 
   return (
@@ -55,7 +43,7 @@ export const CategoryFilter: React.FC<ProductItemProps> = ({
       <Grid container columns={6} marginTop="10px">
         <Grid item p={0.5}>
           <LoadingButton
-            onClick={() => setFilterCategories([])}
+            onClick={() => setFilterCategories("")}
             variant={filterCategories.length === 0 ? "contained" : "outlined"}
             size="small"
             loading={isLoading}

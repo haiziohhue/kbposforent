@@ -178,7 +178,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
               </Hidden>
             </Stack>
             <Grid container>
-              <Card
+              {/* <Card
                 onClick={() => showCreateModal()}
                 sx={{
                   display: "flex",
@@ -234,7 +234,7 @@ export const MenusList: React.FC<IResourceComponentsProps> = () => {
                   </Typography>
                   <Add sx={{ width: "60px", height: "60px" }} />
                 </CardContent>
-              </Card>
+              </Card> */}
               {menus.length > 0 ? (
                 menus
                   .filter((menu: IMenu) => menu.active === true)

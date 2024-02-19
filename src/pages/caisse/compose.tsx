@@ -29,6 +29,7 @@ export const CreateMenuCompose: React.FC<
   const [selectedIngredients, setSelectedIngredients] = useState<any[]>([]);
   const [responseData, setResponseData] = useState<any[]>([]);
   const url = "/uploads/menu_Compose_cb43bf60d1.png";
+
   useEffect(() => {
     axios
       .get(

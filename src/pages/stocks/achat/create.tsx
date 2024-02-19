@@ -59,6 +59,7 @@ export const CreateAchat: React.FC<
   saveButtonProps,
   modal: { visible, close },
   register,
+  setValue,
   formState: { errors },
 }) => {
   //
@@ -87,7 +88,11 @@ export const CreateAchat: React.FC<
   };
   // Calculate the subtotal for each article
   const calculateSubtotal = (article) => {
-    return article.prix * article.quantite;
+    const prix = typeof article.prix === "number" ? article.prix : 0;
+    const quantite =
+      typeof article.quantite === "number" ? article.quantite : 0;
+
+    return prix * quantite;
   };
 
   // Calculate the total for all items in the articles
@@ -98,12 +103,14 @@ export const CreateAchat: React.FC<
     }
     return total;
   };
+
   //
   const formattedNumber = new Intl.NumberFormat("en-DZ", {
     style: "currency",
     currency: "DZD",
     minimumFractionDigits: 2,
   }).format(calculateTotal());
+
   //delete row by index
   const deleteRow = (index: unknown) => {
     dispatch({
@@ -111,6 +118,7 @@ export const CreateAchat: React.FC<
       payload: articles.filter((_, i) => i !== index),
     });
   };
+
   //Get Products
   const fetchProduits = useCallback(async () => {
     try {
@@ -120,7 +128,7 @@ export const CreateAchat: React.FC<
         },
       });
       const data = await res.json();
-      const produitsData = data.data.map((e) => ({
+      const produitsData = data?.data?.map((e) => ({
         id: e.id,
         ...e.attributes,
       }));
@@ -129,9 +137,23 @@ export const CreateAchat: React.FC<
       console.log(err);
     }
   }, []);
+
   useEffect(() => {
+    setValue(
+      "ingredients",
+      articles
+        ?.filter((k) => !k.state)
+        ?.map((article) => ({
+          stock: article.article.id,
+          quantite: article.quantite,
+          cout: article.prix,
+          total: calculateSubtotal(article),
+        }))
+    );
+    setValue("etat", "Validé");
+    setValue("total", calculateTotal());
     fetchProduits();
-  }, []);
+  }, [articles, setValue]);
   //
 
   //
@@ -266,47 +288,6 @@ export const CreateAchat: React.FC<
         return <Typography variant="body1">{params.row.prix}</Typography>;
       },
     },
-    {
-      field: "date_expiration",
-      headerName: "Date Expiration",
-      width: 180,
-      resizable: true,
-      type: "date",
-      headerAlign: "left",
-      align: "left",
-      valueGetter: (params) => {
-        return new Date(params.row.date_expiration);
-      },
-      renderCell: (params) => {
-        if (params.row.state) {
-          return (
-            <TextField
-              type="date"
-              value={dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
-              fullWidth
-              onChange={(e) => {
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
-                    params.row.id === i
-                      ? {
-                          ...row,
-                          date_expiration: dayjs(e.target.value).toISOString(),
-                        }
-                      : row
-                  ),
-                });
-              }}
-            />
-          );
-        }
-        return (
-          <Typography variant="body1">
-            {dayjs(params.row.date_expiration).format("YYYY-MM-DD")}
-          </Typography>
-        );
-      },
-    },
 
     {
       field: "total",
@@ -343,7 +324,7 @@ export const CreateAchat: React.FC<
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
-                        payload: articles.map((row, i) =>
+                        payload: articles?.map((row, i) =>
                           params.row.id === i ? { ...row, state: false } : row
                         ),
                       });
@@ -384,7 +365,7 @@ export const CreateAchat: React.FC<
           quantite: article.quantite,
           cout: article.prix,
           total: calculateSubtotal(article),
-          date_expiration: article.date_expiration,
+          // date_expiration: article.date_expiration,
         })),
       total: calculateTotal(),
       etat: "Validé",
@@ -459,11 +440,11 @@ export const CreateAchat: React.FC<
                 <FormLabel required>Source</FormLabel>
                 <OutlinedInput
                   id="Nom"
-                  value={br.source}
+                  // value={br.source}
                   {...register("source", {
                     required: "This field is required",
                   })}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                 />
                 {errors.source && (
                   <FormHelperText error>{errors.source.message}</FormHelperText>
@@ -473,9 +454,9 @@ export const CreateAchat: React.FC<
                 <FormLabel>Note</FormLabel>
                 <OutlinedInput
                   id="Note"
-                  value={br.note}
+                  // value={br.note}
                   {...register("note")}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                 />
                 {errors.note && (
                   <FormHelperText error>{errors.note.message}</FormHelperText>
@@ -543,12 +524,19 @@ export const CreateAchat: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button
+          {/* <Button
             {...saveButtonProps}
             variant="contained"
             onClick={() => {
               onFinishHandler();
             }}
+            sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
+          >
+            Enregistrer
+          </Button> */}
+          <Button
+            {...saveButtonProps}
+            variant="contained"
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >
             Enregistrer
