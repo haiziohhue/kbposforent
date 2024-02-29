@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   IResourceComponentsProps,
   BaseRecord,
@@ -18,22 +18,37 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-
 import Autocomplete from "@mui/material/Autocomplete";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import { DateRangePicker } from "react-date-range";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridPagination,
+  gridPageCountSelector,
+  useGridApiContext,
+  useGridSelector,
+} from "@mui/x-data-grid";
 import { useForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
 import { ICaisseLogs, ICaisseLogsFilterVariables } from "../../interfaces";
 import { CalendarToday } from "@mui/icons-material";
-import { Popover, Stack, Typography } from "@mui/material";
+import MuiPagination from "@mui/material/Pagination";
+import {
+  Pagination,
+  Popover,
+  Stack,
+  TablePaginationProps,
+  Typography,
+} from "@mui/material";
 import moment from "moment";
 import { CaisseStatus } from "../../components/order/CaisseStatus";
+import { ColorModeContext } from "../../contexts/color-mode";
 
 export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
+  const { mode } = useContext(ColorModeContext);
   const [periode, setPeriode] = useState([
     {
       startDate: null,
@@ -105,6 +120,31 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
     return null;
   }
   //
+  function GriddPagination({
+    page,
+    onPageChange,
+    className,
+  }: Pick<TablePaginationProps, "page" | "onPageChange" | "className">) {
+    const apiRef = useGridApiContext();
+    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+    return (
+      <Pagination
+        color="primary"
+        className={className}
+        count={dataGridProps?.paginationModel?.pageSize ?? 0}
+        page={page + 1}
+        onChange={(event, newPage) => {
+          onPageChange(event as any, newPage - 1);
+        }}
+      />
+    );
+  }
+
+  function CustomPagination(props: any) {
+    return <GridPagination ActionsComponent={GriddPagination} {...props} />;
+  }
+
   const columns = React.useMemo<GridColDef<ICaisseLogs>[]>(
     () => [
       {
@@ -569,8 +609,8 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
             <Stack>
               <Box
                 sx={{
-                  height: 150 + 80 * dataGridProps?.rows?.length,
-                  maxHeight: 500,
+                  height: 150 + 100 * dataGridProps?.rows?.length,
+                  maxHeight: 610,
                   overflow: "auto",
                 }}
               >
@@ -579,7 +619,8 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                   columns={columns}
                   filterModel={undefined}
                   autoHeight
-                  pageSizeOptions={[10, 20, 50, 100]}
+                  // pagination
+                  pageSizeOptions={[5, 10, 20, 50, 100]}
                   slots={{
                     footer: function CustomFooter() {
                       const columnsToSum = [
@@ -603,68 +644,76 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                         depenses: totalSums["depenses"],
                       });
 
-                      // let customTotalCA: number | null = 0;
-                      // if (totalSums["solde_cloture"] === 0) {
-                      //   customTotalCA = calculateTotal({
-                      //     ventes: totalSums["ventes"],
-                      //     solde_ouverture: totalSums["solde_ouverture"],
-                      //     depenses: totalSums["depenses"],
-                      //   });
-                      // } else {
-                      //   customTotalCA = totalSums["solde_cloture"];
-                      // }
-
                       // Render the custom summary row
                       return (
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            marginTop: "12px",
-                            padding: "8px",
-                            paddingTop: "12px",
-                            paddingBottom: "12px",
-                            border: "1px solid",
-                            borderColor: "#A73A38",
-                            borderRadius: "6px",
-                          }}
-                        >
-                          <Typography>Totaux</Typography>
-                          {columns.map((column) => (
-                            <div
-                              key={column.field}
-                              style={{
-                                flex: 1,
-                                textAlign: "center",
-                                color:
-                                  column.field === "ventes" ||
-                                  column.field === "depenses" ||
-                                  column.field === "solde_ouverture" ||
-                                  column.field === "solde_cloture"
-                                    ? "#FFF"
-                                    : "#1E1E1E",
-                              }}
-                            >
-                              <Typography> {column.headerName}:</Typography>
-                              <br />
-                              {column.field === "solde_cloture" ? (
-                                // Display the custom total for the "Totale CA" column
-                                <Typography>
-                                  {formatter.format(customTotalCA)}
-                                </Typography>
-                              ) : (
-                                // Display totals for other columns
-                                <Typography>
-                                  {formatter.format(totalSums[column.field])}
-                                </Typography>
-                              )}
-                            </div>
-                          ))}
-                        </div>
+                        <>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              marginTop: "12px",
+                              padding: "8px",
+                              paddingTop: "12px",
+                              paddingBottom: "12px",
+                              border: "1px solid",
+                              borderColor: "#EF5350",
+                              borderRadius: "6px",
+                            }}
+                          >
+                            <Typography>Totaux</Typography>
+                            {columns.map((column) => (
+                              <div
+                                key={column.field}
+                                style={{
+                                  flex: 1,
+                                  textAlign: "center",
+                                  color:
+                                    column.field === "ventes" ||
+                                    column.field === "depenses" ||
+                                    column.field === "solde_ouverture" ||
+                                    column.field === "solde_cloture"
+                                      ? mode === "dark"
+                                        ? "#FFF"
+                                        : "#000"
+                                      : "transparent",
+                                }}
+                              >
+                                <Typography> {column.headerName}:</Typography>
+                                <br />
+                                {column.field === "solde_cloture" ? (
+                                  // Display the custom total for the "Totale CA" column
+                                  <Typography>
+                                    {formatter.format(customTotalCA)}
+                                  </Typography>
+                                ) : (
+                                  // Display totals for other columns
+                                  <Typography>
+                                    {formatter.format(totalSums[column.field])}
+                                  </Typography>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                          {/* <Pagination
+                            count={Math.ceil(
+                              dataGridProps?.rows?.length /
+                                (dataGridProps?.paginationModel?.pageSize ?? 1)
+                            )}
+                            page={dataGridProps?.paginationModel?.page ?? 0 + 1}
+                            onChange={(event, page) => {
+                              dataGridProps.setPage(page - 1);
+                            }}
+                          /> */}
+                          {CustomPagination(dataGridProps)}
+                        </>
                       );
                     },
                   }}
+                  // initialState={{
+                  //   ...(dataGridProps as any).initialState,
+                  //   pagination: { paginationModel: { pageSize: 10 } },
+                  // }}
                 />
               </Box>
             </Stack>

@@ -63,6 +63,7 @@ export const RestBC: React.FC<
   saveButtonProps,
   formState: { errors },
   modal: { visible, close },
+  setValue,
   id,
 }) => {
   //
@@ -75,7 +76,7 @@ export const RestBC: React.FC<
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
-      quantite: 1,
+      quantite: 0,
       stock: 0,
       reste: 0,
       state: true,
@@ -88,7 +89,7 @@ export const RestBC: React.FC<
   const deleteRow = (index) => {
     dispatch({
       type: "SET_ARTICLES",
-      payload: articles.filter((_, i) => i !== index),
+      payload: articles?.filter((_, i) => i !== index),
     });
   };
   //
@@ -112,6 +113,7 @@ export const RestBC: React.FC<
       console.log(err);
     }
   }, []);
+
   //Get BC By id
   const fetchBCByID = useCallback(async () => {
     try {
@@ -149,6 +151,7 @@ export const RestBC: React.FC<
       console.log(err);
     }
   }, [id]);
+
   // Get Chefs
   const fetchChefs = useCallback(async () => {
     try {
@@ -177,6 +180,7 @@ export const RestBC: React.FC<
     fetchChefs();
   }, [fetchBCByID, fetchChefs, fetchProduits]);
   //
+
   //
   const columns: GridColDef[] = [
     {
@@ -350,7 +354,7 @@ export const RestBC: React.FC<
     },
   ];
   //
-  const onFinishHandler = async () => {
+  const onFinishHandler = useCallback(async () => {
     const payload = {
       id: id,
       ingredients: articles
@@ -379,7 +383,8 @@ export const RestBC: React.FC<
     } catch (error) {
       console.error("Request failed:", error);
     }
-  };
+  }, [id, articles, close]);
+
   //
   return (
     <Dialog

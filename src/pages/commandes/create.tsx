@@ -47,6 +47,7 @@ import {
 } from "../../interfaces";
 import { API_URL, TOKEN_KEY } from "../../constants";
 import { CloseCaisse } from "../../pages/gestionCaisse/close";
+import { useCaisseContext } from "../../contexts/caisse/caisseContextUtils";
 
 export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   const { data: user } = useGetIdentity<IUser>();
@@ -78,15 +79,20 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
   });
   //
   const userId = user && user?.id;
+
+  //
+  const { selectedCaisseId } = useCaisseContext();
   //
 
   const [selectedCaisse, setSelectedCaisse] = useState<ICaisse | undefined>(
     undefined
   );
+  const [notes, setNotes] = React.useState({});
+
+  //
   useEffect(() => {
-    const caisseId = localStorage.getItem("selectedCaisseId");
-    if (caisseId) {
-      const parsedCaisseId = parseInt(caisseId, 10);
+    if (selectedCaisseId) {
+      const parsedCaisseId = parseInt(String(selectedCaisseId), 10);
       const foundCaisse = caisses?.data?.find(
         (caisse) => caisse?.id === parsedCaisseId
       );
@@ -94,7 +100,8 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
     } else {
       setSelectedCaisse(undefined);
     }
-  }, [caisses?.data]);
+  }, [caisses?.data, selectedCaisseId]);
+
   //
   useEffect(() => {
     setValue(
@@ -127,10 +134,19 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
       payload: { id: itemId, quantity: newQuantity },
     });
   };
-
+  //
   const handleClearCart = () => {
     dispatch({ type: "CLEAR_CART" });
   };
+
+  //
+  const handleNoteChange = (itemId, newNote) => {
+    setNotes((prevNotes) => ({
+      ...prevNotes,
+      [itemId]: newNote,
+    }));
+  };
+
   // Calculate the subtotal for each item
   const calculateSubtotal = (item: ICartMenu) => {
     return item.menus?.prix * item?.quantity;
@@ -161,6 +177,7 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
           return {
             __component: "menus.commande-menu",
             menu: item?.id,
+            note: notes[item.id] || "",
             quantite: item?.quantity,
           };
         } else if (componentType === "menus.menu-compose") {
@@ -502,6 +519,20 @@ export const CreateOrder: React.FC<IResourceComponentsProps> = () => {
                                     </Typography>
                                   ))}
                                 </Box>
+                                <TextField
+                                  id={`note-${item.id}`}
+                                  label="note"
+                                  value={notes[item.id] || ""}
+                                  variant="standard"
+                                  multiline
+                                  maxRows={3}
+                                  onChange={(event) =>
+                                    handleNoteChange(
+                                      item.id,
+                                      event.target.value
+                                    )
+                                  }
+                                />
                                 <Typography
                                   sx={{
                                     fontWeight: 600,

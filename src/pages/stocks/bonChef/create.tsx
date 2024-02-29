@@ -1,11 +1,4 @@
-import {
-  Add,
-  Close,
-  CloseOutlined,
-  Delete,
-  Done,
-  Mode,
-} from "@mui/icons-material";
+import { Add, Close, CloseOutlined, Delete, Done } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -35,7 +28,6 @@ const initialState = {
   articles: [],
   produits: [],
   bc: {
-    // chef: "",
     chef: {
       chef: "",
       id: null,
@@ -64,7 +56,7 @@ export const CreateBC: React.FC<
   UseModalFormReturnType<IBC, HttpError, IBC> & {
     updateData: (newData: IBC) => void;
   }
-> = ({ saveButtonProps, modal: { visible, close }, updateData }) => {
+> = ({ saveButtonProps, modal: { visible, close }, setValue, updateData }) => {
   //
 
   const [{ articles, bc, produits }, dispatch] = useReducer(
@@ -81,7 +73,7 @@ export const CreateBC: React.FC<
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
-      quantite: 1,
+      quantite: 0,
       state: true,
       stock: 0,
     };
@@ -121,9 +113,21 @@ export const CreateBC: React.FC<
       console.log(err);
     }
   }, []);
+
   useEffect(() => {
+    setValue(
+      "ingredients",
+      articles
+        ?.filter((k) => !k.state)
+        ?.map((article) => ({
+          stock: article.article.id,
+          quantite: article.quantite,
+        }))
+    );
+    setValue("chef", bc.chef.id);
+    setValue("etat", "Validé");
     fetchProduits();
-  }, []);
+  }, [setValue, articles, bc.chef.id]);
   //
 
   //
@@ -154,7 +158,7 @@ export const CreateBC: React.FC<
                 value={params.row.article}
                 options={produits
                   .filter(
-                    (k) => !articles.map((e) => e.article.id).includes(k.id)
+                    (k) => !articles?.map((e) => e.article.id)?.includes(k.id)
                   )
                   .map((option) => {
                     return {
@@ -206,7 +210,6 @@ export const CreateBC: React.FC<
       width: 200,
       resizable: true,
       type: "number",
-
       headerAlign: "left",
       align: "left",
       renderCell: (params) => {
@@ -218,7 +221,7 @@ export const CreateBC: React.FC<
               onChange={(e) => {
                 dispatch({
                   type: "SET_ARTICLES",
-                  payload: articles.map((row, i) =>
+                  payload: articles?.map((row, i) =>
                     params.row.id === i
                       ? { ...row, quantite: +e.target.value || 0 }
                       : row
@@ -236,7 +239,6 @@ export const CreateBC: React.FC<
       width: 200,
       resizable: true,
       type: "number",
-
       headerAlign: "left",
       align: "left",
       renderCell: (params) => {
@@ -267,7 +269,7 @@ export const CreateBC: React.FC<
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
-                        payload: articles.map((row, i) =>
+                        payload: articles?.map((row, i) =>
                           params.row.id === i ? { ...row, state: false } : row
                         ),
                       });
@@ -463,18 +465,9 @@ export const CreateBC: React.FC<
           </Box>
         </DialogContent>
         <DialogActions>
-          {/* <SaveButton
-            {...saveButtonProps}
-            onClick={() => {
-              onFinishHandler();
-            }}
-          /> */}
           <Button
             {...saveButtonProps}
             variant="contained"
-            onClick={() => {
-              onFinishHandler();
-            }}
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >
             Enregistrer

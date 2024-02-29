@@ -10,6 +10,7 @@ type CartItem = {
   prix?: number;
   titre?: string;
   image?: string;
+  note?: string;
 };
 
 type CartState = {
@@ -19,6 +20,7 @@ type CartState = {
 type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: number }
+  | { type: "UPDATE_NOTE"; payload: { id: number; note: string } }
   | { type: "UPDATE_QUANTITY"; payload: { id: number; quantity: number } }
   | { type: "CLEAR_CART" }
   | { type: "SET_CART_ITEMS"; payload: CartItem[] };
@@ -86,6 +88,15 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
             : item
         ),
       };
+    case "UPDATE_NOTE": {
+      const { id, note } = action.payload;
+      return {
+        ...state,
+        cartItems: (state.cartItems || [])?.map((item) =>
+          item.id === id ? { ...item, note } : item
+        ),
+      };
+    }
     case "CLEAR_CART":
       return {
         ...state,

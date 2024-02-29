@@ -238,23 +238,29 @@ export const ListOrdes: React.FC<IResourceComponentsProps> = () => {
                   label=""
                   showInMenu
                   onClick={() => {
-                    mutate({
-                      resource: "commandes",
-                      id,
-                      values: {
-                        etat: "Validé",
+                    mutate(
+                      {
+                        resource: "commandes",
+                        id,
+                        values: {
+                          etat: "Validé",
+                        },
                       },
-                    });
-                    mutateCreate({
-                      resource: "tresoriers",
-                      values: {
-                        type: "Vente",
-                        titre: "Vente",
-                        user: row?.users_permissions_user?.id,
-                        montant: row?.total,
-                        caisse: row?.caisse?.id,
-                      },
-                    });
+                      {
+                        onSuccess: () => {
+                          mutateCreate({
+                            resource: "tresoriers",
+                            values: {
+                              type: "Vente",
+                              titre: "Vente",
+                              user: row?.users_permissions_user?.id,
+                              montant: row?.total,
+                              caisse: row?.caisse?.id,
+                            },
+                          });
+                        },
+                      }
+                    );
                   }}
                 />
 

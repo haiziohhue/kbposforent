@@ -19,7 +19,6 @@ import { HttpError } from "@refinedev/core";
 import { Create } from "@refinedev/mui";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { API_URL, TOKEN_KEY } from "../../../constants";
-import dayjs from "dayjs";
 import { IAchat } from "interfaces";
 import React, { useCallback, useEffect, useReducer } from "react";
 import ResizeDataGrid from "../../../components/reusable/ResizeDataGrid";
@@ -31,7 +30,6 @@ const initialState = {
   articles: [],
   produits: [],
   br: {
-    dateTime: dayjs(),
     source: "",
     note: "",
   },
@@ -68,6 +66,7 @@ export const CreateAchat: React.FC<
     reducer,
     initialState
   );
+
   const handleChange = (event) => {
     dispatch({
       type: "SET_BR",
@@ -79,7 +78,6 @@ export const CreateAchat: React.FC<
       article: { id: 0, label: "" },
       quantite: 0,
       prix: 0,
-      date_expiration: dayjs(),
       total: 1,
       state: true,
     };
@@ -229,12 +227,52 @@ export const CreateAchat: React.FC<
       },
     },
     {
+      field: "unite",
+      headerName: "Unite",
+      width: 120,
+      resizable: true,
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      renderCell: (params) => {
+        if (params.row.state) {
+          return (
+            <TextField
+              value={
+                params.row?.article?.value?.ingredient?.data?.attributes?.unite
+              }
+              fullWidth
+              onChange={(e) => {
+                const updatedArticles = articles?.map((row, i) =>
+                  params.row.id === i
+                    ? { ...row, article: { label: e.target.value } }
+                    : row
+                );
+                dispatch({
+                  type: "SET_ARTICLES",
+                  payload: updatedArticles,
+                });
+              }}
+              variant="outlined"
+              placeholder=""
+              disabled
+            />
+          );
+        }
+        return (
+          <Typography variant="body1">
+            {params.row?.article?.value?.ingredient?.data?.attributes?.unite ??
+              ""}
+          </Typography>
+        );
+      },
+    },
+    {
       field: "quantite",
       headerName: "Quantité",
       width: 150,
       resizable: true,
       type: "number",
-
       headerAlign: "left",
       align: "left",
       renderCell: (params) => {
@@ -258,13 +296,13 @@ export const CreateAchat: React.FC<
         return <Typography variant="body1">{params.row.quantite}</Typography>;
       },
     },
+
     {
       field: "prix",
-      headerName: "Prix",
+      headerName: "Prix Unitaire",
       width: 150,
       resizable: true,
       type: "number",
-
       headerAlign: "left",
       align: "left",
       renderCell: (params) => {
@@ -440,11 +478,11 @@ export const CreateAchat: React.FC<
                 <FormLabel required>Source</FormLabel>
                 <OutlinedInput
                   id="Nom"
-                  // value={br.source}
+                  value={br.source}
                   {...register("source", {
                     required: "This field is required",
                   })}
-                  // onChange={handleChange}
+                  onChange={handleChange}
                 />
                 {errors.source && (
                   <FormHelperText error>{errors.source.message}</FormHelperText>
@@ -454,9 +492,9 @@ export const CreateAchat: React.FC<
                 <FormLabel>Note</FormLabel>
                 <OutlinedInput
                   id="Note"
-                  // value={br.note}
+                  value={br.note}
                   {...register("note")}
-                  // onChange={handleChange}
+                  onChange={handleChange}
                 />
                 {errors.note && (
                   <FormHelperText error>{errors.note.message}</FormHelperText>
@@ -511,29 +549,10 @@ export const CreateAchat: React.FC<
                 disabled
                 fullWidth
               />
-              {/* <Typography
-                sx={{
-                  fontWeight: 800,
-                  fontSize: "16px",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                Totale: {calculateTotal()}
-              </Typography> */}
             </Box>
           </Box>
         </DialogContent>
         <DialogActions>
-          {/* <Button
-            {...saveButtonProps}
-            variant="contained"
-            onClick={() => {
-              onFinishHandler();
-            }}
-            sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
-          >
-            Enregistrer
-          </Button> */}
           <Button
             {...saveButtonProps}
             variant="contained"

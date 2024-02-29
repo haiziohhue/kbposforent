@@ -6,18 +6,14 @@ import {
   Button,
   BoxProps,
   Box,
-  Checkbox,
   Container,
   Card,
   CardContent,
   CardContentProps,
-  FormControlLabel,
   TextField,
   Typography,
   Divider,
-  Link as MuiLink,
   FormControl,
-  FormLabel,
   OutlinedInput,
   InputAdornment,
   IconButton,
@@ -340,6 +336,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           maxWidth="xs"
           sx={{
             display: "flex",
+            gap: "16px",
             flexDirection: "column",
             justifyContent: "center",
             height: "100vh",
@@ -362,6 +359,24 @@ export const LoginPage: React.FC<LoginProps> = ({
               </>
             )}
           </Box>
+          <Typography
+            fontSize={10}
+            fontWeight={600}
+            color="#BBBBBB"
+            textAlign="center"
+            sx={{
+              textTransform: "uppercase",
+            }}
+          >
+            <span
+              style={{
+                fontWeight: 400,
+              }}
+            >
+              DEVELOPED BY
+            </span>{" "}
+            KB DEVELOPPEMENT
+          </Typography>
         </Container>
       </Box>
     </FormProvider>

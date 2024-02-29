@@ -25,10 +25,8 @@ import { IBC } from "../../../interfaces";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateBC } from "./create";
 import { EditBC } from "./edit";
-import axios from "axios";
-import { API_URL } from "../../../constants";
 import moment from "moment";
-import { Button, Popover } from "@mui/material";
+import { Box, Button, Popover } from "@mui/material";
 import { BonChefAchatStatus } from "../../../components/order/BonChefAchatStatus";
 import { RestBC } from "./reste";
 
@@ -40,7 +38,7 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
   const [selectedRowId, setSelectedRowId] = React.useState<number>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [filteredData, setFilteredData] = React.useState<any[]>([]);
-  const [refresh, setRefresh] = React.useState(false);
+
   //
   const [periode, setPeriode] = React.useState([
     {
@@ -145,6 +143,23 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
           );
         },
       },
+
+      {
+        field: "updatedAt",
+        headerName: "Date de Modification",
+        flex: 1,
+        minWidth: 170,
+        renderCell: function render({ row }) {
+          return (
+            <DateField
+              value={row.updatedAt}
+              format="LLL"
+              sx={{ fontSize: "14px" }}
+            />
+          );
+        },
+      },
+
       {
         field: "actions",
         type: "actions",
@@ -344,7 +359,6 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
                 >
                   Ajouter
                 </CreateButton>
-                <RefreshButton onClick={() => window.location.reload()} />
               </>
             }
           >
@@ -403,20 +417,29 @@ export const ListBC: React.FC<IResourceComponentsProps> = () => {
                 </Button>
               </div>
             </Popover>
-            <DataGrid
-              {...dataGridProps}
-              columns={columns}
-              // rows={filteredData}
-              filterModel={undefined}
-              autoHeight
-              pageSizeOptions={[5, 10, 20, 50, 100]}
+            <Box
               sx={{
-                ...dataGridProps.sx,
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
+                // height: 150 + 50 * dataGridProps?.rows?.length,
+
+                maxHeight: 500,
+                overflow: "auto",
               }}
-            />
+            >
+              <DataGrid
+                {...dataGridProps}
+                columns={columns}
+                // rows={filteredData}
+                filterModel={undefined}
+                autoHeight
+                pageSizeOptions={[5, 10, 20, 50, 100]}
+                sx={{
+                  ...dataGridProps.sx,
+                  "& .MuiDataGrid-row": {
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            </Box>
           </List>
         </Grid>
       </Grid>

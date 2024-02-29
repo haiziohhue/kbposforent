@@ -63,6 +63,7 @@ export const EditBC: React.FC<
   saveButtonProps,
   formState: { errors },
   modal: { visible, close },
+  setValue,
   id,
 }) => {
   //
@@ -75,7 +76,7 @@ export const EditBC: React.FC<
   const addArticle = () => {
     const newArticle = {
       article: { id: 0, label: "" },
-      quantite: 1,
+      quantite: 0,
       stock: 0,
       state: true,
     };
@@ -87,7 +88,7 @@ export const EditBC: React.FC<
   const deleteRow = (index) => {
     dispatch({
       type: "SET_ARTICLES",
-      payload: articles.filter((_, i) => i !== index),
+      payload: articles?.filter((_, i) => i !== index),
     });
   };
   //
@@ -111,6 +112,7 @@ export const EditBC: React.FC<
       console.log(err);
     }
   }, []);
+
   //Get BC By id
   const fetchBCByID = useCallback(async () => {
     try {
@@ -147,6 +149,7 @@ export const EditBC: React.FC<
       console.log(err);
     }
   }, [id]);
+
   // Get Chefs
   const fetchChefs = useCallback(async () => {
     try {
@@ -174,7 +177,37 @@ export const EditBC: React.FC<
     fetchBCByID();
     fetchChefs();
   }, [fetchBCByID, fetchChefs, fetchProduits]);
+
   //
+  useEffect(() => {
+    setValue(
+      "ingredients",
+      articles
+        ?.filter((k) => !k.state)
+        ?.map((article) => ({
+          stock: article.article.id,
+          quantite: article.quantite,
+        }))
+    );
+    setValue("chef", bc?.chef?.data?.id ? bc?.chef?.data?.id : bc?.chef?.id);
+    setValue("etat", "Validé");
+  }, [setValue, articles, bc?.chef?.data?.id, bc?.chef?.id]);
+
+  //
+  useEffect(() => {
+    setValue(
+      "ingredients",
+      articles
+        ?.filter((k) => !k.state)
+        ?.map((article) => ({
+          stock: article.article.id,
+          quantite: article.quantite,
+        }))
+    );
+    setValue("chef", bc?.chef?.data?.id ? bc?.chef?.data?.id : bc?.chef?.id);
+    setValue("etat", "Validé");
+  }, [setValue, articles, bc?.chef?.data?.id, bc?.chef?.id]);
+
   //
   const columns: GridColDef[] = [
     {
@@ -201,12 +234,13 @@ export const EditBC: React.FC<
                 value={params.row.article}
                 options={produits
                   .filter(
-                    (k) => !articles.map((e) => e.article.id).includes(k.id)
+                    (k) => !articles?.map((e) => e.article.id)?.includes(k.id)
                   )
                   .map((option) => {
                     return {
                       label: option.ingredient?.data?.attributes?.nom,
                       id: option.id,
+                      stock: option?.quantite,
                       value: option,
                     };
                   })}
@@ -216,12 +250,13 @@ export const EditBC: React.FC<
                 freeSolo
                 onChange={(event, newValue) => {
                   if (!newValue.value) return;
-                  const products = articles.map((e, i) => {
+                  const products = articles?.map((e, i) => {
                     if (i === params.row.id) {
                       return {
                         ...e,
                         article: newValue,
                         prix: newValue.value.prix,
+                        stock: newValue.stock,
                       };
                     }
 
@@ -310,7 +345,7 @@ export const EditBC: React.FC<
                     if (params.row.article.value)
                       dispatch({
                         type: "SET_ARTICLES",
-                        payload: articles.map((row, i) =>
+                        payload: articles?.map((row, i) =>
                           params.row.id === i ? { ...row, state: false } : row
                         ),
                       });
@@ -423,7 +458,7 @@ export const EditBC: React.FC<
                   options={chefs}
                   getOptionLabel={(option) => {
                     return option?.data?.attributes?.chef
-                      ? option.data.attributes.chef
+                      ? option?.data?.attributes?.chef
                       : option?.chef ?? "";
                   }}
                   onChange={(event, newValue) => {
@@ -499,9 +534,6 @@ export const EditBC: React.FC<
           <Button
             {...saveButtonProps}
             variant="contained"
-            onClick={() => {
-              onFinishHandler();
-            }}
             sx={{ fontWeight: 500, paddingX: "26px", paddingY: "4px" }}
           >
             Enregistrer

@@ -110,8 +110,8 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
     setValue("etat", "En cours");
     setValue("caisse", selectedCaisse);
     setValue("type", type);
-    setValue("table", selectedTable);
-  }, [selectedCaisse, selectedTable, setValue, type, userId, users?.data]);
+    // setValue("table", selectedTable);
+  }, [selectedCaisse, setValue, type, userId, users?.data]);
   const handleListItemClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     caisseId: ICaisse
@@ -165,6 +165,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
         id: item?.menu?.id ? item?.menu?.id : item?.id,
         menus: item?.menu?.attributes ? item?.menu?.attributes : item,
         quantity: item?.quantite,
+        note: item?.note,
         titre: item?.menu?.attributes?.titre
           ? item?.menu?.attributes?.titre
           : item?.titre,
@@ -190,6 +191,13 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
     dispatch({
       type: "UPDATE_QUANTITY",
       payload: { id: itemId, quantity: newQuantity },
+    });
+  };
+
+  const handleNoteChange = (itemId: number, newNote: string) => {
+    dispatch({
+      type: "UPDATE_NOTE",
+      payload: { id: itemId, note: newNote },
     });
   };
 
@@ -220,6 +228,7 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
           return {
             __component: "menus.commande-menu",
             menu: item?.id,
+            note: item?.note,
             quantite: item?.quantity,
           };
         } else if (componentType === "menus.menu-compose") {
@@ -570,6 +579,23 @@ export const NewEdit: React.FC<IResourceComponentsProps> = () => {
                                     </Typography>
                                   ))}
                                 </Box>
+                                <TextField
+                                  id={`note-${item.id}`}
+                                  label="note"
+                                  value={item?.note}
+                                  variant="standard"
+                                  multiline
+                                  maxRows={3}
+                                  onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    // setNote(event.target.value);
+                                    handleNoteChange(
+                                      item?.id,
+                                      event.target.value
+                                    );
+                                  }}
+                                />
                                 <Typography
                                   sx={{
                                     fontWeight: 600,

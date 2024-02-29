@@ -5,13 +5,7 @@ import {
   CrudFilters,
   useUpdate,
 } from "@refinedev/core";
-import {
-  useDataGrid,
-  List,
-  CreateButton,
-  DateField,
-  RefreshButton,
-} from "@refinedev/mui";
+import { useDataGrid, List, CreateButton, DateField } from "@refinedev/mui";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarToday, Cancel, Edit } from "@mui/icons-material";
@@ -20,7 +14,7 @@ import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { CreateAchat } from "./create";
 import { EditAchat } from "./edit";
 import moment from "moment";
-import { Button, Popover } from "@mui/material";
+import { Box, Button, Popover } from "@mui/material";
 import { DateRangePicker } from "react-date-range";
 import { BonChefAchatStatus } from "../../../components/order/BonChefAchatStatus";
 
@@ -51,7 +45,6 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
     meta: { populate: "deep" },
     onSearch: () => {
       const filters: CrudFilters = [];
-
       const startDate = moment(periode[0].startDate)
         .startOf("day")
         .format("YYYY-MM-DDTHH:mm:ss[Z]");
@@ -179,7 +172,7 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
   } = createDrawerFormProps;
 
   const editDrawerFormProps = useModalForm<IAchat, HttpError, IAchat>({
-    refineCoreProps: { action: "edit", meta: { populate: "*" } },
+    refineCoreProps: { action: "edit", meta: { populate: "deep" } },
   });
 
   const {
@@ -227,7 +220,6 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
                 >
                   Ajouter
                 </CreateButton>
-                <RefreshButton onClick={() => window.location.reload()} />
               </>
             }
           >
@@ -286,19 +278,27 @@ export const ListAchat: React.FC<IResourceComponentsProps> = () => {
                 </Button>
               </div>
             </Popover>
-            <DataGrid
-              {...dataGridProps}
-              columns={columns}
-              filterModel={undefined}
-              autoHeight
-              pageSizeOptions={[5, 10, 20, 50, 100]}
+            <Box
               sx={{
-                ...dataGridProps.sx,
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
+                // height: 150 + 50 * dataGridProps?.rows?.length,
+                maxHeight: 500,
+                overflow: "auto",
               }}
-            />
+            >
+              <DataGrid
+                {...dataGridProps}
+                columns={columns}
+                filterModel={undefined}
+                autoHeight
+                pageSizeOptions={[5, 10, 20, 50, 100]}
+                sx={{
+                  ...dataGridProps.sx,
+                  "& .MuiDataGrid-row": {
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            </Box>
           </List>
         </Grid>
       </Grid>

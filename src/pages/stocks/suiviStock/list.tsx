@@ -90,11 +90,26 @@ export const StockList = () => {
             />
           );
         },
-        // renderCell(params) {
-        //   return (
-        //     <Typography>{dayjs(params.value).format("DD-MM-YYYY")}</Typography>
-        //   );
-        // },
+      },
+      {
+        field: "updatedAt",
+        headerAlign: "center",
+        align: "center",
+        headerName: "Date de modification",
+        type: "date",
+        minWidth: 200,
+        valueGetter: (params) => {
+          return new Date(params.row?.updatedAt);
+        },
+        renderCell(params) {
+          return (
+            <DateField
+              value={params.value}
+              format="LLL"
+              sx={{ fontSize: "14px" }}
+            />
+          );
+        },
       },
     ],
     []

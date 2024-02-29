@@ -189,22 +189,7 @@ export const SettingsList = () => {
             ],
           })}
         </Box>
-        {SectionHeader(
-          "Menu Composée",
-          <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
-        )}
-        {ParamItem({
-          titre: " Categories-Ingredients",
-          links: [
-            {
-              titre:
-                "Voir / Ajouter des Categories-Ingredients pour Menu Composée",
-              action: () => {
-                navigate("/parametres/categorieIngredient");
-              },
-            },
-          ],
-        })}
+
         {SectionHeader(
           "stock",
           <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />

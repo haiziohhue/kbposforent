@@ -8,11 +8,6 @@ import {
   useGetIdentity,
 } from "@refinedev/core";
 import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  CardMedia,
   Drawer,
   Grid,
   Hidden,

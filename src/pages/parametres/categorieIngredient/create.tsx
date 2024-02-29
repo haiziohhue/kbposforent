@@ -425,8 +425,7 @@ export const CreateCatIngredients: React.FC<
             <Box sx={{ mt: 4 }}>
               <Box
                 sx={{
-                  // height: 150 + 53 * articles.length,
-                  height: 250,
+                  height: 150 + 50 * articles.length,
                   maxHeight: 250,
                   width: "100%",
                   overflow: `auto `,

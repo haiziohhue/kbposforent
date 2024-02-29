@@ -216,10 +216,12 @@ export interface IChef {
 export interface IBC {
   id: number;
   createdAt: Dayjs | null;
+  updatedAt: Dayjs | null;
   etat: "Validé" | "Annulé";
   note: string;
   chef: IChef;
   traite: boolean;
+  ingredients?: IIngredients[];
 }
 
 export interface IStock {
@@ -227,6 +229,7 @@ export interface IStock {
   ingredient: IIngredients;
   quantité: number;
   publishedAt: Date;
+  updatedAt: Date;
 }
 export type IProps = {
   columns: Columns[];

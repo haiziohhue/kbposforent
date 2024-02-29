@@ -12,6 +12,7 @@ import { IIngredients } from "../../../interfaces";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { CreateIngredient } from "./create";
 import { EditIngredient } from "./edit";
+import { Box } from "@mui/material";
 
 export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
   const { mutate: mutateDelete } = useDelete();
@@ -149,19 +150,26 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
               }
             }
           >
-            <DataGrid
-              {...dataGridProps}
-              columns={columns}
-              filterModel={undefined}
-              autoHeight
-              pageSizeOptions={[5, 10, 20, 50, 100]}
+            <Box
               sx={{
-                ...dataGridProps.sx,
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
+                maxHeight: 500,
+                overflow: "auto",
               }}
-            />
+            >
+              <DataGrid
+                {...dataGridProps}
+                columns={columns}
+                filterModel={undefined}
+                autoHeight
+                pageSizeOptions={[5, 10, 20, 50, 100]}
+                sx={{
+                  ...dataGridProps.sx,
+                  "& .MuiDataGrid-row": {
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            </Box>
           </List>
         </Grid>
       </Grid>

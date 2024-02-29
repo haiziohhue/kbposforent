@@ -37,7 +37,6 @@ export const CloseCaisse: React.FC<
   useEffect(() => {
     const caisseId = localStorage.getItem("selectedCaisseId");
     if (caisseId) {
-      console.log(caisseId);
       const parsedCaisseId = parseInt(caisseId, 10);
       const foundCaisse = caissesLogs?.data?.find(
         (caisse) =>
@@ -50,7 +49,7 @@ export const CloseCaisse: React.FC<
   }, [caissesLogs?.data]);
 
   //
-  console.log(selectedCaisseLog);
+
   //Get data
   const fetchData = useCallback(async () => {
     try {

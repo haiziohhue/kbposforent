@@ -25,13 +25,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  FileCopy,
-  MoreVert,
-  Security,
-} from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { CreateButton, EditButton, List, SaveButton } from "@refinedev/mui";
 import { CreateCaisse } from "./create";
 

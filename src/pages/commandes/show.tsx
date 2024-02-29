@@ -132,6 +132,18 @@ export const ShowOrder: React.FC<
                 >
                   {record?.type}
                 </Typography>
+                {record?.table && (
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "16px",
+                      textOverflow: "ellipsis",
+                      color: "#689f38",
+                    }}
+                  >
+                    {record?.table?.data?.attributes?.nom}
+                  </Typography>
+                )}
               </Stack>
               <Divider />
               <Stack gap={3}>
@@ -305,23 +317,30 @@ export const ShowOrder: React.FC<
                         width: "100%",
                       }}
                       onClick={() => {
-                        mutate({
-                          resource: "commandes",
-                          id,
-                          values: {
-                            etat: "Validé",
+                        mutate(
+                          {
+                            resource: "commandes",
+                            id,
+                            values: {
+                              etat: "Validé",
+                            },
                           },
-                        });
-                        mutateCreate({
-                          resource: "tresoriers",
-                          values: {
-                            type: "Vente",
-                            titre: "Vente",
-                            user: record?.users_permissions_user?.data?.id,
-                            montant: record?.total,
-                            caisse: record?.caisse?.data?.id,
-                          },
-                        });
+                          {
+                            onSuccess: () => {
+                              mutateCreate({
+                                resource: "tresoriers",
+                                values: {
+                                  type: "Vente",
+                                  titre: "Vente",
+                                  user: record?.users_permissions_user?.data
+                                    ?.id,
+                                  montant: record?.total,
+                                  caisse: record?.caisse?.data?.id,
+                                },
+                              });
+                            },
+                          }
+                        );
                       }}
                     >
                       Validé

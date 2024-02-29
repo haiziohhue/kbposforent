@@ -112,7 +112,7 @@ export const ListTresor: React.FC<IResourceComponentsProps> = () => {
       return filters;
     },
   });
-  console.log(dataGridProps.rows);
+
   const columns = React.useMemo<GridColDef<ITresor>[]>(
     () => [
       {

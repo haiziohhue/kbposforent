@@ -11,7 +11,6 @@ import {
   DialogTitle,
   FormControl,
   FormHelperText,
-  IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -24,12 +23,15 @@ import {
 import { Create } from "@refinedev/mui";
 // import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { ICaisse, ICaisseLogs, IUser } from "../../interfaces";
+import { useCaisseContext } from "../../contexts/caisse/caisseContextUtils";
 import { API_URL, TOKEN_KEY } from "../../constants";
 import axios from "axios";
 
 export const OpenCaisse: React.FC<
   UseModalFormReturnType<ICaisseLogs, HttpError, ICaisseLogs>
 > = ({ saveButtonProps, modal: { visible, close }, formState: { errors } }) => {
+  //
+  const { selectedCaisseId, setSelectedCaisse } = useCaisseContext();
   // Get Caisses
   const { options } = useSelect<ICaisse>({
     resource: "caisses",
@@ -40,11 +42,12 @@ export const OpenCaisse: React.FC<
   //
   const [caisseId, setCaisseId] = React.useState<string>("");
   const [errorr, setErrorr] = React.useState<string | null>(null);
-  const handleChange = (event: SelectChangeEvent<typeof caisseId>) => {
+  //
+  const handleChange = (event: SelectChangeEvent<typeof selectedCaisseId>) => {
     const {
       target: { value },
     } = event;
-    setCaisseId(value);
+    setSelectedCaisse(value as number); // Cast value to number
   };
   //
   const ITEM_HEIGHT = 48;
@@ -58,6 +61,7 @@ export const OpenCaisse: React.FC<
     },
   };
   //
+
   // const [showPassword, setshowPassword] = React.useState<boolean>(false);
   // const handleClickShowPassword = () => setshowPassword((show) => !show);
   // const handleMouseDownPassword = (
@@ -71,6 +75,7 @@ export const OpenCaisse: React.FC<
     password: "",
     solde_ouverture: null,
   });
+
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -83,13 +88,13 @@ export const OpenCaisse: React.FC<
   const onFinishHandler = async () => {
     const payload = {
       // data: formData,
-      caisse: caisseId,
+      caisse: selectedCaisseId,
       password: formData.password,
       solde_ouverture: formData.solde_ouverture,
       // solde_cloture: formData.solde_ouverture,
       etat: "Ouverte",
     };
-    console.log(payload);
+
     try {
       const response = await axios.post(
         `${API_URL}/api/logs-caisses/ouverture`,
@@ -104,11 +109,11 @@ export const OpenCaisse: React.FC<
       );
       console.log("Request succeeded:", response.status);
       close();
-      localStorage.setItem("selectedCaisseId", String(caisseId));
+      setSelectedCaisse(selectedCaisseId as number);
       localStorage.setItem("selectedCaisseEtat", "Ouverte");
+      // localStorage.setItem("selectedCaisseId", String(caisseId));
     } catch (error: any) {
       console.error("Request failed:", error);
-      console.log(error);
       if (error?.response) {
         setErrorr(error.response.data.error.message);
       }
@@ -164,7 +169,7 @@ export const OpenCaisse: React.FC<
               <FormControl>
                 <InputLabel id="caisse">Caisse</InputLabel>
                 <Select
-                  value={caisseId}
+                  value={selectedCaisseId}
                   onChange={handleChange}
                   input={<OutlinedInput label="Caisse" />}
                   MenuProps={MenuProps}
