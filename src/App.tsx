@@ -29,6 +29,7 @@ import {
   PaymentsOutlined,
   WidgetsOutlined,
   SettingsOutlined,
+  DashboardOutlined,
 } from "@mui/icons-material";
 import { CreateMenu, EditMenu, ListMenus } from "./pages/menus";
 import { CreateOrder, ListOrdes, ShowOrder, NewEdit } from "./pages/commandes";
@@ -53,6 +54,7 @@ import { ListCategories } from "./pages/parametres/categories";
 import { ListTables } from "./pages/parametres/tables";
 import { ListCaisses } from "./pages/parametres/caisses";
 import { ListCaissesLogs } from "./pages/gestionCaisse/list";
+import { Dashboard } from "./pages/dashboard";
 
 function App() {
   //
@@ -111,6 +113,14 @@ function App() {
                   notificationProvider={useNotificationProvider}
                   routerProvider={routerBindings}
                   resources={[
+                    {
+                      name: "Dashboard",
+                      list: "/dashboard",
+                      meta: {
+                        label: "Dashboard",
+                        icon: <DashboardOutlined />,
+                      },
+                    },
                     {
                       name: "",
                       list: "/caisse",
@@ -192,6 +202,9 @@ function App() {
                         <Route index element={<MenusList />} />
 
                         <>
+                          <Route path="/dashboard">
+                            <Route index element={<Dashboard />} />
+                          </Route>
                           {/* Menus */}
                           <Route path="/caisse">
                             <Route index element={<MenusList />} />
@@ -314,6 +327,14 @@ function App() {
                   notificationProvider={useNotificationProvider}
                   routerProvider={routerBindings}
                   resources={[
+                    {
+                      name: "Dashboard",
+                      list: "/dashboard",
+                      meta: {
+                        label: "Dashboard",
+                        icon: <DashboardOutlined />,
+                      },
+                    },
                     {
                       name: "",
                       list: "/caisse",
@@ -564,6 +585,9 @@ function App() {
                         <Route index element={<MenusList />} />
 
                         <>
+                          <Route path="/dashboard">
+                            <Route index element={<Dashboard />} />
+                          </Route>
                           {/* Menus */}
                           <Route path="/caisse">
                             <Route index element={<MenusList />} />
