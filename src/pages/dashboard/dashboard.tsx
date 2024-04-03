@@ -170,8 +170,10 @@ export const Dashboard = () => {
       if (order.etat === "Validé") {
         const orderQuantity = order.quantite || 1;
         order?.menu?.forEach((menuItem) => {
+          console.log(menuItem);
           if (menuItem.__component === "menus.commande-menu") {
             menuItem?.menu.ingredients?.forEach((ingredientItem) => {
+              console.log(ingredientItem);
               updateIngredientQuantities(
                 ingredientItem,
                 ingredientItem.quantite_demande * orderQuantity,
@@ -217,7 +219,7 @@ export const Dashboard = () => {
       id: index + 1,
     })
   );
-
+  console.log(gridData);
   //
 
   // Analytics cards Function
@@ -416,22 +418,22 @@ export const Dashboard = () => {
         flex: 1,
         minWidth: 150,
       },
-      {
-        field: "quantityInMenuCompose",
-        headerName: "Quantité utilisée dans Menu Compose",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        minWidth: 150,
-      },
-      {
-        field: "quantityInSupplements",
-        headerName: "Quantité utilisée dans Suppléments",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        minWidth: 150,
-      },
+      // {
+      //   field: "quantityInMenuCompose",
+      //   headerName: "Quantité utilisée dans Menu Compose",
+      //   headerAlign: "center",
+      //   align: "center",
+      //   flex: 1,
+      //   minWidth: 150,
+      // },
+      // {
+      //   field: "quantityInSupplements",
+      //   headerName: "Quantité utilisée dans Suppléments",
+      //   headerAlign: "center",
+      //   align: "center",
+      //   flex: 1,
+      //   minWidth: 150,
+      // },
     ],
     []
   );

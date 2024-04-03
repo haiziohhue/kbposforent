@@ -65,8 +65,8 @@ export const EditMenu: React.FC<
   setValue,
   modal: { visible, close },
   register,
-  refineCore: { onFinish, queryResult },
-  handleSubmit,
+  refineCore: { queryResult },
+
   setError,
   formState: { errors },
 }) => {
@@ -117,7 +117,7 @@ export const EditMenu: React.FC<
       setIsUploadLoading(false);
     }
   };
-
+  console.log(articles);
   //
   const addArticle = () => {
     const newArticle = {
@@ -146,6 +146,7 @@ export const EditMenu: React.FC<
         },
       });
       const data = await res.json();
+
       const produitsData = data.data.map((e) => ({
         id: e.id,
         ...e.attributes,
@@ -193,19 +194,25 @@ export const EditMenu: React.FC<
     }
   }, [menuData?.id]);
   //
+
+  useEffect(() => {
+    fetchProduits();
+    fetchMenuByID();
+  }, [fetchMenuByID, fetchProduits]);
+
   useEffect(() => {
     setValue(
       "ingredients",
       articles
         ?.filter((k) => !k.state)
         ?.map((article) => ({
-          stock: article.article.id,
-          quantite: article.quantite,
+          ingredient: article.article.id,
+          quantite_demande: article.quantite,
         }))
     );
-    fetchProduits();
-    fetchMenuByID();
-  }, [fetchMenuByID, fetchProduits, setValue]);
+  }, [articles, setValue]);
+
+  console.log(articles);
   //
   const columns: GridColDef[] = [
     {

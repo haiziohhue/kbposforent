@@ -341,6 +341,7 @@ export const ShowOrder: React.FC<
                             },
                           }
                         );
+                        close();
                       }}
                     >
                       Validé
@@ -375,6 +376,7 @@ export const ShowOrder: React.FC<
                             etat: "Annulé",
                           },
                         });
+                        close();
                       }}
                     >
                       Annulé
