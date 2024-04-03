@@ -1,4 +1,4 @@
-import { DarkModeOutlined, LightModeOutlined } from '@mui/icons-material';
+import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -6,13 +6,13 @@ import {
   Stack,
   Toolbar,
   Typography,
-} from '@mui/material';
-import { useGetIdentity } from '@refinedev/core';
-import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from '@refinedev/mui';
-import React, { useContext } from 'react';
-import { ColorModeContext } from '../../contexts/color-mode';
-import { IUser } from '../../interfaces';
-import { API_URL } from '../../constants';
+} from "@mui/material";
+import { useGetIdentity } from "@refinedev/core";
+import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from "@refinedev/mui";
+import React, { useContext } from "react";
+import { ColorModeContext } from "../../contexts/color-mode";
+import { IUser } from "../../interfaces";
+import { API_URL } from "../../constants";
 
 // type IUser = {
 //   id: number;
@@ -27,9 +27,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
 
   const { data: user } = useGetIdentity<IUser>();
 
-
   return (
-    <AppBar position={sticky ? 'sticky' : 'relative'}>
+    <AppBar position={sticky ? "sticky" : "relative"}>
       <Toolbar>
         <Stack
           direction="row"
@@ -44,14 +43,14 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
             justifyContent="flex-end"
             alignItems="center"
           >
-            <IconButton
+            {/* <IconButton
               color="inherit"
               onClick={() => {
                 setMode();
               }}
             >
               {mode === 'dark' ? <LightModeOutlined /> : <DarkModeOutlined />}
-            </IconButton>
+            </IconButton> */}
 
             {(user?.photo || user?.username) && (
               <Stack
@@ -64,8 +63,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                   <Typography
                     sx={{
                       display: {
-                        xs: 'none',
-                        sm: 'inline-block',
+                        xs: "none",
+                        sm: "inline-block",
                       },
                     }}
                     variant="subtitle2"
