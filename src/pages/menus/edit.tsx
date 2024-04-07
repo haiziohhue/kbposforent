@@ -117,7 +117,7 @@ export const EditMenu: React.FC<
       setIsUploadLoading(false);
     }
   };
-  console.log(articles);
+
   //
   const addArticle = () => {
     const newArticle = {
@@ -212,7 +212,6 @@ export const EditMenu: React.FC<
     );
   }, [articles, setValue]);
 
-  console.log(articles);
   //
   const columns: GridColDef[] = [
     {

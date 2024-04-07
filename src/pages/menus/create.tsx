@@ -150,7 +150,7 @@ export const CreateMenu: React.FC<
         id: e.id,
         ...e.attributes,
       }));
-      console.log(produitsData);
+
       dispatch({ type: "SET_PRODUITS", payload: produitsData });
     } catch (err) {
       console.log(err);

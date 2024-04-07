@@ -219,7 +219,7 @@ export const Dashboard = () => {
       id: index + 1,
     })
   );
-  console.log(gridData);
+
   //
 
   // Analytics cards Function
@@ -443,9 +443,9 @@ export const Dashboard = () => {
         paddingX: { xs: 3, md: 2 },
         paddingY: { xs: 2, md: 3 },
         my: 0.5,
+        backgroundColor: "rgba(250, 250, 250, 1)",
       }}
     >
-      {/* cards */}
       <Stack spacing={2}>
         <Box
           sx={{

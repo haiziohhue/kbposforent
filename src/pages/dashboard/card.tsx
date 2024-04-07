@@ -30,7 +30,7 @@ export const AnalyticsCard: React.FC<AnalyticCard> = ({
           alignItems: "center",
           backgroundColor: color,
           height: "100%",
-          width: { xs: "100%", md: 260 },
+          width: "100%",
           paddingInline: 2,
         }}
       >
