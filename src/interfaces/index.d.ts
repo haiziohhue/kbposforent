@@ -6,7 +6,10 @@ export interface ICategory {
   nom: string;
   type: Option;
 }
-
+export interface IUnite {
+  id: number;
+  unite: string;
+}
 export interface IMenu {
   id: number;
   titre?: string;
@@ -173,7 +176,7 @@ export interface IIngredients {
   id: number;
   nom?: string;
   description?: string;
-  unite?: string;
+  unite?: IUnite;
   prix?: number;
   count?: number;
 }

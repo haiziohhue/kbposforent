@@ -3,6 +3,7 @@ import React from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
+  Autocomplete,
   Box,
   Dialog,
   DialogActions,
@@ -15,9 +16,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Create, SaveButton } from "@refinedev/mui";
+import { Create, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { CloseOutlined } from "@mui/icons-material";
-import { IIngredients } from "../../../interfaces";
+import { IIngredients, IUnite } from "../../../interfaces";
+import { Controller } from "react-hook-form";
 
 export const CreateIngredient: React.FC<
   UseModalFormReturnType<IIngredients, HttpError, IIngredients>
@@ -25,8 +27,13 @@ export const CreateIngredient: React.FC<
   saveButtonProps,
   modal: { visible, close },
   register,
+  control,
   formState: { errors },
 }) => {
+  const { autocompleteProps } = useAutocomplete<IUnite>({
+    resource: "unites",
+  });
+
   return (
     <Dialog
       open={visible}
@@ -99,7 +106,7 @@ export const CreateIngredient: React.FC<
               </FormControl>
 
               {/* Unitées de mesure */}
-              <FormControl>
+              {/* <FormControl>
                 <FormLabel>Unité de mesure</FormLabel>
                 <TextField
                   id="unite"
@@ -119,6 +126,45 @@ export const CreateIngredient: React.FC<
                       },
                     },
                   }}
+                />
+                {errors.unite && (
+                  <FormHelperText error>{errors.unite.message}</FormHelperText>
+                )}
+              </FormControl> */}
+              <FormControl>
+                <FormLabel required>Unité de mesure</FormLabel>
+                <Controller
+                  control={control}
+                  name="unite"
+                  rules={{
+                    required: "This field is required",
+                  }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      disablePortal
+                      {...autocompleteProps}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value?.id);
+                      }}
+                      getOptionLabel={(item) => {
+                        return item.unite ? item.unite : "";
+                      }}
+                      isOptionEqualToValue={(option, value) =>
+                        value === undefined ||
+                        option?.id?.toString() ===
+                          (value?.id ?? value)?.toString()
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          error={!!errors.unite?.message}
+                          required
+                        />
+                      )}
+                    />
+                  )}
                 />
                 {errors.unite && (
                   <FormHelperText error>{errors.unite.message}</FormHelperText>

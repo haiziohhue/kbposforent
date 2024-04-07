@@ -189,22 +189,40 @@ export const SettingsList = () => {
             ],
           })}
         </Box>
-
-        {SectionHeader(
-          "stock",
-          <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
-        )}
-        {ParamItem({
-          titre: " Chefs",
-          links: [
-            {
-              titre: "Voir / Ajouter des Chefs",
-              action: () => {
-                navigate("/parametres/chefs");
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          {SectionHeader(
+            "stock",
+            <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />
+          )}
+          {ParamItem({
+            titre: " Chefs",
+            links: [
+              {
+                titre: "Voir / Ajouter des Chefs",
+                action: () => {
+                  navigate("/parametres/chefs");
+                },
               },
-            },
-          ],
-        })}
+            ],
+          })}
+          {ParamItem({
+            titre: " Unité de Mesure",
+            links: [
+              {
+                titre: "Voir / Ajouter des Unités de Mesure",
+                action: () => {
+                  navigate("/parametres/unites");
+                },
+              },
+            ],
+          })}
+        </Box>
         {SectionHeader(
           "Trésorerie",
           <Settings color="primary" sx={{ mr: 1, fontSize: 20 }} />

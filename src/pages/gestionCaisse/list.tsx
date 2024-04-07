@@ -609,8 +609,8 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
             <Stack>
               <Box
                 sx={{
-                  height: 150 + 100 * dataGridProps?.rows?.length,
-                  maxHeight: 610,
+                  // height: 150 + 50 * dataGridProps?.rows?.length,
+                  maxHeight: 500,
                   overflow: "auto",
                 }}
               >
@@ -674,7 +674,7 @@ export const ListCaissesLogs: React.FC<IResourceComponentsProps> = () => {
                                     column.field === "solde_ouverture" ||
                                     column.field === "solde_cloture"
                                       ? mode === "dark"
-                                        ? "#FFF"
+                                        ? "#000"
                                         : "#000"
                                       : "transparent",
                                 }}

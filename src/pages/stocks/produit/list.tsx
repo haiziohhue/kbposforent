@@ -45,6 +45,7 @@ export const ListIngredients: React.FC<IResourceComponentsProps> = () => {
         headerName: "Unité de Mesure",
         headerAlign: "center",
         align: "center",
+        valueGetter: ({ row }) => row.unite?.unite,
         flex: 1,
         minWidth: 90,
       },

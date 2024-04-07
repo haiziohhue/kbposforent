@@ -55,6 +55,7 @@ import { ListTables } from "./pages/parametres/tables";
 import { ListCaisses } from "./pages/parametres/caisses";
 import { ListCaissesLogs } from "./pages/gestionCaisse/list";
 import { Dashboard } from "./pages/dashboard";
+import { ListUnites } from "./pages/parametres/unites";
 
 function App() {
   //
@@ -188,6 +189,7 @@ function App() {
                       <Route
                         element={
                           <Authenticated
+                            key="authenticated-routes"
                             fallback={<CatchAllNavigate to="/login" />}
                           >
                             <ThemedLayoutV2
@@ -231,7 +233,10 @@ function App() {
                       </Route>
                       <Route
                         element={
-                          <Authenticated fallback={<Outlet />}>
+                          <Authenticated
+                            key="authenticated-routes"
+                            fallback={<Outlet />}
+                          >
                             <NavigateToResource />
                           </Authenticated>
                         }
@@ -278,6 +283,7 @@ function App() {
                       <Route
                         element={
                           <Authenticated
+                            key="authenticated-routes"
                             fallback={<CatchAllNavigate to="/login" />}
                           >
                             <ThemedLayoutV2
@@ -303,7 +309,10 @@ function App() {
                       </Route>
                       <Route
                         element={
-                          <Authenticated fallback={<Outlet />}>
+                          <Authenticated
+                            key="authenticated-routes"
+                            fallback={<Outlet />}
+                          >
                             <NavigateToResource />
                           </Authenticated>
                         }
@@ -526,6 +535,17 @@ function App() {
                       },
                     },
                     {
+                      name: "unites",
+                      list: "/parametres/unites",
+                      create: "/parametres/unites/create",
+
+                      meta: {
+                        hide: true,
+                        parent: "parametres",
+                        canDelete: true,
+                      },
+                    },
+                    {
                       name: "categorie-depenses",
                       list: "/parametres/categorieDepense",
                       create: "/parametres/categorieDepense/create",
@@ -571,6 +591,7 @@ function App() {
                       <Route
                         element={
                           <Authenticated
+                            key="authenticated-routes"
                             fallback={<CatchAllNavigate to="/login" />}
                           >
                             <ThemedLayoutV2
@@ -648,6 +669,9 @@ function App() {
                           <Route path="/parametres/chefs">
                             <Route index element={<ListChefs />} />
                           </Route>
+                          <Route path="/parametres/unites">
+                            <Route index element={<ListUnites />} />
+                          </Route>
                           <Route path="/parametres/categorieDepense">
                             <Route index element={<ListCategoryDepense />} />
                           </Route>
@@ -663,7 +687,10 @@ function App() {
                       </Route>
                       <Route
                         element={
-                          <Authenticated fallback={<Outlet />}>
+                          <Authenticated
+                            key="authenticated-routes"
+                            fallback={<Outlet />}
+                          >
                             <NavigateToResource />
                           </Authenticated>
                         }
@@ -719,6 +746,7 @@ function App() {
                     <Route
                       element={
                         <Authenticated
+                          key="authenticated-routes"
                           fallback={<CatchAllNavigate to="/login" />}
                         >
                           <ThemedLayoutV2
@@ -736,7 +764,10 @@ function App() {
                     </Route>
                     <Route
                       element={
-                        <Authenticated fallback={<Outlet />}>
+                        <Authenticated
+                          key="authenticated-routes"
+                          fallback={<Outlet />}
+                        >
                           <NavigateToResource />
                         </Authenticated>
                       }

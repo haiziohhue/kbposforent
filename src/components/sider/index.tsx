@@ -298,9 +298,11 @@ export const Sider: React.FC<RefineThemedLayoutV2SiderProps> = ({
       if (confirm) {
         setWarnWhen(false);
         mutateLogout();
+        console.log("abla");
       }
     } else {
       mutateLogout();
+      console.log("abla");
     }
   };
 

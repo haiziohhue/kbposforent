@@ -3,6 +3,7 @@ import React from "react";
 
 import { HttpError } from "@refinedev/core";
 import {
+  Autocomplete,
   Box,
   Dialog,
   DialogActions,
@@ -15,21 +16,25 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Edit, SaveButton } from "@refinedev/mui";
+import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { CloseOutlined } from "@mui/icons-material";
-import { IIngredients } from "../../../interfaces";
+import { IIngredients, IUnite } from "../../../interfaces";
+import { Controller } from "react-hook-form";
 
 export const EditIngredient: React.FC<
   UseModalFormReturnType<IIngredients, HttpError, IIngredients>
 > = ({
   saveButtonProps,
-
   modal: { visible, close },
   register,
+  control,
   refineCore: { onFinish },
   handleSubmit,
   formState: { errors },
 }) => {
+  const { autocompleteProps } = useAutocomplete<IUnite>({
+    resource: "unites",
+  });
   return (
     <Dialog
       open={visible}
@@ -103,25 +108,39 @@ export const EditIngredient: React.FC<
                 </FormControl>
                 {/* Unitées de mesure */}
                 <FormControl>
-                  <FormLabel>Unité de mesure</FormLabel>
-                  <TextField
-                    id="unite"
-                    {...register("unite")}
-                    margin="normal"
-                    fullWidth
+                  <FormLabel required>Unité de mesure</FormLabel>
+                  <Controller
+                    control={control}
                     name="unite"
-                    InputProps={{
-                      inputProps: {
-                        style: { textTransform: "capitalize" },
-                        maxLength: 50,
-                        onChange: (event) => {
-                          const target = event.target as HTMLInputElement;
-                          target.value =
-                            target.value.charAt(0).toUpperCase() +
-                            target.value.slice(1);
-                        },
-                      },
+                    rules={{
+                      required: "This field is required",
                     }}
+                    render={({ field }) => (
+                      <Autocomplete
+                        disablePortal
+                        {...autocompleteProps}
+                        {...field}
+                        onChange={(_, value) => {
+                          field.onChange(value?.id);
+                        }}
+                        getOptionLabel={(item) => {
+                          return item.unite ? item.unite : "";
+                        }}
+                        isOptionEqualToValue={(option, value) =>
+                          value === undefined ||
+                          option?.id?.toString() ===
+                            (value?.id ?? value)?.toString()
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            error={!!errors.unite?.message}
+                            required
+                          />
+                        )}
+                      />
+                    )}
                   />
                   {errors.unite && (
                     <FormHelperText error>
