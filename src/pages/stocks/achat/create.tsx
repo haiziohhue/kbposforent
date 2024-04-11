@@ -226,47 +226,48 @@ export const CreateAchat: React.FC<
         );
       },
     },
-    {
-      field: "unite",
-      headerName: "Unite",
-      width: 120,
-      resizable: true,
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      renderCell: (params) => {
-        if (params.row.state) {
-          return (
-            <TextField
-              value={
-                params.row?.article?.value?.ingredient?.data?.attributes?.unite
-              }
-              fullWidth
-              onChange={(e) => {
-                const updatedArticles = articles?.map((row, i) =>
-                  params.row.id === i
-                    ? { ...row, article: { label: e.target.value } }
-                    : row
-                );
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: updatedArticles,
-                });
-              }}
-              variant="outlined"
-              placeholder=""
-              disabled
-            />
-          );
-        }
-        return (
-          <Typography variant="body1">
-            {params.row?.article?.value?.ingredient?.data?.attributes?.unite ??
-              ""}
-          </Typography>
-        );
-      },
-    },
+    // {
+    //   field: "unite",
+    //   headerName: "Unite",
+    //   width: 120,
+    //   resizable: true,
+    //   type: "number",
+    //   headerAlign: "left",
+    //   align: "left",
+    //   renderCell: (params) => {
+    //     if (params.row.state) {
+    //       return (
+    //         <TextField
+    //           value={
+    //             params.row?.article?.value?.ingredient?.data?.attributes?.unite
+    //               ?.data.attributes?.unite ?? ""
+    //           }
+    //           fullWidth
+    //           onChange={(e) => {
+    //             const updatedArticles = articles?.map((row, i) =>
+    //               params.row.id === i
+    //                 ? { ...row, article: { label: e.target.value } }
+    //                 : row
+    //             );
+    //             dispatch({
+    //               type: "SET_ARTICLES",
+    //               payload: updatedArticles,
+    //             });
+    //           }}
+    //           variant="outlined"
+    //           placeholder=""
+    //           disabled
+    //         />
+    //       );
+    //     }
+    //     return (
+    //       <Typography variant="body1">
+    //         {params.row?.article?.value?.ingredient?.data?.attributes?.unite ??
+    //           ""}
+    //       </Typography>
+    //     );
+    //   },
+    // },
     {
       field: "quantite",
       headerName: "Quantité",

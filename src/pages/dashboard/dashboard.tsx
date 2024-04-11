@@ -170,10 +170,8 @@ export const Dashboard = () => {
       if (order.etat === "Validé") {
         const orderQuantity = order.quantite || 1;
         order?.menu?.forEach((menuItem) => {
-          console.log(menuItem);
           if (menuItem.__component === "menus.commande-menu") {
             menuItem?.menu.ingredients?.forEach((ingredientItem) => {
-              console.log(ingredientItem);
               updateIngredientQuantities(
                 ingredientItem,
                 ingredientItem.quantite_demande * orderQuantity,
