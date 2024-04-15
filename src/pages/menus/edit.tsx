@@ -124,7 +124,6 @@ export const EditMenu: React.FC<
       article: { id: 0, label: "" },
       quantite: 0,
       state: true,
-      unite: "",
     };
 
     dispatch({ type: "SET_ARTICLES", payload: [...articles, newArticle] });
@@ -182,7 +181,7 @@ export const EditMenu: React.FC<
           },
         },
         quantite: e?.quantite_demande || 0,
-        unite: e.ingredient?.data?.attributes?.unite || "",
+
         state: false,
       }));
       dispatch({
@@ -279,47 +278,6 @@ export const EditMenu: React.FC<
           );
         return (
           <Typography variant="body1">{params.row.article.label}</Typography>
-        );
-      },
-    },
-    {
-      field: "unite",
-      headerName: "Unite",
-      width: 120,
-      resizable: true,
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      renderCell: (params) => {
-        if (params.row.state) {
-          return (
-            <TextField
-              value={
-                params.row?.article?.value?.ingredient?.data?.attributes?.unite
-              }
-              fullWidth
-              onChange={(e) => {
-                const updatedArticles = articles.map((row, i) =>
-                  params.row.id === i
-                    ? { ...row, article: { label: e.target.value } }
-                    : row
-                );
-                dispatch({
-                  type: "SET_ARTICLES",
-                  payload: updatedArticles,
-                });
-              }}
-              variant="outlined"
-              placeholder=""
-              disabled
-            />
-          );
-        }
-        return (
-          <Typography variant="body1">
-            {params.row?.article?.value?.ingredient?.data?.attributes?.unite ??
-              ""}
-          </Typography>
         );
       },
     },

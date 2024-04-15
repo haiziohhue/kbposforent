@@ -88,7 +88,7 @@ export const Dashboard = () => {
     },
   });
   //
-
+  console.log(dataGridProps?.rows);
   // Date Picker
   const openDatePicker = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -171,7 +171,7 @@ export const Dashboard = () => {
         const orderQuantity = order.quantite || 1;
         order?.menu?.forEach((menuItem) => {
           if (menuItem.__component === "menus.commande-menu") {
-            menuItem?.menu.ingredients?.forEach((ingredientItem) => {
+            menuItem?.menu?.ingredients?.forEach((ingredientItem) => {
               updateIngredientQuantities(
                 ingredientItem,
                 ingredientItem.quantite_demande * orderQuantity,
@@ -260,18 +260,18 @@ export const Dashboard = () => {
     );
   }
 
-  const orderCounts = countOrdersByTypeAndStatus(dataGridProps?.rows);
+  const orderCounts = countOrdersByTypeAndStatus(dataGridProps?.rows || []);
 
   // Popular Menus Function
   function countMenus(orders) {
     const menuCounts = new Map();
-    const validOrders = orders.filter((order) => order?.etat === "Validé");
+    const validOrders = orders?.filter((order) => order?.etat === "Validé");
 
     validOrders.forEach((order) => {
       order.menu.forEach((menuItem) => {
         if (menuItem.__component === "menus.commande-menu") {
-          const menuName = menuItem.menu.titre;
-          const menuImage = menuItem.menu.image.url;
+          const menuName = menuItem?.menu?.titre;
+          const menuImage = menuItem?.menu?.image.url;
 
           const entry = menuCounts.get(menuName) || {
             count: 0,
@@ -342,9 +342,9 @@ export const Dashboard = () => {
     filteredOrders.forEach((order) => {
       order.menu.forEach((menuItem) => {
         if (menuItem.__component === "menus.commande-menu") {
-          const categoryName = menuItem.menu.categorie.nom;
-          const price = parseFloat(menuItem.menu.prix);
-          const total = price * menuItem.quantite;
+          const categoryName = menuItem?.menu?.categorie.nom;
+          const price = parseFloat(menuItem?.menu?.prix);
+          const total = price * menuItem?.quantite;
 
           const existingCategory = revenueByCategory.find(
             (entry) => entry.label === categoryName
