@@ -16,3 +16,8 @@
 .print-visible {
   display: block !important;
 }
+.ant-picker-calendar-date-content {
+  /* default calendar style is shot*/
+  overflow-y: auto;
+  min-height: 172px;
+}
