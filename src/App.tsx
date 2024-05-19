@@ -256,6 +256,231 @@ function App() {
                                     <UnsavedChangesNotifier/>
                                 </Refine>
                             )}
+                            {
+                                user?.role?.name==="HR" && (<Refine
+                                        authProvider={authProvider}
+                                        dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+                                        notificationProvider={useNotificationProvider}
+                                        routerProvider={routerBindings}
+                                        resources={[
+                                            {
+                                                name: "Dashboard",
+                                                list: "/dashboard",
+                                                meta: {
+                                                    label: "Dashboard",
+                                                    icon: <DashboardOutlined/>,
+                                                },
+                                            },
+                                            {
+                                                name: "HR Manager",
+                                                list: "/HR",
+                                                meta: {
+                                                    label: "HR manager",
+                                                    icon: <DashboardOutlined/>,
+                                                },
+                                            }, {
+                                                name: "HR Schedule",
+                                                list: "/HR/schedule",
+                                                meta: {
+                                                    label: "Schedule",
+                                                    parent: "HR Manager",
+                                                    icon: <DashboardOutlined/>,
+                                                },
+                                            }, {
+                                                name: "HR Salary",
+                                                list: "/HR/salary",
+                                                meta: {
+                                                    label: "Salary",
+                                                    parent: "HR Manager",
+                                                    icon: <DashboardOutlined/>,
+                                                },
+                                            },{
+                                                name: "HR Manager",
+                                                list: "/HR/manager",
+                                                meta: {
+                                                    label: "manager",
+                                                    parent: "HR Manager",
+                                                    icon: <DashboardOutlined/>,
+                                                },
+                                            },
+                                            {
+                                                name: "data-restaurants",
+                                                list: "/parametres/generales",
+                                                create: "/parametres/generales/create",
+                                                edit: "",
+                                                show: "",
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    label: "Donnée de Restaurant",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "categories",
+                                                list: "/parametres/categories",
+                                                create: "/parametres/categories/create",
+                                                edit: "",
+                                                show: "",
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "tables",
+                                                list: "/parametres/tables",
+                                                create: "/parametres/tables/create",
+                                                edit: "",
+                                                show: "",
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "caisses",
+                                                list: "/parametres/caisses",
+                                                create: "/parametres/caisses/create",
+                                                edit: "",
+                                                show: "",
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "chefs",
+                                                list: "/parametres/chefs",
+                                                create: "/parametres/chefs/create",
+
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "unites",
+                                                list: "/parametres/unites",
+                                                create: "/parametres/unites/create",
+
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "categorie-depenses",
+                                                list: "/parametres/categorieDepense",
+                                                create: "/parametres/categorieDepense/create",
+                                                edit: "",
+                                                show: "",
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "categorie-ingredients",
+                                                list: "/parametres/categorieIngredient",
+                                                create: "/parametres/categorieIngredient/create",
+                                                edit: "",
+                                                show: "",
+                                                meta: {
+                                                    hide: true,
+                                                    parent: "parametres",
+                                                    canDelete: true,
+                                                },
+                                            },
+                                            {
+                                                name: "users",
+                                                list: "/parametres/users",
+                                                create: "/parametres/users/create",
+                                                edit: "/parametres/users/edit/:id",
+                                                meta: {
+                                                    canDelete: true,
+                                                    parent: "parametres",
+                                                    hide: true,
+                                                },
+                                            },
+                                        ]}
+                                        options={{
+                                            syncWithLocation: true,
+                                            warnWhenUnsavedChanges: true,
+                                        }}
+                                    >
+                                        <Routes>
+                                            <>
+                                                <Route
+                                                    element={
+                                                        <Authenticated
+                                                            key="authenticated-routes"
+                                                            fallback={<CatchAllNavigate to="/login"/>}
+                                                        >
+                                                            <ThemedLayoutV2
+                                                                Header={() => <Header sticky/>}
+                                                                Sider={() => <ThemedSiderV2 Title={Title}/>}
+                                                            >
+                                                                <Outlet/>
+                                                            </ThemedLayoutV2>
+                                                        </Authenticated>
+                                                    }
+                                                >
+                                                    <Route index element={<MenusList/>}/>
+
+                                                    <>
+                                                        <Route path="/dashboard">
+                                                            <Route index element={<Dashboard/>}/>
+                                                        </Route>
+                                                        {/* Menus */}
+                                                        <Route path="/caisse">
+                                                            <Route index element={<MenusList/>}/>
+                                                            <Route path="create" element={<CreateOrder/>}/>
+                                                        </Route>
+
+                                                        {/* logs */}
+                                                        <Route path="/gestionCaisse">
+                                                            <Route index element={<ListCaissesLogs/>}/>
+                                                        </Route>
+                                                        {/* hr manager*/}
+                                                        <Route path="/HR">
+                                                            <Route path="schedule"  element={<ScheduleList/>}/>
+                                                            <Route path="salary" element={<SalaryList/>}/>
+                                                            <Route path="manager" element={<HRManageList/>}/>
+                                                        </Route>
+                                                    </>
+
+                                                    <Route path="*" element={<ErrorComponent/>}/>
+                                                </Route>
+                                                <Route
+                                                    element={
+                                                        <Authenticated
+                                                            key="authenticated-routes"
+                                                            fallback={<Outlet/>}
+                                                        >
+                                                            <NavigateToResource/>
+                                                        </Authenticated>
+                                                    }
+                                                >
+                                                    <Route
+                                                        path="/login"
+                                                        element={<AuthPage type="login"/>}
+                                                    />
+                                                </Route>
+                                            </>
+                                        </Routes>
+
+                                        <RefineKbar/>
+                                        <UnsavedChangesNotifier/>
+                                    </Refine>
+                                )
+                            }
                             {user?.role?.name === "Serveur" && (
                                 <Refine
                                     authProvider={authProvider}
